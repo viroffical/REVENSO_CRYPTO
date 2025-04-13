@@ -5,7 +5,7 @@ import { faXTwitter } from '@fortawesome/free-brands-svg-icons';
 
 const Card = ({ profile, dragProgress }) => {
   return (
-    <div className="relative w-full h-full bg-white rounded-3xl overflow-y-auto">
+    <div className="relative w-full h-full bg-white rounded-3xl overflow-y-auto scrollbar-hide">
       <div className="relative h-[65%] min-h-[65%]">
         {/* Tag on top (e.g., "bizz") */}
         {profile.badge && (
