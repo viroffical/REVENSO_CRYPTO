@@ -9,6 +9,7 @@ const BottomNavigation = dynamic(() => import('../components/BottomNavigation'),
 const MeetingsComponent = dynamic(() => import('../components/MeetingsComponent'), { ssr: false })
 const EventsComponent = dynamic(() => import('../components/EventsComponent'), { ssr: false })
 const ChatsComponent = dynamic(() => import('../components/ChatsComponent'), { ssr: false })
+const MapDetailComponent = dynamic(() => import('../components/MapDetailComponent'), { ssr: false })
 import { profiles } from '../data/profiles'
 
 export default function Home() {
@@ -18,6 +19,8 @@ export default function Home() {
     switch (activeTab) {
       case 'people':
         return <CardStack profiles={profiles} />;
+      case 'maps':
+        return <MapDetailComponent />;
       case 'meetings':
         return <MeetingsComponent />;
       case 'events':

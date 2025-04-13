@@ -23,6 +23,12 @@
       "static/chunks/_pages-dir-browser_components_EventsComponent_js.js"
     ]
   },
+  "pages/index.js -> ../components/MapDetailComponent": {
+    "id": "pages/index.js -> ../components/MapDetailComponent",
+    "files": [
+      "static/chunks/_pages-dir-browser_components_MapDetailComponent_js.js"
+    ]
+  },
   "pages/index.js -> ../components/MeetingsComponent": {
     "id": "pages/index.js -> ../components/MeetingsComponent",
     "files": [
