@@ -45,7 +45,7 @@ const CardStack = ({ profiles }) => {
 
   return (
     <div className="card-stack flex flex-col h-full">
-      <div className="flex-1 relative flex items-center justify-center w-full h-[calc(100vh-150px)] shadow-lg bg-white">
+      <div className="flex-1 relative flex items-center justify-center w-full h-[calc(100vh-10px)] shadow-lg bg-white">
         <AnimatePresence>
           {visibleProfiles.length > 0 ? (
             visibleProfiles.map((profile, index) => (
