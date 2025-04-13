@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import dynamic from 'next/dynamic'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars, faUser, faUserCircle, faSliders } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faUser, faUserCircle } from '@fortawesome/free-solid-svg-icons';
 
 // Use dynamic import for components to avoid SSR issues with animations
 const CardStack = dynamic(() => import('../components/CardStack'), { ssr: false })
@@ -97,13 +97,13 @@ export default function Home() {
           <FontAwesomeIcon icon={faBars} className="h-5 w-5 text-gray-600" />
         </button>
         <div>
-          <h1 className="text-2xl font-bold text-black-500">REVENSO</h1>
+          <h1 className="text-2xl font-bold text-yellow-500">REVENSO</h1>
         </div>
         <button 
           className="p-2"
           onClick={() => setActiveTab('profile')}
         >
-          <FontAwesomeIcon icon={faSliders} className="h-5 w-5 text-gray-600" />
+          <FontAwesomeIcon icon={faUserCircle} className="h-5 w-5 text-gray-600" />
         </button>
       </header>
       

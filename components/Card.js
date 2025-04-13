@@ -6,7 +6,7 @@ import { faXTwitter } from '@fortawesome/free-brands-svg-icons';
 const Card = ({ profile, dragProgress }) => {
   return (
     <div className="relative w-full h-full bg-white rounded-3xl overflow-y-auto hide-scrollbar">
-      <div className="relative h-[60%] min-h-[60%]">
+      <div className="relative h-[100%] min-h-[75%]">
         
         {/* Profile Image */}
         <div className="w-full h-full bg-white">
