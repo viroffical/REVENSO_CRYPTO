@@ -1,23 +1,21 @@
 import { useState } from 'react'
 import dynamic from 'next/dynamic'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars, faUser, faUserCircle, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faUser, faUserCircle } from '@fortawesome/free-solid-svg-icons';
 
 // Use dynamic import for components to avoid SSR issues with animations
 const CardStack = dynamic(() => import('../components/CardStack'), { ssr: false })
 const BottomNavigation = dynamic(() => import('../components/BottomNavigation'), { ssr: false })
 const MeetingsComponent = dynamic(() => import('../components/MeetingsComponent'), { ssr: false })
-const EventSection = dynamic(() => import('../components/EventSection'), { ssr: false })
+const EventsComponent = dynamic(() => import('../components/EventsComponent'), { ssr: false })
 const ChatsComponent = dynamic(() => import('../components/ChatsComponent'), { ssr: false })
 const MapDetailComponent = dynamic(() => import('../components/MapDetailComponent'), { ssr: false })
-const MapSection = dynamic(() => import('../components/MapSection'), { ssr: false })
 const SideDrawer = dynamic(() => import('../components/SideDrawer'), { ssr: false })
 import { profiles } from '../data/profiles'
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState('people');
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [showEventMap, setShowEventMap] = useState(true); // Default to map view for events
 
   const toggleDrawer = () => {
     setDrawerOpen(!drawerOpen);
@@ -27,26 +25,7 @@ export default function Home() {
     setDrawerOpen(false);
   };
 
-  const toggleEventMap = () => {
-    setShowEventMap(!showEventMap);
-  };
-  
-  // Handle tab change
-  const handleTabChange = (tab) => {
-    setActiveTab(tab);
-    
-    // Close drawer when tab changes
-    if (drawerOpen) {
-      closeDrawer();
-    }
-  };
-
   const renderContent = () => {
-    // If event map view is active, show that instead of the regular events tab
-    if (activeTab === 'events' && showEventMap) {
-      return <MapSection />;
-    }
-
     switch (activeTab) {
       case 'people':
         return <CardStack profiles={profiles} />;
@@ -55,7 +34,7 @@ export default function Home() {
       case 'meetings':
         return <MeetingsComponent />;
       case 'events':
-        return <EventSection />;
+        return <EventsComponent />;
       case 'chats':
         return <ChatsComponent />;
       default:
@@ -92,28 +71,16 @@ export default function Home() {
             <h1 className="text-xl font-bold capitalize">{activeTab}</h1>
           )}
         </div>
-        {activeTab === 'events' ? (
-          <button 
-            className={`p-2 ${showEventMap ? 'bg-yellow-100 text-yellow-600 rounded-full' : ''}`} 
-            onClick={toggleEventMap}
-          >
-            <FontAwesomeIcon 
-              icon={faMapMarkerAlt} 
-              className={`h-5 w-5 ${showEventMap ? 'text-yellow-600' : 'text-gray-600'}`} 
-            />
-          </button>
-        ) : (
-          <button className="p-2">
-            <FontAwesomeIcon icon={faUserCircle} className="h-5 w-5 text-gray-600" />
-          </button>
-        )}
+        <button className="p-2">
+          <FontAwesomeIcon icon={faUserCircle} className="h-5 w-5 text-gray-600" />
+        </button>
       </header>
       
       <main className="flex-1 overflow-hidden">
         {renderContent()}
       </main>
       
-      <BottomNavigation activeTab={activeTab} setActiveTab={handleTabChange} />
+      <BottomNavigation activeTab={activeTab} setActiveTab={setActiveTab} />
     </div>
   )
 }
