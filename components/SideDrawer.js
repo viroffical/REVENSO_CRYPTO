@@ -56,7 +56,7 @@ const SideDrawer = ({ isOpen, onClose, userProfile }) => {
     username: '@username',
     following: 196,
     followers: 1176,
-    avatarUrl: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=256&q=80'
+    profileImgUrl: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=256&q=80'
   };
 
   return (
@@ -89,9 +89,9 @@ const SideDrawer = ({ isOpen, onClose, userProfile }) => {
         <div className="p-4 border-b border-gray-200">
           <div className="flex items-center mb-2">
             <img 
-              src={profile.avatarUrl} 
+              src={profile.profileImgUrl || profile.avatarUrl} 
               alt={profile.name} 
-              className="w-12 h-12 rounded-full mr-3" 
+              className="w-12 h-12 rounded-full mr-3 object-cover border border-gray-200" 
             />
             <div className="flex-1">
               <h3 className="font-bold text-lg">{profile.name}</h3>
@@ -147,6 +147,19 @@ const SideDrawer = ({ isOpen, onClose, userProfile }) => {
 
         {/* Footer */}
         <div className="p-4 flex flex-col">
+          <div className="flex justify-between items-center mb-4">
+            <button className="p-2 text-blue-400">
+              <FontAwesomeIcon icon={faMoon} />
+            </button>
+            <div className="text-blue-400">
+              <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                <rect x="3" y="3" width="7" height="7" rx="1" />
+                <rect x="14" y="3" width="7" height="7" rx="1" />
+                <rect x="14" y="14" width="7" height="7" rx="1" />
+                <rect x="3" y="14" width="7" height="7" rx="1" />
+              </svg>
+            </div>
+          </div>
           
           {/* Logout Button */}
           <button className="logout-button w-full mt-3">

@@ -71,12 +71,12 @@ const MeetingsComponent = () => {
   return (
     <div className="flex flex-col h-screen bg-white">
       {/* Header */}
-      <div className="px-4 py-4 border-b border-gray-100">
+      <div className="px-4 py-4">
         <h1 className="text-xl font-semibold">Meetings</h1>
       </div>
       
       {/* Tabs - 50-50 split */}
-      <div className="px-4 pt-4 pb-2 flex border-b border-gray-100 w-full">
+      <div className="px-4 pt-4 pb-2 flex w-full">
         <button
           className={`w-1/2 pb-2 font-medium text-sm text-center ${
             activeTab === 'upcoming'
