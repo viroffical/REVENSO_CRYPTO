@@ -17,6 +17,12 @@
       "static/chunks/_pages-dir-browser_components_ChatsComponent_js.js"
     ]
   },
+  "pages/index.js -> ../components/DashboardComponent": {
+    "id": "pages/index.js -> ../components/DashboardComponent",
+    "files": [
+      "static/chunks/_pages-dir-browser_components_DashboardComponent_js.js"
+    ]
+  },
   "pages/index.js -> ../components/EventsComponent": {
     "id": "pages/index.js -> ../components/EventsComponent",
     "files": [

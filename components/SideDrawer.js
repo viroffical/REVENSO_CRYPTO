@@ -8,7 +8,11 @@ import {
   faGear, 
   faQuestionCircle,
   faTimes,
-  faMoon
+  faMoon,
+  faGaugeHigh,
+  faUserPlus,
+  faGears,
+  faHeadset
 } from '@fortawesome/free-solid-svg-icons';
 import { motion } from 'framer-motion';
 
@@ -120,21 +124,21 @@ const SideDrawer = ({ isOpen, onClose, userProfile }) => {
               </a>
             </li>
             <li>
-              <a href="#" className="flex items-center px-4 py-3 hover:bg-gray-100">
-                <FontAwesomeIcon icon={faList} className="text-gray-700 w-5 h-5 mr-3" />
-                <span className="font-medium">Lists</span>
-              </a>
+              <button 
+                onClick={() => {
+                  window.dispatchEvent(new CustomEvent('setActiveTab', { detail: 'dashboard' }));
+                  onClose();
+                }} 
+                className="flex items-center w-full text-left px-4 py-3 hover:bg-gray-100 transition-colors"
+              >
+                <FontAwesomeIcon icon={faGaugeHigh} className="text-gray-700 w-5 h-5 mr-3" />
+                <span className="font-medium">Dashboard</span>
+              </button>
             </li>
             <li>
               <a href="#" className="flex items-center px-4 py-3 hover:bg-gray-100">
-                <FontAwesomeIcon icon={faBookmark} className="text-gray-700 w-5 h-5 mr-3" />
-                <span className="font-medium">Bookmarks</span>
-              </a>
-            </li>
-            <li>
-              <a href="#" className="flex items-center px-4 py-3 hover:bg-gray-100">
-                <FontAwesomeIcon icon={faBolt} className="text-gray-700 w-5 h-5 mr-3" />
-                <span className="font-medium">Moments</span>
+                <FontAwesomeIcon icon={faUserPlus} className="text-gray-700 w-5 h-5 mr-3" />
+                <span className="font-medium">Invite a friend</span>
               </a>
             </li>
           </ul>
@@ -143,11 +147,13 @@ const SideDrawer = ({ isOpen, onClose, userProfile }) => {
             <ul>
               <li>
                 <a href="#" className="flex items-center px-4 py-3 hover:bg-gray-100">
+                  <FontAwesomeIcon icon={faGears} className="text-gray-700 w-5 h-5 mr-3" />
                   <span className="font-medium">Settings and privacy</span>
                 </a>
               </li>
               <li>
                 <a href="#" className="flex items-center px-4 py-3 hover:bg-gray-100">
+                  <FontAwesomeIcon icon={faHeadset} className="text-gray-700 w-5 h-5 mr-3" />
                   <span className="font-medium">Help Center</span>
                 </a>
               </li>

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import dynamic from 'next/dynamic'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faUser, faUserCircle } from '@fortawesome/free-solid-svg-icons';
@@ -10,12 +10,26 @@ const MeetingsComponent = dynamic(() => import('../components/MeetingsComponent'
 const EventsComponent = dynamic(() => import('../components/EventsComponent'), { ssr: false })
 const ChatsComponent = dynamic(() => import('../components/ChatsComponent'), { ssr: false })
 const MapDetailComponent = dynamic(() => import('../components/MapDetailComponent'), { ssr: false })
+const DashboardComponent = dynamic(() => import('../components/DashboardComponent'), { ssr: false })
 const SideDrawer = dynamic(() => import('../components/SideDrawer'), { ssr: false })
 import { profiles } from '../data/profiles'
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState('people');
   const [drawerOpen, setDrawerOpen] = useState(false);
+
+  // Listen for custom events from the sidebar to switch tabs
+  useEffect(() => {
+    const handleSetActiveTab = (event) => {
+      setActiveTab(event.detail);
+    };
+    
+    window.addEventListener('setActiveTab', handleSetActiveTab);
+    
+    return () => {
+      window.removeEventListener('setActiveTab', handleSetActiveTab);
+    };
+  }, []);
 
   const toggleDrawer = () => {
     setDrawerOpen(!drawerOpen);
@@ -37,6 +51,8 @@ export default function Home() {
         return <EventsComponent />;
       case 'chats':
         return <ChatsComponent />;
+      case 'dashboard':
+        return <DashboardComponent />;
       default:
         return (
           <div className="flex items-center justify-center h-full">

@@ -6,15 +6,7 @@ import { faXTwitter } from '@fortawesome/free-brands-svg-icons';
 const Card = ({ profile, dragProgress }) => {
   return (
     <div className="relative w-full h-full bg-white rounded-3xl overflow-y-auto scrollbar-hide">
-      <div className="relative h-[100%] min-h-[65%]">
-        {/* Tag on top (e.g., "bizz") */}
-        {profile.badge && (
-          <div className="absolute top-5 left-5 z-10">
-            <div className="bg-orange-500 text-white px-4 py-1 rounded-full font-medium text-sm">
-              {profile.badge}
-            </div>
-          </div>
-        )}
+      <div className="relative h-[100%] min-h-[75%]">
         
         {/* Profile Image */}
         <div className="w-full h-full bg-white">
@@ -47,33 +39,33 @@ const Card = ({ profile, dragProgress }) => {
         {/* Profile Info Overlay */}
         <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/90 via-black/60 to-transparent text-white">
           <div className="flex items-center mb-0.5">
-            <h2 className="text-2xl font-bold mr-2">{profile.name}</h2>
+            <h2 className="text-lg font-bold mr-2">{profile.name}</h2>
             {profile.verified && (
               <FontAwesomeIcon icon={faXTwitter} style={{height:'1rem', color: 'white', fontWeight: 'bolder'}} />
             )}
           </div>
           
           {/* Job & Company */}
-          <div className="flex items-center mb-1">
-            <FontAwesomeIcon icon={faBriefcase} className="h-5 w-5 mr-2" />
-            <p className="text-base font-medium">
+          <div className="flex items-center mb-0.2">
+            <FontAwesomeIcon icon={faBriefcase} className="h-4 w-4 mr-2" />
+            <p className="text-[0.7rem] font-medium">
               {profile.occupation || profile.jobTitle} {profile.company && `at ${profile.company}`}
             </p>
           </div>
           
           {/* Bio */}
-          <p className="text-base text-gray-100 mb-2">{profile.bio}</p>
+          <p className="text-base text-gray-100 mb-0.5 text-[0.7rem]">{profile.bio}</p>
           
           {/* Attending Section */}
           <div>
-            <h3 className="text-sm font-bold mb-2">Attending</h3>
+            <h3 className="text-sm font-bold">Attending</h3>
             <div className="flex justify-between items-center">
               <div className="flex items-center">
                 <div className="bg-teal-500 text-white rounded-full w-3 h-3 mr-2"></div>
                 <span className="font-medium">Token2049 week</span>
               </div>
               <button className="p-2 ">
-                <FontAwesomeIcon icon={faCommentDots} style={{height:'2rem', color: 'white'}} />
+                <FontAwesomeIcon icon={faCommentDots} style={{height:'1.3rem', color: 'white'}} />
               </button>
             </div>
           </div>
