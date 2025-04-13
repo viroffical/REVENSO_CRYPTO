@@ -122,7 +122,7 @@ const SwipeableCard = ({ profile, onSwipe, isTop, zIndex }) => {
 
   return (
     <motion.div
-      className="absolute w-full h-full px-1 pt-1 pb-0 cursor-grab active:cursor-grabbing touch-manipulation"
+      className="absolute w-full h-full px-2 pt-2 pb-0 cursor-grab active:cursor-grabbing touch-manipulation"
       style={{ 
         x, 
         y, 
@@ -141,7 +141,9 @@ const SwipeableCard = ({ profile, onSwipe, isTop, zIndex }) => {
       variants={variants}
       custom={onSwipe}
     >
-      <Card profile={profile} dragProgress={{ left: leftIndicatorOpacity, right: rightIndicatorOpacity }} />
+      <div className="h-[80vh] shadow-lg">
+        <Card profile={profile} dragProgress={{ left: leftIndicatorOpacity, right: rightIndicatorOpacity }} />
+      </div>
     </motion.div>
   );
 };
