@@ -1,103 +1,72 @@
-const events = [
+export const eventData = [
   {
     id: 1,
-    event_name: "Tech Networking Mixer",
-    date: "April 15, 2025",
-    start_time: "6:00 PM",
-    end_time: "9:00 PM",
-    category: "Networking",
-    entry: "Free",
-    status: "Going",
-    image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
-    invitedUsers: [
-      "https://randomuser.me/api/portraits/women/12.jpg",
-      "https://randomuser.me/api/portraits/men/32.jpg",
-      "https://randomuser.me/api/portraits/women/22.jpg",
-      "https://randomuser.me/api/portraits/men/42.jpg"
-    ]
+    title: "MLOPS Hands-on Session",
+    subtitle: "MLOps and LLMOps Enthusiasts",
+    date: "FRI, APR 18 • 21:35",
+    location: "Tech Hub Downtown",
+    description: "Join us for a practical session on building end-to-end ML pipelines. Bring your laptop!",
+    attendees: 58,
+    price: "Free",
+    imageUrl: "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+    position: { lat: 37.7830, lng: -122.4084 },
+    category: "tech",
+    color: "#6366F1" // indigo
   },
   {
     id: 2,
-    event_name: "Startup Pitch Competition",
-    date: "April 18, 2025",
-    start_time: "1:00 PM",
-    end_time: "5:00 PM",
-    category: "Business",
-    entry: "RSVP Required",
-    status: "Going",
-    image: "https://images.unsplash.com/photo-1515187029135-18ee286d815b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
-    invitedUsers: [
-      "https://randomuser.me/api/portraits/women/15.jpg",
-      "https://randomuser.me/api/portraits/men/22.jpg",
-      "https://randomuser.me/api/portraits/women/32.jpg"
-    ]
+    title: "AI Ethics Panel Discussion",
+    subtitle: "Tech for Good Network",
+    date: "SAT, APR 19 • 14:00",
+    location: "University Auditorium",
+    description: "Panel of experts discussing the ethical implications of AI deployment in public sectors.",
+    attendees: 124,
+    price: "$15",
+    imageUrl: "https://images.unsplash.com/photo-1591115765373-5207764f72e4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+    position: { lat: 37.7699, lng: -122.4161 },
+    category: "education",
+    color: "#F59E0B" // amber
   },
   {
     id: 3,
-    event_name: "Photography Workshop",
-    date: "April 20, 2025",
-    start_time: "10:00 AM",
-    end_time: "2:00 PM",
-    category: "Workshop",
-    entry: "$25",
-    status: "Pending",
-    image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
-    invitedUsers: [
-      "https://randomuser.me/api/portraits/women/18.jpg",
-      "https://randomuser.me/api/portraits/men/28.jpg"
-    ]
+    title: "DevOps Automation Workshop",
+    subtitle: "Bay Area DevOps Community",
+    date: "THU, APR 24 • 18:30",
+    location: "Cloud Center",
+    description: "Learn how to automate your CI/CD pipelines with modern tools and best practices.",
+    attendees: 45,
+    price: "$25",
+    imageUrl: "https://images.unsplash.com/photo-1577401239170-897942555fb3?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+    position: { lat: 37.7907, lng: -122.4013 },
+    category: "tech",
+    color: "#EC4899" // pink
   },
   {
     id: 4,
-    event_name: "Charity Gala Dinner",
-    date: "April 22, 2025",
-    start_time: "7:00 PM",
-    end_time: "11:00 PM",
-    category: "Charity",
-    entry: "$100 Donation",
-    status: "Invited",
-    image: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
-    invitedUsers: [
-      "https://randomuser.me/api/portraits/women/23.jpg",
-      "https://randomuser.me/api/portraits/men/34.jpg",
-      "https://randomuser.me/api/portraits/women/45.jpg",
-      "https://randomuser.me/api/portraits/men/56.jpg",
-      "https://randomuser.me/api/portraits/women/67.jpg"
-    ]
+    title: "Digital Art Exhibition",
+    subtitle: "Creative Tech Collective",
+    date: "SUN, APR 20 • 11:00",
+    location: "Modern Art Space",
+    description: "Explore the intersection of technology and art with interactive digital installations.",
+    attendees: 210,
+    price: "$10",
+    imageUrl: "https://images.unsplash.com/photo-1579762593175-20226054cad0?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+    position: { lat: 37.7749, lng: -122.4294 },
+    category: "art",
+    color: "#10B981" // emerald
   },
   {
     id: 5,
-    event_name: "AI in Healthcare Conference",
-    date: "April 25, 2025",
-    start_time: "9:00 AM",
-    end_time: "6:00 PM",
-    category: "Conference",
-    entry: "Free for Members",
-    status: "Going",
-    image: "https://images.unsplash.com/photo-1576089172869-4f5f6f315620?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
-    invitedUsers: [
-      "https://randomuser.me/api/portraits/women/28.jpg",
-      "https://randomuser.me/api/portraits/men/29.jpg",
-      "https://randomuser.me/api/portraits/women/30.jpg"
-    ]
-  },
-  {
-    id: 6,
-    event_name: "Wine Tasting Social",
-    date: "April 28, 2025",
-    start_time: "7:30 PM",
-    end_time: "10:30 PM",
-    category: "Social",
-    entry: "$35",
-    status: "Pending",
-    image: "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80",
-    invitedUsers: [
-      "https://randomuser.me/api/portraits/women/33.jpg",
-      "https://randomuser.me/api/portraits/men/44.jpg",
-      "https://randomuser.me/api/portraits/women/55.jpg",
-      "https://randomuser.me/api/portraits/men/66.jpg"
-    ]
+    title: "Startup Pitch Night",
+    subtitle: "Venture Capital Network",
+    date: "TUE, APR 22 • 19:00",
+    location: "Innovation Center",
+    description: "Watch 10 startups pitch their ideas to a panel of VCs and angel investors.",
+    attendees: 150,
+    price: "Free",
+    imageUrl: "https://images.unsplash.com/photo-1556761175-b413da4baf72?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+    position: { lat: 37.7879, lng: -122.4074 },
+    category: "business",
+    color: "#8B5CF6" // violet
   }
 ];
-
-export default events;
