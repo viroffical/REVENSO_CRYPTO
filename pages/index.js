@@ -71,11 +71,19 @@ export default function Home() {
     email: 'alex.johnson@example.com',
     phone: '+1 (555) 123-4567',
     address: 'San Francisco, CA',
+    dateOfBirth: 'June 15, 1992',
+    occupation: 'Senior Product Designer',
+    bio: 'Creative designer with a passion for user experience and innovative solutions.',
     following: 196,
     followers: 1176,
     isPremium: true,
     role: 'Gold Member',
-    profileImgUrl: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=256&q=80'
+    profileImgUrl: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=256&q=80',
+    socialLinks: [
+      { platform: 'Twitter', handle: '@alexjohnson' },
+      { platform: 'LinkedIn', handle: 'alex-johnson' },
+      { platform: 'Instagram', handle: '@alex.creates' }
+    ]
   };
 
   return (
