@@ -55,7 +55,7 @@ export default function Home() {
       case 'meetings':
         return <MeetingsComponent />;
       case 'events':
-        return <EventsComponent />;
+        return <EventSection />;
       case 'chats':
         return <ChatsComponent />;
       default:
