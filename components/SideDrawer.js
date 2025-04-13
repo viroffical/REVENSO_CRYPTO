@@ -97,13 +97,6 @@ const SideDrawer = ({ isOpen, onClose, userProfile }) => {
               <h3 className="font-bold text-lg">{profile.name}</h3>
               <p className="text-sm text-gray-500">{profile.username}</p>
             </div>
-            <button className="text-gray-400 p-1">
-              <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-                <circle cx="5" cy="12" r="2" />
-                <circle cx="12" cy="12" r="2" />
-                <circle cx="19" cy="12" r="2" />
-              </svg>
-            </button>
           </div>
           <div className="flex text-sm mt-2">
             <div className="mr-4">
@@ -146,21 +139,7 @@ const SideDrawer = ({ isOpen, onClose, userProfile }) => {
         </nav>
 
         {/* Footer */}
-        <div className="p-4 flex flex-col">
-          <div className="flex justify-between items-center mb-4">
-            <button className="p-2 text-blue-400">
-              <FontAwesomeIcon icon={faMoon} />
-            </button>
-            <div className="text-blue-400">
-              <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-                <rect x="3" y="3" width="7" height="7" rx="1" />
-                <rect x="14" y="3" width="7" height="7" rx="1" />
-                <rect x="14" y="14" width="7" height="7" rx="1" />
-                <rect x="3" y="14" width="7" height="7" rx="1" />
-              </svg>
-            </div>
-          </div>
-          
+        <div className="p-4 flex flex-col">   
           {/* Logout Button */}
           <button className="logout-button w-full mt-3">
             <span className="flex items-center justify-center">
