@@ -11,6 +11,7 @@ const EventsComponent = dynamic(() => import('../components/EventsComponent'), {
 const ChatsComponent = dynamic(() => import('../components/ChatsComponent'), { ssr: false })
 const MapDetailComponent = dynamic(() => import('../components/MapDetailComponent'), { ssr: false })
 const DashboardComponent = dynamic(() => import('../components/DashboardComponent'), { ssr: false })
+const ProfileComponent = dynamic(() => import('../components/ProfileComponent'), { ssr: false })
 const SideDrawer = dynamic(() => import('../components/SideDrawer'), { ssr: false })
 import { profiles } from '../data/profiles'
 
@@ -53,6 +54,8 @@ export default function Home() {
         return <ChatsComponent />;
       case 'dashboard':
         return <DashboardComponent />;
+      case 'profile':
+        return <ProfileComponent userProfile={userProfile} />;
       default:
         return (
           <div className="flex items-center justify-center h-full">
@@ -65,9 +68,14 @@ export default function Home() {
   const userProfile = {
     name: 'Alex Johnson',
     username: '@alexj',
+    email: 'alex.johnson@example.com',
+    phone: '+1 (555) 123-4567',
+    address: 'San Francisco, CA',
     following: 196,
     followers: 1176,
-    avatarUrl: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=256&q=80'
+    isPremium: true,
+    role: 'Gold Member',
+    profileImgUrl: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=256&q=80'
   };
 
   return (
@@ -83,7 +91,10 @@ export default function Home() {
         <div>
           <h1 className="text-2xl font-bold text-yellow-500">REVENSO</h1>
         </div>
-        <button className="p-2">
+        <button 
+          className="p-2"
+          onClick={() => setActiveTab('profile')}
+        >
           <FontAwesomeIcon icon={faUserCircle} className="h-5 w-5 text-gray-600" />
         </button>
       </header>

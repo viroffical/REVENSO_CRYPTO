@@ -118,10 +118,16 @@ const SideDrawer = ({ isOpen, onClose, userProfile }) => {
         <nav className="flex-1 overflow-y-auto">
           <ul className="py-2">
             <li>
-              <a href="#" className="flex items-center px-4 py-3 hover:bg-gray-100">
+              <button 
+                onClick={() => {
+                  window.dispatchEvent(new CustomEvent('setActiveTab', { detail: 'profile' }));
+                  onClose();
+                }} 
+                className="flex items-center w-full text-left px-4 py-3 hover:bg-gray-100 transition-colors"
+              >
                 <FontAwesomeIcon icon={faUser} className="text-gray-700 w-5 h-5 mr-3" />
                 <span className="font-medium">Profile</span>
-              </a>
+              </button>
             </li>
             <li>
               <button 

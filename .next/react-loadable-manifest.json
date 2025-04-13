@@ -41,6 +41,12 @@
       "static/chunks/_pages-dir-browser_components_MeetingsComponent_js.js"
     ]
   },
+  "pages/index.js -> ../components/ProfileComponent": {
+    "id": "pages/index.js -> ../components/ProfileComponent",
+    "files": [
+      "static/chunks/_pages-dir-browser_components_ProfileComponent_js.js"
+    ]
+  },
   "pages/index.js -> ../components/SideDrawer": {
     "id": "pages/index.js -> ../components/SideDrawer",
     "files": [
