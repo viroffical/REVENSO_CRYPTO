@@ -7,6 +7,7 @@ import { faBars, faUser, faUserCircle } from '@fortawesome/free-solid-svg-icons'
 const CardStack = dynamic(() => import('../components/CardStack'), { ssr: false })
 const BottomNavigation = dynamic(() => import('../components/BottomNavigation'), { ssr: false })
 const MeetingsComponent = dynamic(() => import('../components/MeetingsComponent'), { ssr: false })
+const EventsComponent = dynamic(() => import('../components/EventsComponent'), { ssr: false })
 import { profiles } from '../data/profiles'
 
 export default function Home() {
@@ -18,6 +19,8 @@ export default function Home() {
         return <CardStack profiles={profiles} />;
       case 'meetings':
         return <MeetingsComponent />;
+      case 'events':
+        return <EventsComponent />;
       default:
         return (
           <div className="flex items-center justify-center h-full">
