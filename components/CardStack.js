@@ -1,95 +1,79 @@
-import { useState, useEffect } from 'react';
+import { useState, useRef } from 'react';
+import { motion, useMotionValue, useTransform, AnimatePresence } from 'framer-motion';
 import Card from './Card';
+import SwipeIndicator from './SwipeIndicator';
 import SwipeButtons from './SwipeButtons';
 
 const CardStack = ({ profiles }) => {
-  const [currentProfileIndex, setCurrentProfileIndex] = useState(0);
-  const [lastDirection, setLastDirection] = useState(null);
-  const [showFeedback, setShowFeedback] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [exitDirection, setExitDirection] = useState(null);
   const [swipedProfiles, setSwipedProfiles] = useState([]);
-
-  const handleSwipe = (direction, profileId) => {
-    // Don't process swipe if already at the end
-    if (currentProfileIndex >= profiles.length - 1) return;
+  
+  // Only show top 3 cards for performance
+  const visibleProfiles = profiles.slice(currentIndex, currentIndex + 3);
+  
+  const handleSwipe = (direction) => {
+    if (currentIndex >= profiles.length) return;
     
-    // Set the direction for feedback animation
-    setLastDirection(direction);
-    setShowFeedback(true);
+    // Set exit direction for animation
+    setExitDirection(direction);
     
-    // Add the swiped profile to our history
-    setSwipedProfiles([...swipedProfiles, { id: profileId, direction }]);
+    // Add swiped profile to history
+    setSwipedProfiles([...swipedProfiles, { id: profiles[currentIndex].id, direction }]);
     
-    // Wait for animation to complete before moving to next card
+    // Move to next card
     setTimeout(() => {
-      setCurrentProfileIndex(currentProfileIndex + 1);
-      setShowFeedback(false);
+      setCurrentIndex(currentIndex + 1);
+      setExitDirection(null);
     }, 300);
   };
 
   // Handle button clicks for swipe actions
   const handleButtonSwipe = (direction) => {
-    if (currentProfileIndex < profiles.length) {
-      handleSwipe(direction, profiles[currentProfileIndex].id);
+    if (currentIndex < profiles.length) {
+      handleSwipe(direction);
     }
   };
 
-  // Reset the stack if we've gone through all profiles
-  useEffect(() => {
-    if (currentProfileIndex >= profiles.length) {
-      setTimeout(() => {
-        setCurrentProfileIndex(0);
-        setSwipedProfiles([]);
-      }, 1000);
-    }
-  }, [currentProfileIndex, profiles.length]);
-
   const restoreLastSwipedProfile = () => {
-    if (swipedProfiles.length > 0 && currentProfileIndex > 0) {
+    if (swipedProfiles.length > 0 && currentIndex > 0) {
       // Remove the last swiped profile from history
       setSwipedProfiles(swipedProfiles.slice(0, -1));
       // Go back to the previous profile
-      setCurrentProfileIndex(currentProfileIndex - 1);
+      setCurrentIndex(currentIndex - 1);
     }
   };
 
   return (
-    <div className="card-stack">
-      <div className="cards-container">
-        {/* Render a few cards ahead for better performance */}
-        {profiles.slice(currentProfileIndex, currentProfileIndex + 3).map((profile, index) => (
-          <Card 
-            key={profile.id}
-            profile={profile}
-            onSwipe={handleSwipe}
-            index={profiles.length - index}
-            active={index === 0}
-          />
-        ))}
+    <div className="card-stack flex flex-col h-full">
+      <div className="flex-1 relative flex items-center justify-center w-full bg-white">
+        <AnimatePresence>
+          {visibleProfiles.length > 0 ? (
+            visibleProfiles.map((profile, index) => (
+              <SwipeableCard 
+                key={profile.id} 
+                profile={profile} 
+                onSwipe={handleSwipe}
+                isTop={index === 0}
+                zIndex={visibleProfiles.length - index}
+              />
+            ))
+          ) : (
+            <div className="empty-state text-center p-8">
+              <h2 className="text-2xl mb-4">No more profiles</h2>
+              <p className="mb-4">You've seen everyone for now</p>
+              <button 
+                className="bg-purple-600 text-white px-4 py-2 rounded-full"
+                onClick={() => setCurrentIndex(0)}
+              >
+                Start Over
+              </button>
+            </div>
+          )}
+        </AnimatePresence>
         
-        {/* Feedback animation */}
-        {showFeedback && (
-          <div className={`swipe-feedback ${lastDirection === 'right' ? 'right' : 'left'}`}>
-            {lastDirection === 'right' ? (
-              <i className="fas fa-heart text-5xl text-pink-500"></i>
-            ) : (
-              <i className="fas fa-times text-5xl text-red-500"></i>
-            )}
-          </div>
-        )}
-        
-        {/* Empty state when all cards are swiped */}
-        {currentProfileIndex >= profiles.length && (
-          <div className="empty-state">
-            <h2 className="text-2xl mb-4">No more profiles</h2>
-            <p className="mb-4">You've seen everyone for now</p>
-            <button 
-              className="bg-purple-600 text-white px-4 py-2 rounded-full"
-              onClick={() => setCurrentProfileIndex(0)}
-            >
-              Start Over
-            </button>
-          </div>
-        )}
+        <SwipeIndicator direction="left" isVisible={exitDirection === 'left'} />
+        <SwipeIndicator direction="right" isVisible={exitDirection === 'right'} />
       </div>
       
       <SwipeButtons 
@@ -99,6 +83,74 @@ const CardStack = ({ profiles }) => {
         canUndo={swipedProfiles.length > 0}
       />
     </div>
+  );
+};
+
+const SwipeableCard = ({ profile, onSwipe, isTop, zIndex }) => {
+  const [isDragging, setIsDragging] = useState(false);
+  
+  // Motion values for card position and rotation
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const rotate = useTransform(x, [-200, 0, 200], [-15, 0, 15]);
+  
+  // Transform x position to opacity for the indicators
+  const leftIndicatorOpacity = useTransform(x, [-100, -10], [1, 0]);
+  const rightIndicatorOpacity = useTransform(x, [10, 100], [0, 1]);
+  
+  // Detect swipe direction and threshold
+  const handleDragEnd = (_, info) => {
+    setIsDragging(false);
+    const swipeThreshold = 100;
+    
+    if (info.offset.x > swipeThreshold) {
+      onSwipe('right');
+    } else if (info.offset.x < -swipeThreshold) {
+      onSwipe('left');
+    }
+  };
+
+  const handleDragStart = () => {
+    setIsDragging(true);
+  };
+
+  // Animation variants for card appearance and exit
+  const variants = {
+    initial: {
+      scale: isTop ? 1 : 0.95,
+      y: isTop ? 0 : 15,
+    },
+    exit: (direction) => ({
+      x: direction === 'left' ? -500 : direction === 'right' ? 500 : 0,
+      opacity: 1,
+      transition: { duration: 0.3 },
+      zIndex: 10
+    }),
+  };
+
+  return (
+    <motion.div
+      className="absolute w-full h-full px-1 pt-1 pb-0 cursor-grab active:cursor-grabbing touch-manipulation"
+      style={{ 
+        x, 
+        y, 
+        rotate, 
+        zIndex: isDragging ? 10 : zIndex,
+        touchAction: 'none',
+      }}
+      drag={isTop}
+      dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
+      dragElastic={0.9}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+      initial="initial"
+      animate="initial"
+      exit="exit"
+      variants={variants}
+      custom={onSwipe}
+    >
+      <Card profile={profile} dragProgress={{ left: leftIndicatorOpacity, right: rightIndicatorOpacity }} />
+    </motion.div>
   );
 };
 
