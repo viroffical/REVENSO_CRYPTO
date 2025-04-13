@@ -5,6 +5,7 @@ import { faBars, faUser, faUserCircle } from '@fortawesome/free-solid-svg-icons'
 
 // Use dynamic import for CardStack to avoid SSR issues with animations
 const CardStack = dynamic(() => import('../components/CardStack'), { ssr: false })
+const BottomNavigation = dynamic(() => import('../components/BottomNavigation'), { ssr: false })
 import { profiles } from '../data/profiles'
 
 export default function Home() {
@@ -25,6 +26,8 @@ export default function Home() {
       <main className="flex-1 overflow-hidden">
         <CardStack profiles={profiles} />
       </main>
+      
+      <BottomNavigation />
     </div>
   )
 }

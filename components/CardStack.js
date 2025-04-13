@@ -141,7 +141,7 @@ const SwipeableCard = ({ profile, onSwipe, isTop, zIndex }) => {
       variants={variants}
       custom={onSwipe}
     >
-      <div className="h-[85vh] shadow-lg">
+      <div className="h-[calc(85vh-64px)] shadow-lg">
         <Card profile={profile} dragProgress={{ left: leftIndicatorOpacity, right: rightIndicatorOpacity }} />
       </div>
     </motion.div>
