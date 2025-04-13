@@ -17,22 +17,22 @@
       "static/chunks/_pages-dir-browser_components_ChatsComponent_js.js"
     ]
   },
-  "pages/index.js -> ../components/EventMapView": {
-    "id": "pages/index.js -> ../components/EventMapView",
+  "pages/index.js -> ../components/EventSection": {
+    "id": "pages/index.js -> ../components/EventSection",
     "files": [
-      "static/chunks/_pages-dir-browser_components_EventMapView_js.js"
-    ]
-  },
-  "pages/index.js -> ../components/EventsComponent": {
-    "id": "pages/index.js -> ../components/EventsComponent",
-    "files": [
-      "static/chunks/_pages-dir-browser_components_EventsComponent_js.js"
+      "static/chunks/_pages-dir-browser_components_EventSection_js.js"
     ]
   },
   "pages/index.js -> ../components/MapDetailComponent": {
     "id": "pages/index.js -> ../components/MapDetailComponent",
     "files": [
       "static/chunks/_pages-dir-browser_components_MapDetailComponent_js.js"
+    ]
+  },
+  "pages/index.js -> ../components/MapSection": {
+    "id": "pages/index.js -> ../components/MapSection",
+    "files": [
+      "static/chunks/_pages-dir-browser_components_MapSection_js.js"
     ]
   },
   "pages/index.js -> ../components/MeetingsComponent": {

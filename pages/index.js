@@ -7,10 +7,10 @@ import { faBars, faUser, faUserCircle, faMapMarkerAlt } from '@fortawesome/free-
 const CardStack = dynamic(() => import('../components/CardStack'), { ssr: false })
 const BottomNavigation = dynamic(() => import('../components/BottomNavigation'), { ssr: false })
 const MeetingsComponent = dynamic(() => import('../components/MeetingsComponent'), { ssr: false })
-const EventsComponent = dynamic(() => import('../components/EventsComponent'), { ssr: false })
+const EventSection = dynamic(() => import('../components/EventSection'), { ssr: false })
 const ChatsComponent = dynamic(() => import('../components/ChatsComponent'), { ssr: false })
 const MapDetailComponent = dynamic(() => import('../components/MapDetailComponent'), { ssr: false })
-const EventMapView = dynamic(() => import('../components/EventMapView'), { ssr: false })
+const MapSection = dynamic(() => import('../components/MapSection'), { ssr: false })
 const SideDrawer = dynamic(() => import('../components/SideDrawer'), { ssr: false })
 import { profiles } from '../data/profiles'
 
@@ -44,7 +44,7 @@ export default function Home() {
   const renderContent = () => {
     // If event map view is active, show that instead of the regular events tab
     if (activeTab === 'events' && showEventMap) {
-      return <EventMapView />;
+      return <MapSection />;
     }
 
     switch (activeTab) {
