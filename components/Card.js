@@ -19,7 +19,7 @@ const Card = ({ profile, dragProgress }) => {
         {/* Profile Image */}
         <div className="w-full h-full bg-white">
           <img
-            src={profile.image}
+            src={profile.imageUrl || profile.image}
             alt={profile.name}
             className="w-full h-full object-cover"
           />
@@ -56,7 +56,9 @@ const Card = ({ profile, dragProgress }) => {
           {/* Job & Company */}
           <div className="flex items-center mb-1">
             <FontAwesomeIcon icon={faBriefcase} className="h-5 w-5 mr-2" />
-            <p className="text-base font-medium">{profile.occupation}</p>
+            <p className="text-base font-medium">
+              {profile.occupation} {profile.company && `at ${profile.company}`}
+            </p>
           </div>
           
           {/* Bio */}
