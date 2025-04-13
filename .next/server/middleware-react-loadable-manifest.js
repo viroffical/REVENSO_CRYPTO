@@ -1,0 +1,1 @@
+self.__REACT_LOADABLE_MANIFEST="{\"pages/index.js -> ../components/CardStack\":{\"id\":\"pages/index.js -> ../components/CardStack\",\"files\":[\"static/chunks/_pages-dir-browser_components_CardStack_js.js\"]}}"
