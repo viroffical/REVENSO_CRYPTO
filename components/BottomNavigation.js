@@ -4,9 +4,7 @@ import { faUsers, faMap, faCalendarCheck, faComments, faHandshake, faTachometerA
 import Link from 'next/link';
 import { useState } from 'react';
 
-const BottomNavigation = () => {
-  const [activeTab, setActiveTab] = useState('people');
-  
+const BottomNavigation = ({ activeTab, setActiveTab }) => {
   const tabs = [
     { id: 'people', icon: faUsers, label: 'People' },
     { id: 'maps', icon: faMap, label: 'Maps' },

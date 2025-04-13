@@ -10,5 +10,11 @@
     "files": [
       "static/chunks/_pages-dir-browser_components_CardStack_js.js"
     ]
+  },
+  "pages/index.js -> ../components/MeetingsComponent": {
+    "id": "pages/index.js -> ../components/MeetingsComponent",
+    "files": [
+      "static/chunks/_pages-dir-browser_components_MeetingsComponent_js.js"
+    ]
   }
 }
