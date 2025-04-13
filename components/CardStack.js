@@ -106,12 +106,24 @@ const SwipeableCard = ({ profile, onSwipe, isTop, zIndex }) => {
   // Detect swipe direction and threshold
   const handleDragEnd = (_, info) => {
     setIsDragging(false);
-    const swipeThreshold = 80; // Lower threshold for easier swiping on mobile
-    const swipeVelocityThreshold = 200; // Velocity threshold for quick swipes
+    const swipeThreshold = 60; // Even lower threshold for easier swiping on mobile
+    const swipeVelocityThreshold = 100; // Lower velocity threshold for quicker swipes
     
-    if (info.offset.x > swipeThreshold || (info.velocity.x > 0.5 && info.velocity.x * info.offset.x > swipeVelocityThreshold)) {
+    // Check velocity first for quick flicks
+    if (info.velocity.x > 0.3) {
       onSwipe('right');
-    } else if (info.offset.x < -swipeThreshold || (info.velocity.x < -0.5 && info.velocity.x * info.offset.x < -swipeVelocityThreshold)) {
+      return;
+    } 
+    
+    if (info.velocity.x < -0.3) {
+      onSwipe('left');
+      return;
+    }
+    
+    // Otherwise check distance moved
+    if (info.offset.x > swipeThreshold) {
+      onSwipe('right');
+    } else if (info.offset.x < -swipeThreshold) {
       onSwipe('left');
     }
   };
@@ -142,11 +154,15 @@ const SwipeableCard = ({ profile, onSwipe, isTop, zIndex }) => {
         y, 
         rotate, 
         zIndex: isDragging ? 10 : zIndex,
-        touchAction: 'pan-y',
+        touchAction: 'none',
+        WebkitTapHighlightColor: 'transparent',
+        WebkitUserSelect: 'none',
+        userSelect: 'none',
       }}
       drag={isTop}
       dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
       dragElastic={0.7}
+      dragTransition={{ bounceStiffness: 600, bounceDamping: 20 }}
       dragDirectionLock
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}

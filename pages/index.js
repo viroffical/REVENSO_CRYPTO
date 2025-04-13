@@ -92,26 +92,29 @@ export default function Home() {
       <SideDrawer isOpen={drawerOpen} onClose={closeDrawer} userProfile={userProfile} />
 
       {/* Header - always showing the app name REVENSO */}
-      <header className="flex justify-between items-center p-3 bg-white">
-        <button className="p-2" onClick={toggleDrawer}>
+      <header className="flex justify-between items-center p-3 bg-white shadow-sm z-10">
+        <button className="p-2 touch-manipulation" onClick={toggleDrawer}>
           <FontAwesomeIcon icon={faBars} className="h-5 w-5 text-gray-600" />
         </button>
         <div>
           <h1 className="text-2xl font-bold text-black-500">REVENSO</h1>
         </div>
         <button 
-          className="p-2"
+          className="p-2 touch-manipulation"
           onClick={() => setActiveTab('profile')}
         >
           <FontAwesomeIcon icon={faSlidersH} className="h-5 w-5 text-gray-600" />
         </button>
       </header>
       
-      <main className="flex-1 overflow-hidden pb-16">
+      <main className="flex-1 overflow-hidden pb-20">
         {renderContent()}
       </main>
       
-      <BottomNavigation activeTab={activeTab} setActiveTab={setActiveTab} />
+      {/* Bottom navigation with increased z-index */}
+      <div className="z-50 w-full">
+        <BottomNavigation activeTab={activeTab} setActiveTab={setActiveTab} />
+      </div>
     </div>
   )
 }

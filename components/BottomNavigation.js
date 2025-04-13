@@ -14,14 +14,15 @@ const BottomNavigation = ({ activeTab, setActiveTab }) => {
   ];
   
   return (
-    <nav className="fixed bottom-0 z-50 w-full bg-white shadow-lg">
+    <nav className="sticky bottom-0 z-50 w-full bg-white shadow-lg">
       <div className="flex justify-around items-center h-16">
         {tabs.map((tab) => {
           return (
             <button
               key={tab.id}
-              className="flex flex-col items-center justify-center flex-1 h-full relative"
+              className="flex flex-col items-center justify-center flex-1 h-full relative touch-manipulation"
               onClick={() => setActiveTab(tab.id)}
+              style={{ WebkitTapHighlightColor: 'transparent' }}
             >
               {activeTab === tab.id && (
                 <motion.div

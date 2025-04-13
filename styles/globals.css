@@ -78,6 +78,19 @@ html, body, #__next {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #f5f5f5;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* Improved mobile support */
+@media (max-width: 640px) {
+  * {
+    touch-action: manipulation;
+  }
+  
+  button {
+    -webkit-tap-highlight-color: transparent;
+  }
 }
 
 @keyframes fadeInRight {
