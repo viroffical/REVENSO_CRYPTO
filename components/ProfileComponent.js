@@ -112,10 +112,6 @@ const ProfileComponent = ({ userProfile }) => {
 
   return (
     <div className="flex flex-col h-full overflow-auto hide-scrollbar bg-white text-gray-800">
-      {/* App Header */}
-      <div className="px-4 py-4 border-b border-gray-100">
-        <h1 className="text-xl font-semibold text-yellow-500">REVENSO</h1>
-      </div>
       {/* Profile Header */}
       <div className="relative p-6 border-b border-gray-100">
         <div className="flex flex-col items-center">
