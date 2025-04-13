@@ -34,5 +34,11 @@
     "files": [
       "static/chunks/_pages-dir-browser_components_MeetingsComponent_js.js"
     ]
+  },
+  "pages/index.js -> ../components/SideDrawer": {
+    "id": "pages/index.js -> ../components/SideDrawer",
+    "files": [
+      "static/chunks/_pages-dir-browser_components_SideDrawer_js.js"
+    ]
   }
 }
