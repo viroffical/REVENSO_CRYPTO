@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarDay, faClock } from '@fortawesome/free-solid-svg-icons';
-import events from '../data/events';
+import events from '../data/eventData';
 
 const EventsComponent = () => {
   const [selectedCategory, setSelectedCategory] = useState('All');

@@ -31,44 +31,6 @@ const ChatsComponent = () => {
           </button>
         </div>
       </div>
-
-      {/* Stories */}
-      <div className="py-3 px-1 border-b border-gray-100">
-        <div className="flex overflow-x-auto space-x-4 px-3 pb-1 scrollbar-hide">
-          {/* Add Story Button */}
-          <div className="flex flex-col items-center flex-shrink-0">
-            <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center relative border-2 border-gray-200">
-              <FontAwesomeIcon icon={faPlus} className="text-gray-500 text-xl" />
-            </div>
-            <span className="text-xs mt-1 text-center">Add story</span>
-          </div>
-
-          {/* User Stories */}
-          {stories.map(story => (
-            <div key={story.id} className="flex flex-col items-center flex-shrink-0">
-              <div className={`w-16 h-16 rounded-full overflow-hidden relative ${story.hasNewStory ? 'border-2 border-yellow-500' : ''}`}>
-                <img 
-                  src={story.avatar} 
-                  alt={story.name} 
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <span className="text-xs mt-1 text-center">{story.name}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Chats Header */}
-      <div className="px-4 py-3 border-b border-gray-100">
-        <div className="flex justify-between items-center">
-          <h2 className="font-semibold">Chats</h2>
-          <button className="p-1">
-            <FontAwesomeIcon icon={faEllipsisVertical} className="text-gray-600" />
-          </button>
-        </div>
-      </div>
-
       {/* Chat List */}
       <div className="flex-1 overflow-y-auto scrollbar-hide">
         {chats.map(chat => (

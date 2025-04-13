@@ -59,17 +59,13 @@ export default function Home() {
       {/* Side Drawer */}
       <SideDrawer isOpen={drawerOpen} onClose={closeDrawer} userProfile={userProfile} />
 
-      {/* Header - always show it but with different content based on active tab */}
+      {/* Header - always showing the app name REVENSO */}
       <header className="flex justify-between items-center p-3 bg-white shadow-sm">
         <button className="p-2" onClick={toggleDrawer}>
           <FontAwesomeIcon icon={faBars} className="h-5 w-5 text-gray-600" />
         </button>
         <div>
-          {activeTab === 'people' ? (
-            <h1 className="text-2xl font-bold">Bumble</h1>
-          ) : (
-            <h1 className="text-xl font-bold capitalize">{activeTab}</h1>
-          )}
+          <h1 className="text-2xl font-bold text-yellow-500">REVENSO</h1>
         </div>
         <button className="p-2">
           <FontAwesomeIcon icon={faUserCircle} className="h-5 w-5 text-gray-600" />
