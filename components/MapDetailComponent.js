@@ -101,22 +101,7 @@ const MapDetailComponent = () => {
     : eventData.filter(event => event.category === activeCategory);
 
   return (
-    <div className="flex flex-col h-screen bg-gray-100 relative">
-      {/* Header */}
-      <div className="absolute top-0 left-0 right-0 z-50 bg-white shadow-md">
-        <div className="px-4 py-4 flex justify-between items-center">
-          <h1 className="text-xl font-semibold text-yellow-500">REVENSO</h1>
-          <div className="flex items-center space-x-3">
-            <button className="p-2 bg-gray-100 rounded-full">
-              <FontAwesomeIcon icon={faSearch} className="text-gray-600" />
-            </button>
-            <button className="p-2 bg-gray-100 rounded-full">
-              <FontAwesomeIcon icon={faFilter} className="text-gray-600" />
-            </button>
-          </div>
-        </div>
-      </div>
-      
+    <div className="flex flex-col h-screen bg-gray-100 relative">   
       {/* Full-screen map */}
       <div className="absolute inset-0 z-0">
         {isLoaded ? (
