@@ -110,6 +110,17 @@ module.exports = require("@fortawesome/react-fontawesome");
 
 /***/ }),
 
+/***/ "@react-google-maps/api":
+/*!*****************************************!*\
+  !*** external "@react-google-maps/api" ***!
+  \*****************************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("@react-google-maps/api");
+
+/***/ }),
+
 /***/ "framer-motion":
 /*!********************************!*\
   !*** external "framer-motion" ***!
