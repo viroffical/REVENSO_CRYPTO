@@ -1,8 +1,7 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { motion, useMotionValue, useTransform, AnimatePresence } from 'framer-motion';
 import Card from './Card';
 import SwipeIndicator from './SwipeIndicator';
-import SwipeButtons from './SwipeButtons';
 
 const CardStack = ({ profiles }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -75,13 +74,6 @@ const CardStack = ({ profiles }) => {
         <SwipeIndicator direction="left" isVisible={exitDirection === 'left'} />
         <SwipeIndicator direction="right" isVisible={exitDirection === 'right'} />
       </div>
-      
-      <SwipeButtons 
-        onSwipeLeft={() => handleButtonSwipe('left')}
-        onSwipeRight={() => handleButtonSwipe('right')}
-        onUndo={restoreLastSwipedProfile}
-        canUndo={swipedProfiles.length > 0}
-      />
     </div>
   );
 };

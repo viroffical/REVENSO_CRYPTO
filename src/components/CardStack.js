@@ -92,12 +92,12 @@ const CardStack = ({ profiles }) => {
         )}
       </div>
       
-      <SwipeButtons 
+      {/* <SwipeButtons 
         onSwipeLeft={() => handleButtonSwipe('left')}
         onSwipeRight={() => handleButtonSwipe('right')}
         onUndo={restoreLastSwipedProfile}
         canUndo={swipedProfiles.length > 0}
-      />
+      /> */}
     </div>
   );
 };
