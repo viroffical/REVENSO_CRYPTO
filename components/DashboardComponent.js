@@ -87,7 +87,7 @@ const DashboardComponent = () => {
   ];
 
   return (
-    <div className="flex flex-col h-full bg-white p-4 overflow-auto">
+    <div className="flex flex-col h-full bg-white p-4 overflow-auto hide-scrollbar">
       {/* Dashboard Header */}
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-800">Dashboard</h1>

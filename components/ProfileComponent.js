@@ -111,7 +111,7 @@ const ProfileComponent = ({ userProfile }) => {
   ];
 
   return (
-    <div className="flex flex-col h-full overflow-auto bg-white text-gray-800">
+    <div className="flex flex-col h-full overflow-auto hide-scrollbar bg-white text-gray-800">
       {/* Profile Header */}
       <div className="relative p-6 border-b border-gray-100">
         <div className="flex flex-col items-center">
