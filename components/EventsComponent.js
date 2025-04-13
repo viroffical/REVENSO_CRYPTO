@@ -58,7 +58,7 @@ const EventsComponent = () => {
       <div className="sticky top-0 z-10 bg-white pb-2">
         <div className="p-4 pb-2">
           <div className="flex justify-between items-center mb-4">
-            <h1 className="text-2xl font-bold">Events</h1>
+            <h1 className="text-2xl font-bold text-yellow-500">REVENSO</h1>
           </div>
 
           {/* Category Filters */}
