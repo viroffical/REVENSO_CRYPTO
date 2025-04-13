@@ -12,7 +12,8 @@ import {
   faGaugeHigh,
   faUserPlus,
   faGears,
-  faHeadset
+  faHeadset,
+  faArrowRightFromBracket
 } from '@fortawesome/free-solid-svg-icons';
 import { motion } from 'framer-motion';
 
@@ -141,45 +142,32 @@ const SideDrawer = ({ isOpen, onClose, userProfile }) => {
                 <span className="font-medium">Dashboard</span>
               </button>
             </li>
-            <li>
-              <a href="#" className="flex items-center px-4 py-3 hover:bg-gray-100">
-                <FontAwesomeIcon icon={faUserPlus} className="text-gray-700 w-5 h-5 mr-3" />
-                <span className="font-medium">Invite a friend</span>
-              </a>
-            </li>
           </ul>
-          
-          <div className="border-t border-gray-200 mt-2 pt-2">
-            <ul>
-              <li>
-                <a href="#" className="flex items-center px-4 py-3 hover:bg-gray-100">
-                  <FontAwesomeIcon icon={faGears} className="text-gray-700 w-5 h-5 mr-3" />
-                  <span className="font-medium">Settings and privacy</span>
-                </a>
-              </li>
-              <li>
-                <a href="#" className="flex items-center px-4 py-3 hover:bg-gray-100">
-                  <FontAwesomeIcon icon={faHeadset} className="text-gray-700 w-5 h-5 mr-3" />
-                  <span className="font-medium">Help Center</span>
-                </a>
-              </li>
-            </ul>
-          </div>
         </nav>
 
         {/* Footer */}
-        <div className="border-t border-gray-200 p-4 flex justify-between items-center">
-          <button className="p-2 text-blue-400">
-            <FontAwesomeIcon icon={faMoon} />
-          </button>
-          <div className="text-blue-400">
-            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-              <rect x="3" y="3" width="7" height="7" rx="1" />
-              <rect x="14" y="3" width="7" height="7" rx="1" />
-              <rect x="14" y="14" width="7" height="7" rx="1" />
-              <rect x="3" y="14" width="7" height="7" rx="1" />
-            </svg>
+        <div className="border-t border-gray-200 p-4 flex flex-col">
+          <div className="flex justify-between items-center mb-4">
+            <button className="p-2 text-blue-400">
+              <FontAwesomeIcon icon={faMoon} />
+            </button>
+            <div className="text-blue-400">
+              <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                <rect x="3" y="3" width="7" height="7" rx="1" />
+                <rect x="14" y="3" width="7" height="7" rx="1" />
+                <rect x="14" y="14" width="7" height="7" rx="1" />
+                <rect x="3" y="14" width="7" height="7" rx="1" />
+              </svg>
+            </div>
           </div>
+          
+          {/* Logout Button */}
+          <button className="logout-button w-full mt-3">
+            <span className="flex items-center justify-center">
+              <FontAwesomeIcon icon={faArrowRightFromBracket} className="mr-2" />
+              Logout
+            </span>
+          </button>
         </div>
       </motion.div>
     </>
