@@ -200,17 +200,17 @@ const MapDetailComponent = () => {
       </div>
       
       {/* Bottom event cards carousel */}
-      <div className="absolute bottom-0 left-0 right-0 z-10">
+      <div className="absolute bottom-0 left-0 right-0 z-50 mb-16"> {/* Increased z-index to 50 and added margin-bottom to appear above bottom navigation */}
         <div 
           ref={carouselRef}
-          className="flex overflow-x-auto pb-6 pt-2 px-4 scrollbar-hide"
+          className="flex overflow-x-auto pb-2 pt-2 px-4 hide-scrollbar"
           style={{ scrollSnapType: 'x mandatory' }}
         >
           {filteredEvents.map((event, index) => (
             <motion.div 
               key={event.id}
-              className={`flex-shrink-0 w-72 mr-4 bg-white rounded-lg shadow-lg overflow-hidden cursor-pointer ${
-                selectedEvent && selectedEvent.id === event.id ? 'ring-2 ring-indigo-500' : ''
+              className={`flex-shrink-0 w-72 mr-4 bg-white rounded-xl shadow-xl overflow-hidden cursor-pointer ${
+                selectedEvent && selectedEvent.id === event.id ? 'ring-2 ring-indigo-500 border border-indigo-200' : 'border border-gray-100'
               }`}
               onClick={() => handleEventSelect(event, index)}
               style={{ scrollSnapAlign: 'start' }}
