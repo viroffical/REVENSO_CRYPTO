@@ -45,7 +45,7 @@ const CardStack = ({ profiles }) => {
 
   return (
     <div className="card-stack flex flex-col h-full">
-      <div className="flex-1 relative flex items-center justify-center w-full bg-white">
+      <div className="flex-1 relative flex items-center justify-center w-full bg-white pt-0">
         <AnimatePresence>
           {visibleProfiles.length > 0 ? (
             visibleProfiles.map((profile, index) => (
@@ -122,7 +122,7 @@ const SwipeableCard = ({ profile, onSwipe, isTop, zIndex }) => {
 
   return (
     <motion.div
-      className="absolute w-full h-full px-2 pt-2 pb-0 cursor-grab active:cursor-grabbing touch-manipulation"
+      className="absolute w-full h-full px-2 pt-0 pb-0 cursor-grab active:cursor-grabbing touch-manipulation"
       style={{ 
         x, 
         y, 
@@ -141,7 +141,7 @@ const SwipeableCard = ({ profile, onSwipe, isTop, zIndex }) => {
       variants={variants}
       custom={onSwipe}
     >
-      <div className="h-[calc(85vh-64px)] shadow-lg">
+      <div className="h-[calc(90vh-60px)] shadow-lg">
         <Card profile={profile} dragProgress={{ left: leftIndicatorOpacity, right: rightIndicatorOpacity }} />
       </div>
     </motion.div>
