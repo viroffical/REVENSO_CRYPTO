@@ -11,6 +11,12 @@
       "static/chunks/_pages-dir-browser_components_CardStack_js.js"
     ]
   },
+  "pages/index.js -> ../components/ChatsComponent": {
+    "id": "pages/index.js -> ../components/ChatsComponent",
+    "files": [
+      "static/chunks/_pages-dir-browser_components_ChatsComponent_js.js"
+    ]
+  },
   "pages/index.js -> ../components/EventsComponent": {
     "id": "pages/index.js -> ../components/EventsComponent",
     "files": [

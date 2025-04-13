@@ -1,130 +1,193 @@
-// data/chats.js
-const stories = [
+export const stories = [
   {
     id: 1,
-    name: "Terry",
-    avatar:
-      "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=2564&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    hasNewStory: true,
+    name: 'Sarah',
+    avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
+    hasNewStory: true
   },
   {
     id: 2,
-    name: "Craig",
-    avatar:
-      "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    hasNewStory: true,
+    name: 'Michael',
+    avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
+    hasNewStory: true
   },
   {
     id: 3,
-    name: "Roger",
-    avatar:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    hasNewStory: false,
+    name: 'Jessica',
+    avatar: 'https://randomuser.me/api/portraits/women/65.jpg',
+    hasNewStory: false
   },
   {
     id: 4,
-    name: "Nolan",
-    avatar:
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    hasNewStory: true,
+    name: 'David',
+    avatar: 'https://randomuser.me/api/portraits/men/86.jpg',
+    hasNewStory: true
   },
   {
     id: 5,
-    name: "Jordan",
-    avatar:
-      "https://images.unsplash.com/photo-1527980965255-d3b416303d12?q=80&w=2580&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    hasNewStory: false,
-  },
-  {
-    id: 6,
-    name: "Melissa",
-    avatar:
-      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=2576&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    hasNewStory: true,
-  },
+    name: 'Amanda',
+    avatar: 'https://randomuser.me/api/portraits/women/33.jpg',
+    hasNewStory: false
+  }
 ];
 
-const chats = [
+export const chats = [
   {
     id: 1,
-    name: "Angel Curtis",
-    avatar:
-      "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=2622&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    lastMessage: "Please help me find a good monitor for ...",
-    time: "02:11",
+    name: 'Sarah Johnson',
+    avatar: 'https://randomuser.me/api/portraits/women/44.jpg',
+    lastMessage: 'Looking forward to the meeting tomorrow!',
+    time: '10:24 AM',
     unread: 2,
-    isRead: false,
+    messages: [
+      {
+        id: 101,
+        text: 'Hi there! How are you doing?',
+        sender: 'them',
+        timestamp: '10:20 AM'
+      },
+      {
+        id: 102,
+        text: 'I\'m good, thanks for asking! How about you?',
+        sender: 'me',
+        timestamp: '10:22 AM'
+      },
+      {
+        id: 103,
+        text: 'Doing well! Just wanted to confirm our meeting for tomorrow.',
+        sender: 'them',
+        timestamp: '10:23 AM'
+      },
+      {
+        id: 104,
+        text: 'Looking forward to the meeting tomorrow!',
+        sender: 'them',
+        timestamp: '10:24 AM'
+      }
+    ]
   },
   {
     id: 2,
-    name: "Zaire Dorwart",
-    avatar:
-      "https://images.unsplash.com/photo-1601412436009-d964bd02edbc?q=80&w=2564&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    lastMessage: "✓ Gacor pisan kang",
-    time: "02:11",
+    name: 'Michael Chen',
+    avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
+    lastMessage: 'The project is coming along nicely.',
+    time: 'Yesterday',
     unread: 0,
-    isRead: true,
+    messages: [
+      {
+        id: 201,
+        text: 'Hey, how\'s the project going?',
+        sender: 'them',
+        timestamp: 'Yesterday, 2:30 PM'
+      },
+      {
+        id: 202,
+        text: 'It\'s coming along well. I\'ve finished the initial designs.',
+        sender: 'me',
+        timestamp: 'Yesterday, 2:45 PM'
+      },
+      {
+        id: 203,
+        text: 'Great! Can you share them with me?',
+        sender: 'them',
+        timestamp: 'Yesterday, 3:00 PM'
+      },
+      {
+        id: 204,
+        text: 'The project is coming along nicely.',
+        sender: 'me',
+        timestamp: 'Yesterday, 3:15 PM'
+      }
+    ]
   },
   {
     id: 3,
-    name: "Kelas Malam",
-    avatar:
-      "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=2564&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    lastMessage: "Btms : No one can come today?",
-    time: "02:11",
-    unread: 2,
-    isRead: false,
+    name: 'Jessica Parker',
+    avatar: 'https://randomuser.me/api/portraits/women/65.jpg',
+    lastMessage: 'Are we still on for coffee this weekend?',
+    time: 'Yesterday',
+    unread: 1,
+    messages: [
+      {
+        id: 301,
+        text: 'Hey! How have you been?',
+        sender: 'them',
+        timestamp: 'Yesterday, 10:00 AM'
+      },
+      {
+        id: 302,
+        text: 'I\'ve been good! Just busy with work.',
+        sender: 'me',
+        timestamp: 'Yesterday, 10:15 AM'
+      },
+      {
+        id: 303,
+        text: 'Are we still on for coffee this weekend?',
+        sender: 'them',
+        timestamp: 'Yesterday, 10:30 AM'
+      }
+    ]
   },
   {
     id: 4,
-    name: "Jocelyn Gouse",
-    avatar:
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    lastMessage: "You're now an admin",
-    time: "02:11",
+    name: 'David Miller',
+    avatar: 'https://randomuser.me/api/portraits/men/86.jpg',
+    lastMessage: 'Thanks for the introduction yesterday.',
+    time: 'Tuesday',
     unread: 0,
-    isRead: true,
+    messages: [
+      {
+        id: 401,
+        text: 'Thanks for introducing me to your colleague yesterday.',
+        sender: 'them',
+        timestamp: 'Tuesday, 4:00 PM'
+      },
+      {
+        id: 402,
+        text: 'No problem at all! I thought you two would get along.',
+        sender: 'me',
+        timestamp: 'Tuesday, 4:15 PM'
+      },
+      {
+        id: 403,
+        text: 'We did! We\'re planning to collaborate on a project.',
+        sender: 'them',
+        timestamp: 'Tuesday, 4:30 PM'
+      },
+      {
+        id: 404,
+        text: 'Thanks for the introduction yesterday.',
+        sender: 'them',
+        timestamp: 'Tuesday, 4:45 PM'
+      }
+    ]
   },
   {
     id: 5,
-    name: "Jaylon Dias",
-    avatar:
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    lastMessage: "✓ Buy back 10k gallons, top up credit, b...",
-    time: "02:11",
+    name: 'Amanda Lee',
+    avatar: 'https://randomuser.me/api/portraits/women/33.jpg',
+    lastMessage: 'The concert was amazing! Check out this photo.',
+    time: 'Monday',
     unread: 0,
-    isRead: true,
-  },
-  {
-    id: 6,
-    name: "Chance Rhiel Madsen",
-    avatar:
-      "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    lastMessage: "Thank you mate!",
-    time: "02:11",
-    unread: 2,
-    isRead: false,
-  },
-  {
-    id: 7,
-    name: "Sophie Chang",
-    avatar:
-      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    lastMessage: "Can we reschedule our meeting to next week?",
-    time: "01:45",
-    unread: 0,
-    isRead: true,
-  },
-  {
-    id: 8,
-    name: "Marcus Wilson",
-    avatar:
-      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    lastMessage: "Just sent you the files you requested",
-    time: "Yesterday",
-    unread: 0,
-    isRead: true,
-  },
+    messages: [
+      {
+        id: 501,
+        text: 'Did you see the concert last night?',
+        sender: 'them',
+        timestamp: 'Monday, 11:00 AM'
+      },
+      {
+        id: 502,
+        text: 'No, I couldn\'t make it. How was it?',
+        sender: 'me',
+        timestamp: 'Monday, 11:15 AM'
+      },
+      {
+        id: 503,
+        text: 'The concert was amazing! Check out this photo.',
+        sender: 'them',
+        timestamp: 'Monday, 11:30 AM'
+      }
+    ]
+  }
 ];
-
-export { stories, chats };
