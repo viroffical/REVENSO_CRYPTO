@@ -107,7 +107,7 @@ export default function Home() {
         </button>
       </header>
       
-      <main className="flex-1 overflow-hidden">
+      <main className="flex-1 overflow-hidden pb-16">
         {renderContent()}
       </main>
       

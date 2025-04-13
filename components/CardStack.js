@@ -93,11 +93,12 @@ const SwipeableCard = ({ profile, onSwipe, isTop, zIndex }) => {
   // Detect swipe direction and threshold
   const handleDragEnd = (_, info) => {
     setIsDragging(false);
-    const swipeThreshold = 100;
+    const swipeThreshold = 80; // Lower threshold for easier swiping on mobile
+    const swipeVelocityThreshold = 200; // Velocity threshold for quick swipes
     
-    if (info.offset.x > swipeThreshold) {
+    if (info.offset.x > swipeThreshold || (info.velocity.x > 0.5 && info.velocity.x * info.offset.x > swipeVelocityThreshold)) {
       onSwipe('right');
-    } else if (info.offset.x < -swipeThreshold) {
+    } else if (info.offset.x < -swipeThreshold || (info.velocity.x < -0.5 && info.velocity.x * info.offset.x < -swipeVelocityThreshold)) {
       onSwipe('left');
     }
   };
@@ -128,11 +129,12 @@ const SwipeableCard = ({ profile, onSwipe, isTop, zIndex }) => {
         y, 
         rotate, 
         zIndex: isDragging ? 10 : zIndex,
-        touchAction: 'none',
+        touchAction: 'pan-y',
       }}
       drag={isTop}
       dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
-      dragElastic={0.9}
+      dragElastic={0.7}
+      dragDirectionLock
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
       initial="initial"
@@ -140,8 +142,9 @@ const SwipeableCard = ({ profile, onSwipe, isTop, zIndex }) => {
       exit="exit"
       variants={variants}
       custom={onSwipe}
+      whileTap={{ scale: 1.01 }}
     >
-      <div className="h-[calc(85vh-64px)] shadow-lg">
+      <div className="h-[calc(75vh-72px)] max-h-[600px] shadow-xl rounded-xl overflow-hidden">
         <Card profile={profile} dragProgress={{ left: leftIndicatorOpacity, right: rightIndicatorOpacity }} />
       </div>
     </motion.div>

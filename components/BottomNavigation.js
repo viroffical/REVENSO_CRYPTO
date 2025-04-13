@@ -14,7 +14,7 @@ const BottomNavigation = ({ activeTab, setActiveTab }) => {
   ];
   
   return (
-    <nav className="sticky bottom-0 z-20 w-full bg-white shadow-lg">
+    <nav className="fixed bottom-0 z-50 w-full bg-white shadow-lg">
       <div className="flex justify-around items-center h-16">
         {tabs.map((tab) => {
           return (
