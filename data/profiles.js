@@ -11,15 +11,41 @@ export const profiles = [
     imageUrl: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80',
     events: [
       {
-        id: 101,
-        event_name: 'EdTech Summit 2023',
-        date: 'Apr 15',
-        start_time: '9:00 AM',
-        category: 'Conference',
-        status: 'Going',
-        image: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80',
-        link: '#'
-      }
+        id: '1',
+        "date": "28 April",
+        "start_time": "7:00 AM",
+        "end_time": "6:00 PM",
+        "event_name": "CoinFerenceX – Day 1",
+        "category": "Conference/Summit",
+        "entry": "Free",
+        image: "https://token2049-week.s3.amazonaws.com/token2049-events/token2049-b7dc33b3-5109-4b8a-b5bb-ffd8200468b0.png",
+        status: "Going",
+        link: "https://lu.ma/e5b9etz8"
+      },
+      {
+        id: "2",
+        "date": "28 April",
+        "start_time": "8:00 AM",
+        "end_time": "12:00 PM",
+        "event_name": "Oversubscribed Capital VIP Breakfast",
+        "category": "Networking",
+        "entry": "Free",
+        "image": "https://token2049-week.s3.amazonaws.com/token2049-events/token2049-b3d46cee-fdce-4dbc-a3ea-dddef3b7475b.png",
+        status: "Pending",
+        link: "https://lu.ma/e5b9etz8"
+      },
+      {
+        id: "3",
+        "date": "28 April",
+        "start_time": "8:00 AM",
+        "end_time": "5:30 PM",
+        "event_name": "Unchained Summit - Day 1",
+        "category": "Conference/Summit",
+        "entry": "US$499",
+        "image": "https://token2049-week.s3.amazonaws.com/token2049-events/token2049-f19d4966-4360-43db-89bb-fc2fb0fe53d7.jpg",
+        status: "Invited",
+        link: "https://unchainedsummit.com/#buy-ticket"
+      },
     ]
   },
   {

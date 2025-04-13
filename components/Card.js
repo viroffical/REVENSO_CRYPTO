@@ -5,7 +5,7 @@ import { faXTwitter } from '@fortawesome/free-brands-svg-icons';
 
 const Card = ({ profile, dragProgress }) => {
   return (
-    <div className="relative w-full h-full bg-white rounded-3xl overflow-y-auto scrollbar-hide">
+    <div className="relative w-full h-full bg-white rounded-3xl overflow-y-auto hide-scrollbar">
       <div className="relative h-[100%] min-h-[75%]">
         
         {/* Profile Image */}
@@ -97,7 +97,7 @@ const Card = ({ profile, dragProgress }) => {
               </button>
             </div>
             
-            <div className="overflow-x-auto -mx-5 px-5">
+            <div className="overflow-x-auto -mx-5 px-5 hide-scrollbar">
               <div className="flex space-x-4 pb-2">
                 {profile.events.map(event => (
                   <a 

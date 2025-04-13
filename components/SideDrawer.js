@@ -146,20 +146,7 @@ const SideDrawer = ({ isOpen, onClose, userProfile }) => {
         </nav>
 
         {/* Footer */}
-        <div className="border-t border-gray-200 p-4 flex flex-col">
-          <div className="flex justify-between items-center mb-4">
-            <button className="p-2 text-blue-400">
-              <FontAwesomeIcon icon={faMoon} />
-            </button>
-            <div className="text-blue-400">
-              <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-                <rect x="3" y="3" width="7" height="7" rx="1" />
-                <rect x="14" y="3" width="7" height="7" rx="1" />
-                <rect x="14" y="14" width="7" height="7" rx="1" />
-                <rect x="3" y="14" width="7" height="7" rx="1" />
-              </svg>
-            </div>
-          </div>
+        <div className="p-4 flex flex-col">
           
           {/* Logout Button */}
           <button className="logout-button w-full mt-3">
