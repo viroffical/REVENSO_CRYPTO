@@ -71,8 +71,8 @@ const MeetingsComponent = () => {
   return (
     <div className="flex flex-col h-screen bg-white">
       {/* Header */}
-      <div className="px-4 py-4">
-        <h1 className="text-xl font-semibold">Meetings</h1>
+      <div className="px-4 py-4 border-b border-gray-100">
+        <h1 className="text-xl font-semibold text-yellow-500">REVENSO</h1>
       </div>
       
       {/* Tabs - 50-50 split */}

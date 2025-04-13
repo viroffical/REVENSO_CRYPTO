@@ -25,7 +25,7 @@ const ChatsComponent = () => {
       {/* Header */}
       <div className="px-4 py-4 border-b border-gray-100">
         <div className="flex justify-between items-center">
-          <h1 className="text-xl font-semibold">Chats</h1>
+          <h1 className="text-xl font-semibold text-yellow-500">REVENSO</h1>
           <button className="p-2">
             <FontAwesomeIcon icon={faSearch} className="text-gray-600" />
           </button>
