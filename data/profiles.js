@@ -8,6 +8,7 @@ export const profiles = [
     occupation: 'Teaching Expert/Curriculum Developer at Ed Tech',
     company: 'Ed Tech Co.',
     bio: 'Hey there! I am into Lead Generation. Apart from this, I am a highly skilled teacher who can teach you about speed mathematics within an hour!',
+    interests: ['Blockchain', 'Education', 'Mathematics', 'Lead Generation', 'Technology'],
     imageUrl: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80',
     events: [
       {
@@ -57,6 +58,7 @@ export const profiles = [
     occupation: 'UX Designer',
     company: 'Creative Co.',
     bio: 'Looking for someone who enjoys art galleries and coffee shops as much as I do. Big fan of outdoor activities and weekend hikes.',
+    interests: ['Design', 'Art', 'Hiking', 'Coffee', 'Photography'],
     imageUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80',
     events: [
       {
@@ -80,6 +82,7 @@ export const profiles = [
     occupation: 'Software Engineer',
     company: 'Tech Inc.',
     bio: 'Tech enthusiast, amateur chef, and fitness junkie. Love trying new restaurants and traveling to unique places.',
+    interests: ['Coding', 'Cooking', 'Fitness', 'Travel', 'Technology'],
     imageUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80'
   },
   {
@@ -91,6 +94,7 @@ export const profiles = [
     occupation: 'Marketing Manager',
     company: 'Growth Co.',
     bio: 'Passionate about digital marketing and content creation. Looking to connect with like-minded professionals!',
+    interests: ['Marketing', 'Social Media', 'Content Creation', 'Networking', 'Digital Strategy'],
     imageUrl: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80',
     events: [
       {

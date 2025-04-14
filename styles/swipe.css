@@ -1,0 +1,58 @@
+/* Swipeable Card Stack custom styles */
+.card-stack-container {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.card-stack-container * {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Optimize for mobile devices */
+@media (max-width: 768px) {
+  .card-stack-container {
+    overflow: hidden;
+  }
+}
+
+/* Hide scrollbar while maintaining scroll functionality */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;     /* Firefox */
+  -webkit-overflow-scrolling: touch;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari, and Opera */
+}
+
+/* Hardware acceleration for smoother animations */
+.hardware-accelerated {
+  will-change: transform;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  perspective: 1000;
+  -webkit-perspective: 1000;
+}
+
+/* Force hardware acceleration in Safari */
+@media not all and (min-resolution:.001dpcm) { 
+  @supports (-webkit-appearance:none) {
+    .card-stack-container {
+      transform: translateZ(0);
+      -webkit-transform: translateZ(0);
+    }
+  }
+}
+
+/* iOS specific optimizations */
+@supports (-webkit-touch-callout: none) {
+  .card-stack-container {
+    -webkit-transform: translate3d(0,0,0);
+  }
+}
