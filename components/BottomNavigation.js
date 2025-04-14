@@ -36,7 +36,9 @@ const BottomNavigation = ({ activeTab, setActiveTab }) => {
           left: 0,
           right: 0,
           width: '100%',
-          paddingBottom: 'env(safe-area-inset-bottom, 8px)' // Safe area for notched phones
+          paddingBottom: 'env(safe-area-inset-bottom, 8px)', // Safe area for notched phones
+          borderTop: '1px solid #e5e7eb', // Add a visible top border
+          boxShadow: '0 -2px 10px rgba(0,0,0,0.05)' // Add a subtle shadow for better visibility
         }}
       >
         <div className="flex justify-around items-center h-full max-w-md mx-auto">

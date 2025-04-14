@@ -81,7 +81,7 @@ const EventsComponent = () => {
       </div>
 
       {/* Scrollable content area */}
-      <div className="flex-1 overflow-y-auto px-4 space-y-4 pb-32 scrollbar-hide">
+      <div className="flex-1 overflow-y-auto px-4 space-y-4 pb-40 scrollbar-hide">
         {filteredEvents.map((event) => (
           <div key={event.id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
             <div className="flex min-h-[140px]">
@@ -129,6 +129,9 @@ const EventsComponent = () => {
             </div>
           </div>
         ))}
+        
+        {/* Bottom spacer to ensure last element is fully visible above the navigation bar */}
+        <div className="h-28 w-full"></div>
       </div>
     </div>
   );
