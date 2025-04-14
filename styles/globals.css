@@ -202,4 +202,25 @@ button:active {
     -webkit-touch-callout: none;
     -webkit-user-select: none;
   }
+  
+  /* iOS touch optimizations */
+  .card-stack * {
+    -webkit-overflow-scrolling: touch;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* Prevent accidental text selection on dragging */
+  .cursor-grab, .cursor-grabbing {
+    -webkit-user-select: none !important;
+    user-select: none !important;
+    -webkit-touch-callout: none !important;
+    touch-callout: none !important;
+  }
+  
+  /* Smooth scrolling for iOS touch events */
+  .will-change-transform {
+    transform: translate3d(0,0,0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+  }
 }

@@ -12,6 +12,10 @@ const Card = ({ profile, dragProgress }) => {
         msOverflowStyle: 'none',
         scrollbarWidth: 'none',
         overscrollBehavior: 'contain',
+        touchAction: 'pan-y', // Only allow vertical touch actions
+        WebkitTouchCallout: 'none', // Prevent callouts
+        WebkitUserSelect: 'none', // Prevent selection
+        userSelect: 'none',
       }}
     >
       <div className="relative h-[120%] min-h-[90%]">

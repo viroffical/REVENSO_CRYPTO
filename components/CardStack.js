@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { motion, useMotionValue, useTransform, AnimatePresence } from 'framer-motion';
+import { useState, useRef, useEffect } from 'react';
+import { motion, useMotionValue, useTransform, AnimatePresence, animate } from 'framer-motion';
 import Card from './Card';
 import SwipeIndicator from './SwipeIndicator';
 
@@ -84,6 +84,7 @@ const CardStack = ({ profiles }) => {
 
 const SwipeableCard = ({ profile, onSwipe, isTop, zIndex }) => {
   const [isDragging, setIsDragging] = useState(false);
+  const cardRef = useRef(null);
   
   // Motion values for card position and rotation
   const x = useMotionValue(0);
@@ -95,35 +96,141 @@ const SwipeableCard = ({ profile, onSwipe, isTop, zIndex }) => {
   const leftIndicatorOpacity = useTransform(x, [-80, -10], [1, 0]);
   const rightIndicatorOpacity = useTransform(x, [10, 80], [0, 1]);
   
-  // Detect swipe direction and threshold with optimized parameters for mobile touch
-  const handleDragEnd = (_, info) => {
-    setIsDragging(false);
-    const swipeThreshold = 40; // Even lower threshold for easier touch swiping
-    const swipeVelocityThreshold = 0.15; // More sensitive velocity threshold for mobile
+  // Touch handling state
+  const [touchStart, setTouchStart] = useState({ x: 0, y: 0 });
+  const [touchDelta, setTouchDelta] = useState({ x: 0, y: 0 });
+  const velocityTracker = useRef({ x: 0, time: 0, positions: [] });
+  
+  // Smoothly animate card back to center when needed
+  useEffect(() => {
+    if (!isTop) {
+      // Reset position when card is not on top
+      x.set(0);
+      y.set(0);
+    }
+  }, [isTop, x, y]);
+  
+  // Handle spring-back animation when releasing the card
+  const resetCardPosition = () => {
+    animate(x, 0, {
+      type: "spring",
+      stiffness: 400,
+      damping: 20,
+      velocity: 0
+    });
+  };
+  
+  // Direct touch event handlers for more responsive mobile experience
+  const handleTouchStart = (e) => {
+    if (!isTop) return;
+    setIsDragging(true);
+    const touch = e.touches[0];
+    setTouchStart({ x: touch.clientX, y: touch.clientY });
+    velocityTracker.current = { 
+      x: touch.clientX, 
+      time: Date.now(), 
+      positions: [{ x: touch.clientX, time: Date.now() }] 
+    };
     
-    // Calculate swipe force as a combination of velocity and offset
-    const swipeForce = Math.abs(info.velocity.x) * (Math.abs(info.offset.x) / 100);
+    // Prevent default to ensure we have smooth tracking
+    e.preventDefault();
+  };
+  
+  const handleTouchMove = (e) => {
+    if (!isTop || !isDragging) return;
+    const touch = e.touches[0];
+    const deltaX = touch.clientX - touchStart.x;
     
-    // Check velocity first for quick flicks
-    if (info.velocity.x > swipeVelocityThreshold || (swipeForce > 0.1 && info.offset.x > 0)) {
-      onSwipe('right');
-      return;
-    } 
+    // Track positions for velocity calculation
+    velocityTracker.current.positions.push({
+      x: touch.clientX,
+      time: Date.now()
+    });
     
-    if (info.velocity.x < -swipeVelocityThreshold || (swipeForce > 0.1 && info.offset.x < 0)) {
-      onSwipe('left');
-      return;
+    // Only keep the last 5 positions for performance
+    if (velocityTracker.current.positions.length > 5) {
+      velocityTracker.current.positions.shift();
     }
     
-    // Otherwise check distance moved
-    if (info.offset.x > swipeThreshold) {
+    // Update motion values directly for smooth visual feedback
+    x.set(deltaX);
+    setTouchDelta({ x: deltaX, y: touch.clientY - touchStart.y });
+    
+    // Prevent default to avoid scroll interference
+    e.preventDefault();
+  };
+  
+  const handleTouchEnd = (e) => {
+    if (!isTop || !isDragging) return;
+    setIsDragging(false);
+    
+    // Calculate velocity based on the last few touch events
+    const positions = velocityTracker.current.positions;
+    let velocity = 0;
+    
+    if (positions.length >= 2) {
+      const first = positions[0];
+      const last = positions[positions.length - 1];
+      const deltaTime = last.time - first.time;
+      
+      if (deltaTime > 0) {
+        velocity = (last.x - first.x) / deltaTime; // pixels per ms
+      }
+    }
+    
+    // Normalize velocity to match Framer Motion scale
+    velocity = velocity * 1000; // Convert to pixels per second
+    
+    const deltaX = touchDelta.x;
+    const swipeThreshold = 40;
+    const swipeVelocityThreshold = 0.4;
+    
+    // Apply the same swipe logic
+    if (velocity > swipeVelocityThreshold || (Math.abs(velocity) > 0.2 && deltaX > 0)) {
+      onSwipe('right');
+    } else if (velocity < -swipeVelocityThreshold || (Math.abs(velocity) > 0.2 && deltaX < 0)) {
+      onSwipe('left');
+    } else if (deltaX > swipeThreshold) {
+      onSwipe('right');
+    } else if (deltaX < -swipeThreshold) {
+      onSwipe('left');
+    } else {
+      // Reset position with spring animation
+      resetCardPosition();
+    }
+    
+    // Reset touch tracking
+    setTouchDelta({ x: 0, y: 0 });
+    
+    // Prevent default 
+    e.preventDefault();
+  };
+  
+  // Framer Motion drag handlers as fallback for desktop
+  const handleDragEnd = (_, info) => {
+    if (!isTop) return;
+    setIsDragging(false);
+    const swipeThreshold = 40;
+    const swipeVelocityThreshold = 0.15;
+    
+    const swipeForce = Math.abs(info.velocity.x) * (Math.abs(info.offset.x) / 100);
+    
+    if (info.velocity.x > swipeVelocityThreshold || (swipeForce > 0.1 && info.offset.x > 0)) {
+      onSwipe('right');
+    } else if (info.velocity.x < -swipeVelocityThreshold || (swipeForce > 0.1 && info.offset.x < 0)) {
+      onSwipe('left');
+    } else if (info.offset.x > swipeThreshold) {
       onSwipe('right');
     } else if (info.offset.x < -swipeThreshold) {
       onSwipe('left');
+    } else {
+      // Reset position smoothly
+      resetCardPosition();
     }
   };
 
   const handleDragStart = () => {
+    if (!isTop) return;
     setIsDragging(true);
   };
 
@@ -158,13 +265,14 @@ const SwipeableCard = ({ profile, onSwipe, isTop, zIndex }) => {
 
   return (
     <motion.div
+      ref={cardRef}
       className="absolute w-full h-full px-2 pt-2 pb-0 cursor-grab active:cursor-grabbing touch-manipulation bg-white will-change-transform"
       style={{ 
         x, 
         y, 
         rotate, 
         zIndex: isDragging ? 999 : (zIndex + 10),
-        touchAction: 'pan-y', // Allow vertical scrolling but handle horizontal swipes
+        touchAction: 'none', // Disable browser touch actions entirely for our custom handling
         WebkitTapHighlightColor: 'transparent',
         WebkitUserSelect: 'none',
         userSelect: 'none',
@@ -177,6 +285,10 @@ const SwipeableCard = ({ profile, onSwipe, isTop, zIndex }) => {
         WebkitTransform: 'translate3d(0,0,0)',
         transform: 'translate3d(0,0,0)',
       }}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      onTouchCancel={handleTouchEnd}
       drag={isTop ? "x" : false} // Limit to horizontal dragging only for better control
       dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
       dragElastic={1} // Full elastic movement for natural touch feel
