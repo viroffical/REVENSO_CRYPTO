@@ -111,7 +111,7 @@ const ProfileComponent = ({ userProfile }) => {
   ];
 
   return (
-    <div className="flex flex-col h-full overflow-auto hide-scrollbar bg-white text-gray-800">
+    <div className="flex flex-col h-full overflow-auto scrollbar-hide bg-white text-gray-800 pb-40">
       {/* Profile Header */}
       <div className="relative p-6 border-b border-gray-100">
         <div className="flex flex-col items-center">
@@ -357,6 +357,9 @@ const ProfileComponent = ({ userProfile }) => {
           ))}
         </div>
       </div>
+      
+      {/* Bottom spacer to ensure last element is fully visible above the navigation bar */}
+      <div className="h-28 w-full"></div>
     </div>
   );
 };

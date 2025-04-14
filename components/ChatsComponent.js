@@ -32,7 +32,7 @@ const ChatsComponent = () => {
         </div>
       </div>
       {/* Chat List */}
-      <div className="flex-1 overflow-y-auto pb-32 scrollbar-hide">
+      <div className="flex-1 overflow-y-auto pb-40 scrollbar-hide">
         {chats.map(chat => (
           <div 
             key={chat.id}
@@ -69,6 +69,9 @@ const ChatsComponent = () => {
             )}
           </div>
         ))}
+        
+        {/* Bottom spacer to ensure last element is fully visible above the navigation bar */}
+        <div className="h-28 w-full"></div>
       </div>
     </div>
   );

@@ -100,7 +100,7 @@ const MeetingsComponent = () => {
       </div>
       
       {/* Meeting Cards List - Scrollable */}
-      <div className="flex-1 overflow-y-auto px-4 py-4 pb-32 scrollbar-hide">
+      <div className="flex-1 overflow-y-auto px-4 py-4 pb-40 scrollbar-hide">
         {activeTab === 'upcoming' ? (
           meetings.upcoming.map(meeting => (
             <MeetingCard key={meeting.id} meeting={meeting} />
@@ -110,6 +110,9 @@ const MeetingsComponent = () => {
             <MeetingCard key={meeting.id} meeting={meeting} />
           ))
         )}
+        
+        {/* Bottom spacer to ensure last element is fully visible above the navigation bar */}
+        <div className="h-28 w-full"></div>
       </div>
     </div>
   );

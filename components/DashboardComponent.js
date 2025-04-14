@@ -87,7 +87,7 @@ const DashboardComponent = () => {
   ];
 
   return (
-    <div className="flex flex-col h-full bg-white p-4 overflow-auto hide-scrollbar">
+    <div className="flex flex-col h-full bg-white p-4 pb-40 overflow-auto scrollbar-hide">
       {/* Dashboard Header */}
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-800">Dashboard</h1>
@@ -228,6 +228,9 @@ const DashboardComponent = () => {
           ))}
         </div>
       </div>
+      
+      {/* Bottom spacer to ensure last element is fully visible above the navigation bar */}
+      <div className="h-28 w-full"></div>
     </div>
   );
 };

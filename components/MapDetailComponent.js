@@ -200,7 +200,7 @@ const MapDetailComponent = () => {
       </div>
       
       {/* Bottom event cards carousel */}
-      <div className="absolute bottom-0 left-0 right-0 z-50 mb-32"> {/* Significantly increased margin-bottom to appear well above bottom navigation */}
+      <div className="absolute bottom-0 left-0 right-0 z-50 mb-40"> {/* Further increased margin-bottom to ensure fully visible above bottom navigation */}
         <div 
           ref={carouselRef}
           className="flex overflow-x-auto pb-2 pt-2 px-4 hide-scrollbar"
