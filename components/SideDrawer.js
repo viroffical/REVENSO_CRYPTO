@@ -72,7 +72,8 @@ const SideDrawer = ({ isOpen, onClose, userProfile }) => {
 
       {/* Drawer sidebar */}
       <motion.div 
-        className="fixed top-0 left-0 h-full w-4/5 max-w-xs bg-white z-40 flex flex-col shadow-xl"
+        className="fixed top-0 left-0 h-full w-4/5 max-w-xs bg-white z-40 flex flex-col shadow-xl overflow-y-auto pb-24"
+        style={{ paddingBottom: 'calc(72px + env(safe-area-inset-bottom, 8px))' }}
         initial="closed"
         animate={isOpen ? "open" : "closed"}
         variants={drawerVariants}
@@ -116,7 +117,7 @@ const SideDrawer = ({ isOpen, onClose, userProfile }) => {
         </div>
 
         {/* Navigation menu */}
-        <nav className="flex-1 overflow-y-auto">
+        <nav className="flex-1">
           <ul className="py-2">
             <li>
               <button 
@@ -142,11 +143,51 @@ const SideDrawer = ({ isOpen, onClose, userProfile }) => {
                 <span className="font-medium">Dashboard</span>
               </button>
             </li>
+            <li>
+              <button 
+                className="flex items-center w-full text-left px-4 py-3 hover:bg-gray-100 transition-colors"
+              >
+                <FontAwesomeIcon icon={faUserPlus} className="text-gray-700 w-5 h-5 mr-3" />
+                <span className="font-medium">Friends</span>
+              </button>
+            </li>
+            <li>
+              <button 
+                className="flex items-center w-full text-left px-4 py-3 hover:bg-gray-100 transition-colors"
+              >
+                <FontAwesomeIcon icon={faBookmark} className="text-gray-700 w-5 h-5 mr-3" />
+                <span className="font-medium">Saved Items</span>
+              </button>
+            </li>
+            <li>
+              <button 
+                className="flex items-center w-full text-left px-4 py-3 hover:bg-gray-100 transition-colors"
+              >
+                <FontAwesomeIcon icon={faGears} className="text-gray-700 w-5 h-5 mr-3" />
+                <span className="font-medium">Settings</span>
+              </button>
+            </li>
+            <li>
+              <button 
+                className="flex items-center w-full text-left px-4 py-3 hover:bg-gray-100 transition-colors"
+              >
+                <FontAwesomeIcon icon={faHeadset} className="text-gray-700 w-5 h-5 mr-3" />
+                <span className="font-medium">Support</span>
+              </button>
+            </li>
+            <li>
+              <button 
+                className="flex items-center w-full text-left px-4 py-3 hover:bg-gray-100 transition-colors"
+              >
+                <FontAwesomeIcon icon={faQuestionCircle} className="text-gray-700 w-5 h-5 mr-3" />
+                <span className="font-medium">Help Center</span>
+              </button>
+            </li>
           </ul>
         </nav>
 
-        {/* Footer */}
-        <div className="p-4 flex flex-col">
+        {/* Footer - with extra space to ensure visibility above bottom navigation */}
+        <div className="p-4 pt-2 flex flex-col">
           <div className="flex justify-between items-center mb-4">
             <button className="p-2 text-blue-400">
               <FontAwesomeIcon icon={faMoon} />
@@ -162,12 +203,15 @@ const SideDrawer = ({ isOpen, onClose, userProfile }) => {
           </div>
           
           {/* Logout Button */}
-          <button className="logout-button w-full mt-3">
+          <button className="logout-button w-full mt-3 mb-4">
             <span className="flex items-center justify-center">
               <FontAwesomeIcon icon={faArrowRightFromBracket} className="mr-2" />
               Logout
             </span>
           </button>
+          
+          {/* Extra space to ensure visibility above bottom nav */}
+          <div className="h-16"></div>
         </div>
       </motion.div>
     </>
