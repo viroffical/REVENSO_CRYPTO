@@ -1,11 +1,9 @@
 import { motion } from 'framer-motion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUsers, faMap, faCalendarCheck, faComments, faHandshake } from '@fortawesome/free-solid-svg-icons';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 
 const BottomNavigation = ({ activeTab, setActiveTab }) => {
-  const navRef = useRef(null);
-  
   const tabs = [
     { id: 'people', icon: faUsers, label: 'People' },
     { id: 'maps', icon: faMap, label: 'Maps' },
@@ -14,61 +12,63 @@ const BottomNavigation = ({ activeTab, setActiveTab }) => {
     { id: 'chats', icon: faComments, label: 'Chats' },
   ];
   
-  // Ensure bottom nav has higher stacking order than all other elements
+  // Add a specific CSS class for the body to handle the bottom navigation
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      // Force repaint to ensure visibility on mobile
-      if (navRef.current) {
-        const nav = navRef.current;
-        nav.style.display = 'none';
-        setTimeout(() => {
-          nav.style.display = 'block';
-        }, 10);
-      }
+    if (typeof document !== 'undefined') {
+      document.body.classList.add('has-bottom-nav');
+      
+      return () => {
+        document.body.classList.remove('has-bottom-nav');
+      };
     }
   }, []);
   
   return (
-    <div 
-      ref={navRef}
-      className="fixed bottom-0 left-0 right-0 z-[9999] bg-white shadow-xl border-t border-gray-200"
-      style={{ 
-        maxWidth: '28rem', 
-        margin: '0 auto',
-        WebkitTransform: 'translateZ(0)', // Force hardware acceleration
-        transform: 'translateZ(0)'
-      }}
-    >
-      <div className="flex justify-around items-center h-16">
-        {tabs.map((tab) => (
-          <button
-            key={tab.id}
-            className="flex flex-col items-center justify-center flex-1 h-full relative touch-manipulation py-2 active:bg-gray-100"
-            onClick={() => setActiveTab(tab.id)}
-            style={{ WebkitTapHighlightColor: 'transparent' }}
-          >
-            {activeTab === tab.id && (
-              <motion.div
-                layoutId="activeTabIndicator"
-                className="absolute top-0 w-full h-1 bg-yellow-500"
-                initial={false}
-                transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-              />
-            )}
-            <div className={`flex flex-col items-center ${activeTab === tab.id ? 'text-black' : 'text-gray-500'}`}>
-              <FontAwesomeIcon 
-                icon={tab.icon}
-                className={`h-5 w-5 ${activeTab === tab.id ? 'text-yellow-500' : 'text-gray-400'}`} 
-              />
-              <span className={`text-xs mt-1 ${activeTab === tab.id ? 'font-medium' : ''}`}>{tab.label}</span>
-            </div>
-          </button>
-        ))}
+    <>
+      {/* This is the actual navigation bar */}
+      <div 
+        className="nav-container fixed bottom-0 left-0 right-0 w-full bg-white border-t border-gray-200 shadow-lg"
+        style={{
+          zIndex: 999999, // extremely high z-index
+          height: '64px',
+          position: 'fixed',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          width: '100%'
+        }}
+      >
+        <div className="flex justify-around items-center h-full max-w-md mx-auto">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              className="flex flex-col items-center justify-center flex-1 h-full relative touch-manipulation py-2"
+              onClick={() => setActiveTab(tab.id)}
+              style={{ WebkitTapHighlightColor: 'transparent' }}
+            >
+              {activeTab === tab.id && (
+                <motion.div
+                  layoutId="activeTabIndicator"
+                  className="absolute top-0 w-full h-1 bg-yellow-500"
+                  initial={false}
+                  transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                />
+              )}
+              <div className={`flex flex-col items-center ${activeTab === tab.id ? 'text-black' : 'text-gray-500'}`}>
+                <FontAwesomeIcon 
+                  icon={tab.icon}
+                  className={`h-5 w-5 ${activeTab === tab.id ? 'text-yellow-500' : 'text-gray-400'}`} 
+                />
+                <span className={`text-xs mt-1 ${activeTab === tab.id ? 'font-medium' : ''}`}>{tab.label}</span>
+              </div>
+            </button>
+          ))}
+        </div>
       </div>
       
-      {/* Safe area inset for notched devices */}
-      <div className="h-[env(safe-area-inset-bottom)] bg-white"></div>
-    </div>
+      {/* This adds padding at the bottom of the page to ensure content isn't hidden behind nav */}
+      <div className="h-16"></div>
+    </>
   );
 };
 

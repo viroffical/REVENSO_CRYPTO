@@ -87,33 +87,35 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col h-screen max-w-md mx-auto bg-white overflow-hidden">
-      {/* Side Drawer */}
-      <SideDrawer isOpen={drawerOpen} onClose={closeDrawer} userProfile={userProfile} />
+    <>
+      <div className="relative flex flex-col h-screen max-w-md mx-auto bg-white overflow-hidden">
+        {/* Side Drawer */}
+        <SideDrawer isOpen={drawerOpen} onClose={closeDrawer} userProfile={userProfile} />
 
-      {/* Header - always showing the app name REVENSO */}
-      <header className="flex justify-between items-center p-3 bg-white shadow-sm z-10 sticky top-0">
-        <button className="p-2 touch-manipulation" onClick={toggleDrawer}>
-          <FontAwesomeIcon icon={faBars} className="h-5 w-5 text-gray-600" />
-        </button>
-        <div>
-          <h1 className="text-2xl font-bold text-black-500">REVENSO</h1>
-        </div>
-        <button 
-          className="p-2 touch-manipulation"
-          onClick={() => setActiveTab('profile')}
-        >
-          <FontAwesomeIcon icon={faSlidersH} className="h-5 w-5 text-gray-600" />
-        </button>
-      </header>
+        {/* Header - always showing the app name REVENSO */}
+        <header className="flex justify-between items-center p-3 bg-white shadow-sm z-10 sticky top-0">
+          <button className="p-2 touch-manipulation" onClick={toggleDrawer}>
+            <FontAwesomeIcon icon={faBars} className="h-5 w-5 text-gray-600" />
+          </button>
+          <div>
+            <h1 className="text-2xl font-bold text-black-500">REVENSO</h1>
+          </div>
+          <button 
+            className="p-2 touch-manipulation"
+            onClick={() => setActiveTab('profile')}
+          >
+            <FontAwesomeIcon icon={faSlidersH} className="h-5 w-5 text-gray-600" />
+          </button>
+        </header>
+        
+        {/* Main content area */}
+        <main className="flex-1 overflow-hidden pb-16">
+          {renderContent()}
+        </main>
+      </div>
       
-      {/* Main content area with safe area for bottom navigation */}
-      <main className="flex-1 overflow-hidden" style={{ paddingBottom: 'calc(4rem + env(safe-area-inset-bottom, 0))' }}>
-        {renderContent()}
-      </main>
-      
-      {/* Bottom navigation rendered outside of scrollable area */}
+      {/* Bottom navigation - rendered outside the main container to ensure it's always on top */}
       <BottomNavigation activeTab={activeTab} setActiveTab={setActiveTab} />
-    </div>
+    </>
   )
 }

@@ -99,10 +99,20 @@ html, body, #__next {
   }
   
   /* Ensure bottom navigation is always visible */
-  .z-\[9999\] {
-    -webkit-transform: translateZ(1px);
-    transform: translateZ(1px);
-    z-index: 9999 !important;
+  .nav-container {
+    -webkit-transform: translateZ(9999px);
+    transform: translateZ(9999px);
+    z-index: 9999999 !important;
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+  }
+  
+  /* Set padding for pages with bottom navigation */
+  body.has-bottom-nav {
+    padding-bottom: 64px !important;
   }
   
   /* Force hardware acceleration on main containers */
