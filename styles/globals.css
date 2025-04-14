@@ -189,11 +189,28 @@ button:active {
 .card-stack {
   -webkit-perspective: 1000px;
   perspective: 1000px;
-  touch-action: pan-y;
+  touch-action: none;
+  pointer-events: auto;
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -ms-touch-action: manipulation;
+  touch-action: manipulation;
 }
 
 .card-stack * {
   -webkit-tap-highlight-color: transparent;
+  touch-action: none;
+  will-change: transform;
+}
+
+.card-stack img,
+.card-stack button {
+  touch-action: none;
+  -webkit-user-drag: none;
+  user-drag: none;
+  pointer-events: none;
 }
 
 @supports (-webkit-touch-callout: none) {
@@ -201,5 +218,14 @@ button:active {
   .card-stack {
     -webkit-touch-callout: none;
     -webkit-user-select: none;
+    user-select: none;
+    pointer-events: auto;
+    cursor: grab;
+  }
+  
+  /* Improved touch handling for iOS devices */
+  .card-stack [draggable="false"] {
+    -webkit-user-drag: none;
+    user-drag: none;
   }
 }
