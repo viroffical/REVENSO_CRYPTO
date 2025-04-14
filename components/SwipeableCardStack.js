@@ -12,9 +12,10 @@ const SwipeableCardStack = () => {
   
   // Set up visible profiles when currentIndex changes
   useEffect(() => {
-    // Load next 3 profiles to show in stack (or less if near the end of the array)
+    // Load next 5 profiles to show in stack (or less if near the end of the array)
+    // Showing more profiles creates a more visible stack effect
     const newVisibleProfiles = [];
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 5; i++) {
       const index = currentIndex + i;
       if (index < profiles.length) {
         newVisibleProfiles.push(profiles[index]);
@@ -86,17 +87,19 @@ const SwipeableCard = ({ profile, onSwipe, index, totalCards }) => {
   const leftIndicatorOpacity = useTransform(x, [-100, -10], [1, 0]);
   const rightIndicatorOpacity = useTransform(x, [10, 100], [0, 1]);
   
-  // Calculate card scale and position based on index in stack
+  // Calculate card scale and position based on index in stack for a more visible stack
   const getStackStyles = () => {
     // Base values for the top card
-    if (index === 0) return { scale: 1, y: 0, opacity: 1 };
+    if (index === 0) return { scale: 1, y: 0, opacity: 1, x: 0 };
     
-    // For cards underneath, create a stacked appearance
-    const scale = 1 - index * 0.05; // Each card is slightly smaller
-    const y = index * 8; // Each card is slightly lower
-    const opacity = 1 - index * 0.2; // Each card is slightly more transparent
+    // For cards underneath, create a stacked appearance with offset
+    // Use smaller reductions to make more cards visible in the stack
+    const scale = 1 - index * 0.04; // Smaller reduction in size
+    const y = index * 10; // More vertical separation
+    const x = index * -5; // Slight horizontal offset to create "fanned" appearance
+    const opacity = 1 - index * 0.15; // Keep cards more visible (less transparency)
     
-    return { scale, y, opacity };
+    return { scale, y, opacity, x };
   };
   
   const stackStyles = getStackStyles();
@@ -137,7 +140,7 @@ const SwipeableCard = ({ profile, onSwipe, index, totalCards }) => {
     <motion.div
       className="absolute w-full px-3"
       style={{
-        x: index === 0 ? x : 0,
+        x: index === 0 ? x : stackStyles.x,
         y: index === 0 ? y : stackStyles.y,
         zIndex: isDragging ? 999 : zIndex,
         rotate: index === 0 ? rotate : 0,
@@ -146,35 +149,55 @@ const SwipeableCard = ({ profile, onSwipe, index, totalCards }) => {
         right: '0',
         pointerEvents: index === 0 ? 'auto' : 'none',
         willChange: 'transform',
+        transformOrigin: 'center bottom',
       }}
       animate={{
         scale: stackStyles.scale,
         opacity: stackStyles.opacity,
+        x: index !== 0 ? stackStyles.x : undefined,
       }}
       initial={{
         scale: stackStyles.scale,
         opacity: stackStyles.opacity,
+        x: index !== 0 ? stackStyles.x : 0,
       }}
       exit={direction => ({
-        x: direction === 'left' ? -500 : direction === 'right' ? 500 : 0,
+        x: direction === 'left' ? -600 : direction === 'right' ? 600 : 0,
         opacity: 0,
-        transition: { duration: 0.2 }
+        rotate: direction === 'left' ? -20 : direction === 'right' ? 20 : 0,
+        transition: { 
+          duration: 0.3,
+          ease: [0.2, 0.7, 0.4, 1.0] // Custom ease for more fluid exit
+        }
       })}
       transition={{
+        type: 'spring',
+        damping: 30,
+        stiffness: 300,
+        mass: 0.8,
         scale: { duration: 0.2 },
         opacity: { duration: 0.2 }
       }}
       drag={index === 0 ? 'x' : false}
       dragConstraints={{ left: 0, right: 0 }}
       dragElastic={1}
+      dragTransition={{
+        power: 0.15,
+        timeConstant: 130,
+        modifyTarget: target => Math.abs(target) < 2 ? 0 : target,
+        restDelta: 0.01,
+        bounceStiffness: 400,
+        bounceDamping: 40,
+      }}
       onDragStart={() => setIsDragging(true)}
       onDragEnd={handleDragEnd}
     >
       <div 
-        className="bg-white rounded-xl overflow-hidden shadow-lg"
+        className={`bg-white rounded-xl overflow-hidden ${index === 0 ? 'shadow-xl' : 'shadow-md'}`}
         style={{
           height: 'calc(100vh - 200px)',
           maxHeight: '700px',
+          boxShadow: index === 0 ? '0 10px 25px rgba(0,0,0,0.15)' : `0 ${5 + index * 2}px ${10 + index * 3}px rgba(0,0,0,${0.1 - index * 0.02})`,
         }}
       >
         {/* Card Content */}
