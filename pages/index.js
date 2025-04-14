@@ -87,12 +87,12 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col h-screen max-w-md mx-auto bg-gray-50 overflow-hidden relative">
+    <div className="flex flex-col h-screen max-w-md mx-auto bg-white overflow-hidden">
       {/* Side Drawer */}
       <SideDrawer isOpen={drawerOpen} onClose={closeDrawer} userProfile={userProfile} />
 
       {/* Header - always showing the app name REVENSO */}
-      <header className="flex justify-between items-center p-3 bg-white shadow-sm z-10">
+      <header className="flex justify-between items-center p-3 bg-white shadow-sm z-10 sticky top-0">
         <button className="p-2 touch-manipulation" onClick={toggleDrawer}>
           <FontAwesomeIcon icon={faBars} className="h-5 w-5 text-gray-600" />
         </button>
@@ -107,14 +107,13 @@ export default function Home() {
         </button>
       </header>
       
-      <main className="flex-1 overflow-hidden pb-20">
+      {/* Main content area with safe area for bottom navigation */}
+      <main className="flex-1 overflow-hidden" style={{ paddingBottom: 'calc(4rem + env(safe-area-inset-bottom, 0))' }}>
         {renderContent()}
       </main>
       
-      {/* Bottom navigation with increased z-index */}
-      <div className="z-50 w-full">
-        <BottomNavigation activeTab={activeTab} setActiveTab={setActiveTab} />
-      </div>
+      {/* Bottom navigation rendered outside of scrollable area */}
+      <BottomNavigation activeTab={activeTab} setActiveTab={setActiveTab} />
     </div>
   )
 }

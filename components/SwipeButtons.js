@@ -3,7 +3,7 @@ import { faUndo, faXmark, faStar, faHeart, faBolt } from '@fortawesome/free-soli
 
 const SwipeButtons = ({ onSwipeLeft, onSwipeRight, onUndo, canUndo }) => {
   return (
-    <div className="flex justify-center items-center space-x-3 sm:space-x-6 py-4 bg-white px-2 shadow-inner">
+    <div className="flex justify-center items-center space-x-3 sm:space-x-6 py-4 bg-white px-2 shadow-inner" style={{ opacity: 1, position: 'relative', zIndex: 5 }}>
       {/* Undo Button */}
       <button 
         className={`flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-full border-2 ${canUndo ? 'border-gray-300 text-gray-400' : 'border-gray-200 text-gray-300'} bg-white shadow active:shadow-sm touch-manipulation`}

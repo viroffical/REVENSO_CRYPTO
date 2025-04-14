@@ -91,6 +91,31 @@ html, body, #__next {
   button {
     -webkit-tap-highlight-color: transparent;
   }
+  
+  /* Fix for z-index stacking issues on mobile */
+  .fixed {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+  
+  /* Ensure bottom navigation is always visible */
+  .z-\[9999\] {
+    -webkit-transform: translateZ(1px);
+    transform: translateZ(1px);
+    z-index: 9999 !important;
+  }
+  
+  /* Force hardware acceleration on main containers */
+  #__next > div {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+  
+  /* Smooth scrolling for card content */
+  .overflow-y-auto {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
 }
 
 @keyframes fadeInRight {

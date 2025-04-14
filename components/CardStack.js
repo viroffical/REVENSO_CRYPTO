@@ -46,7 +46,10 @@ const CardStack = ({ profiles }) => {
 
   return (
     <div className="card-stack flex flex-col h-full">
+      {/* Card container with background overlay to hide any UI behind it */}
       <div className="flex-1 relative flex items-center justify-center w-full bg-white">
+        <div className="absolute inset-0 bg-white z-0"></div>
+        
         <AnimatePresence>
           {visibleProfiles.length > 0 ? (
             visibleProfiles.map((profile, index) => (
@@ -59,7 +62,7 @@ const CardStack = ({ profiles }) => {
               />
             ))
           ) : (
-            <div className="empty-state text-center p-8">
+            <div className="empty-state text-center p-8 z-10 relative">
               <h2 className="text-2xl mb-4">No more profiles</h2>
               <p className="mb-4">You've seen everyone for now</p>
               <button 
@@ -78,7 +81,7 @@ const CardStack = ({ profiles }) => {
       
       {/* Swipe buttons for easier mobile interaction */}
       {visibleProfiles.length > 0 && (
-        <div className="mb-2 mt-2">
+        <div className="relative z-20 bg-white">
           <SwipeButtons 
             onSwipeLeft={() => handleButtonSwipe('left')}
             onSwipeRight={() => handleButtonSwipe('right')}
@@ -148,21 +151,30 @@ const SwipeableCard = ({ profile, onSwipe, isTop, zIndex }) => {
 
   return (
     <motion.div
-      className="absolute w-full h-full px-2 pt-2 pb-0 cursor-grab active:cursor-grabbing touch-manipulation"
+      className="absolute w-full h-full px-2 pt-2 pb-0 cursor-grab active:cursor-grabbing touch-manipulation bg-white"
       style={{ 
         x, 
         y, 
         rotate, 
-        zIndex: isDragging ? 10 : zIndex,
+        zIndex: isDragging ? 999 : (zIndex + 10),
         touchAction: 'none',
         WebkitTapHighlightColor: 'transparent',
         WebkitUserSelect: 'none',
         userSelect: 'none',
+        WebkitBackfaceVisibility: 'hidden',
+        backfaceVisibility: 'hidden',
+        WebkitTransform: 'translateZ(0)',
+        transform: 'translateZ(0)',
       }}
       drag={isTop}
       dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
-      dragElastic={0.7}
-      dragTransition={{ bounceStiffness: 600, bounceDamping: 20 }}
+      dragElastic={0.5}
+      dragTransition={{ 
+        bounceStiffness: 300, 
+        bounceDamping: 40,
+        power: 0.2,
+        timeConstant: 200,
+      }}
       dragDirectionLock
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
