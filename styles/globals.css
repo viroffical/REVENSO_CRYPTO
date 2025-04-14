@@ -190,28 +190,10 @@ button:active {
   -webkit-perspective: 1000px;
   perspective: 1000px;
   touch-action: pan-y;
-  isolation: isolate;
-  position: relative;
 }
 
 .card-stack * {
   -webkit-tap-highlight-color: transparent;
-}
-
-/* Prevent transparent layers and reflections */
-.card-stack > div > div {
-  background: #ffffff;
-  isolation: isolate;
-}
-
-/* Force quality rendering in Safari */
-@media not all and (min-resolution:.001dpcm) { 
-  @supports (-webkit-appearance:none) {
-    .card-stack {
-      -webkit-backface-visibility: hidden;
-      -webkit-transform: translateZ(0);
-    }
-  }
 }
 
 @supports (-webkit-touch-callout: none) {

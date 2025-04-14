@@ -45,14 +45,13 @@ const CardStack = ({ profiles }) => {
         
         <AnimatePresence mode="popLayout">
           {visibleProfiles.length > 0 ? (
-            // Only render the top card and keep the next card ready but hidden
-            visibleProfiles.slice(0, 2).map((profile, index) => (
+            visibleProfiles.map((profile, index) => (
               <SwipeableCard 
                 key={profile.id} 
                 profile={profile} 
                 onSwipe={handleSwipe}
                 isTop={index === 0}
-                zIndex={index === 0 ? 20 : 10}
+                zIndex={visibleProfiles.length - index}
               />
             ))
           ) : (
@@ -133,18 +132,16 @@ const SwipeableCard = ({ profile, onSwipe, isTop, zIndex }) => {
     initial: {
       scale: isTop ? 1 : 0.95,
       y: isTop ? 0 : 15,
-      opacity: isTop ? 1 : 0, // Make non-top cards completely invisible
-      zIndex: isTop ? 10 : 0,
+      opacity: isTop ? 1 : 0.8,
     },
     animate: {
       scale: isTop ? 1 : 0.95,
       y: isTop ? 0 : 15,
-      opacity: isTop ? 1 : 0, // Make non-top cards completely invisible
-      zIndex: isTop ? 10 : 0,
+      opacity: isTop ? 1 : 0.8,
       transition: {
         scale: { duration: 0.2 },
         y: { duration: 0.2 },
-        opacity: { duration: 0.2 }
+        opacity: { duration: 0.4 }
       }
     },
     exit: (direction) => ({
@@ -161,7 +158,7 @@ const SwipeableCard = ({ profile, onSwipe, isTop, zIndex }) => {
 
   return (
     <motion.div
-      className="absolute w-full h-full px-2 pt-2 pb-0 cursor-grab active:cursor-grabbing touch-manipulation bg-white will-change-transform shadow-xl"
+      className="absolute w-full h-full px-2 pt-2 pb-0 cursor-grab active:cursor-grabbing touch-manipulation bg-white will-change-transform"
       style={{ 
         x, 
         y, 
@@ -175,11 +172,10 @@ const SwipeableCard = ({ profile, onSwipe, isTop, zIndex }) => {
         backfaceVisibility: 'hidden',
         WebkitPerspective: '1000',
         perspective: '1000',
-        WebkitTransformStyle: 'flat',
-        transformStyle: 'flat',
+        WebkitTransformStyle: 'preserve-3d',
+        transformStyle: 'preserve-3d',
         WebkitTransform: 'translate3d(0,0,0)',
         transform: 'translate3d(0,0,0)',
-        backgroundColor: '#ffffff',
       }}
       drag={isTop ? "x" : false} // Limit to horizontal dragging only for better control
       dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
@@ -211,12 +207,7 @@ const SwipeableCard = ({ profile, onSwipe, isTop, zIndex }) => {
         mass: 0.8
       }}
     >
-      <div className="h-[calc(100vh-170px)] shadow-xl rounded-xl overflow-hidden bg-white" 
-        style={{ 
-          isolation: 'isolate',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.1)', 
-          backfaceVisibility: 'hidden',
-        }}>
+      <div className="h-[calc(100vh-170px)] shadow-xl rounded-xl overflow-hidden">
         <Card profile={profile} dragProgress={{ left: leftIndicatorOpacity, right: rightIndicatorOpacity }} />
       </div>
     </motion.div>
