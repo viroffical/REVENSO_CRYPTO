@@ -5,16 +5,31 @@ import { faXTwitter } from '@fortawesome/free-brands-svg-icons';
 
 const Card = ({ profile, dragProgress }) => {
   return (
-    <div className="relative w-full h-full bg-white rounded-3xl overflow-y-auto scrollbar-hide overscroll-y-contain -webkit-overflow-scrolling-touch">
-      <div className="relative h-[100%] min-h-[90%]">
+    <div 
+      className="relative w-full h-full bg-white rounded-3xl overflow-y-auto scrollbar-hide overscroll-y-contain will-change-scroll"
+      style={{
+        WebkitOverflowScrolling: 'touch',
+        msOverflowStyle: 'none',
+        scrollbarWidth: 'none',
+        overscrollBehavior: 'contain',
+      }}
+    >
+      <div className="relative h-[120%] min-h-[90%]">
         
         {/* Profile Image */}
-        <div className="w-full h-full bg-white flex-grow">
+        <div className="w-full h-full bg-white flex-grow will-change-transform">
           <img
             src={profile.imageUrl || profile.image}
             alt={profile.name}
-            className="w-full h-full object-cover object-center"
-            style={{ minHeight: "calc(100vh - 220px)" }}
+            className="w-full h-full object-cover object-center will-change-transform"
+            style={{ 
+              minHeight: "calc(100vh - 220px)",
+              WebkitBackfaceVisibility: 'hidden',
+              backfaceVisibility: 'hidden',
+              transform: 'translateZ(0)',
+            }}
+            loading="eager"
+            draggable="false"
           />
         </div>
         

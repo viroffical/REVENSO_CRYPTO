@@ -131,6 +131,22 @@ html, body, #__next {
     -webkit-overflow-scrolling: touch;
     scroll-behavior: smooth;
   }
+  
+  /* Better touch handling for swipe cards */
+  .card-stack {
+    touch-action: manipulation;
+    -webkit-touch-callout: none;
+  }
+  
+  /* Hardware acceleration for better performance */
+  .will-change-transform {
+    will-change: transform;
+  }
+  
+  /* Improved touch feedback */
+  .cursor-grab:active {
+    cursor: grabbing;
+  }
 }
 
 @keyframes fadeInRight {
@@ -167,4 +183,23 @@ button:active {
 
 .scrollbar-hide::-webkit-scrollbar {
   display: none;  /* Chrome, Safari and Opera */
+}
+
+/* Swipe card optimizations */
+.card-stack {
+  -webkit-perspective: 1000px;
+  perspective: 1000px;
+  touch-action: pan-y;
+}
+
+.card-stack * {
+  -webkit-tap-highlight-color: transparent;
+}
+
+@supports (-webkit-touch-callout: none) {
+  /* iOS-specific optimizations */
+  .card-stack {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+  }
 }
