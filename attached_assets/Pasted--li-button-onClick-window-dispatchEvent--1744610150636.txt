@@ -1,0 +1,52 @@
+<li>
+              <button 
+                onClick={() => {
+                  window.dispatchEvent(new CustomEvent('setActiveTab', { detail: 'dashboard' }));
+                  onClose();
+                }} 
+                className="flex items-center w-full text-left px-4 py-3 hover:bg-gray-100 transition-colors"
+              >
+                <FontAwesomeIcon icon={faGaugeHigh} className="text-gray-700 w-5 h-5 mr-3" />
+                <span className="font-medium">Dashboard</span>
+              </button>
+            </li>
+            <li>
+              <button 
+                className="flex items-center w-full text-left px-4 py-3 hover:bg-gray-100 transition-colors"
+              >
+                <FontAwesomeIcon icon={faUserPlus} className="text-gray-700 w-5 h-5 mr-3" />
+                <span className="font-medium">Friends</span>
+              </button>
+            </li>
+            <li>
+              <button 
+                className="flex items-center w-full text-left px-4 py-3 hover:bg-gray-100 transition-colors"
+              >
+                <FontAwesomeIcon icon={faBookmark} className="text-gray-700 w-5 h-5 mr-3" />
+                <span className="font-medium">Saved Items</span>
+              </button>
+            </li>
+            <li>
+              <button 
+                className="flex items-center w-full text-left px-4 py-3 hover:bg-gray-100 transition-colors"
+              >
+                <FontAwesomeIcon icon={faGears} className="text-gray-700 w-5 h-5 mr-3" />
+                <span className="font-medium">Settings</span>
+              </button>
+            </li>
+            <li>
+              <button 
+                className="flex items-center w-full text-left px-4 py-3 hover:bg-gray-100 transition-colors"
+              >
+                <FontAwesomeIcon icon={faHeadset} className="text-gray-700 w-5 h-5 mr-3" />
+                <span className="font-medium">Support</span>
+              </button>
+            </li>
+            <li>
+              <button 
+                className="flex items-center w-full text-left px-4 py-3 hover:bg-gray-100 transition-colors"
+              >
+                <FontAwesomeIcon icon={faQuestionCircle} className="text-gray-700 w-5 h-5 mr-3" />
+                <span className="font-medium">Help Center</span>
+              </button>
+            </li>
