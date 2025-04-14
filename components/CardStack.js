@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { motion, useMotionValue, useTransform, AnimatePresence } from 'framer-motion';
 import Card from './Card';
 import SwipeIndicator from './SwipeIndicator';
-import SwipeButtons from './SwipeButtons';
 
 const CardStack = ({ profiles }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -28,13 +27,7 @@ const CardStack = ({ profiles }) => {
     }, 300);
   };
 
-  // Handle button clicks for swipe actions
-  const handleButtonSwipe = (direction) => {
-    if (currentIndex < profiles.length) {
-      handleSwipe(direction);
-    }
-  };
-
+  // Function to restore the previous profile (could be used by custom buttons in the future)
   const restoreLastSwipedProfile = () => {
     if (swipedProfiles.length > 0 && currentIndex > 0) {
       // Remove the last swiped profile from history
@@ -78,18 +71,6 @@ const CardStack = ({ profiles }) => {
         <SwipeIndicator direction="left" isVisible={exitDirection === 'left'} />
         <SwipeIndicator direction="right" isVisible={exitDirection === 'right'} />
       </div>
-      
-      {/* Swipe buttons for easier mobile interaction */}
-      {visibleProfiles.length > 0 && (
-        <div className="relative z-20 bg-white">
-          <SwipeButtons 
-            onSwipeLeft={() => handleButtonSwipe('left')}
-            onSwipeRight={() => handleButtonSwipe('right')}
-            onUndo={restoreLastSwipedProfile}
-            canUndo={swipedProfiles.length > 0}
-          />
-        </div>
-      )}
     </div>
   );
 };
