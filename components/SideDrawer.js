@@ -2,17 +2,8 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faUser, 
-  faList, 
-  faBookmark, 
-  faBolt, 
-  faGear, 
-  faQuestionCircle,
   faTimes,
-  faMoon,
   faGaugeHigh,
-  faUserPlus,
-  faGears,
-  faHeadset,
   faArrowRightFromBracket
 } from '@fortawesome/free-solid-svg-icons';
 import { motion } from 'framer-motion';
@@ -98,13 +89,6 @@ const SideDrawer = ({ isOpen, onClose, userProfile }) => {
               <h3 className="font-bold text-lg">{profile.name}</h3>
               <p className="text-sm text-gray-500">{profile.username}</p>
             </div>
-            <button className="text-gray-400 p-1">
-              <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-                <circle cx="5" cy="12" r="2" />
-                <circle cx="12" cy="12" r="2" />
-                <circle cx="19" cy="12" r="2" />
-              </svg>
-            </button>
           </div>
           <div className="flex text-sm mt-2">
             <div className="mr-4">
@@ -143,67 +127,13 @@ const SideDrawer = ({ isOpen, onClose, userProfile }) => {
                 <span className="font-medium">Dashboard</span>
               </button>
             </li>
-            <li>
-              <button 
-                className="flex items-center w-full text-left px-4 py-3 hover:bg-gray-100 transition-colors"
-              >
-                <FontAwesomeIcon icon={faUserPlus} className="text-gray-700 w-5 h-5 mr-3" />
-                <span className="font-medium">Friends</span>
-              </button>
-            </li>
-            <li>
-              <button 
-                className="flex items-center w-full text-left px-4 py-3 hover:bg-gray-100 transition-colors"
-              >
-                <FontAwesomeIcon icon={faBookmark} className="text-gray-700 w-5 h-5 mr-3" />
-                <span className="font-medium">Saved Items</span>
-              </button>
-            </li>
-            <li>
-              <button 
-                className="flex items-center w-full text-left px-4 py-3 hover:bg-gray-100 transition-colors"
-              >
-                <FontAwesomeIcon icon={faGears} className="text-gray-700 w-5 h-5 mr-3" />
-                <span className="font-medium">Settings</span>
-              </button>
-            </li>
-            <li>
-              <button 
-                className="flex items-center w-full text-left px-4 py-3 hover:bg-gray-100 transition-colors"
-              >
-                <FontAwesomeIcon icon={faHeadset} className="text-gray-700 w-5 h-5 mr-3" />
-                <span className="font-medium">Support</span>
-              </button>
-            </li>
-            <li>
-              <button 
-                className="flex items-center w-full text-left px-4 py-3 hover:bg-gray-100 transition-colors"
-              >
-                <FontAwesomeIcon icon={faQuestionCircle} className="text-gray-700 w-5 h-5 mr-3" />
-                <span className="font-medium">Help Center</span>
-              </button>
-            </li>
           </ul>
         </nav>
 
         {/* Footer - with extra space to ensure visibility above bottom navigation */}
-        <div className="p-4 pt-2 flex flex-col">
-          <div className="flex justify-between items-center mb-4">
-            <button className="p-2 text-blue-400">
-              <FontAwesomeIcon icon={faMoon} />
-            </button>
-            <div className="text-blue-400">
-              <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-                <rect x="3" y="3" width="7" height="7" rx="1" />
-                <rect x="14" y="3" width="7" height="7" rx="1" />
-                <rect x="14" y="14" width="7" height="7" rx="1" />
-                <rect x="3" y="14" width="7" height="7" rx="1" />
-              </svg>
-            </div>
-          </div>
-          
+        <div className="p-4 pt-2 flex flex-col mt-auto">
           {/* Logout Button */}
-          <button className="logout-button w-full mt-3 mb-4">
+          <button className="logout-button w-full mb-4">
             <span className="flex items-center justify-center">
               <FontAwesomeIcon icon={faArrowRightFromBracket} className="mr-2" />
               Logout
