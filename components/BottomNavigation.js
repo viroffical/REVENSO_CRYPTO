@@ -30,12 +30,13 @@ const BottomNavigation = ({ activeTab, setActiveTab }) => {
         className="nav-container fixed bottom-0 left-0 right-0 w-full bg-white border-t border-gray-200 shadow-lg"
         style={{
           zIndex: 999999, // extremely high z-index
-          height: '64px',
+          height: '72px', // Increased height
           position: 'fixed',
           bottom: 0,
           left: 0,
           right: 0,
-          width: '100%'
+          width: '100%',
+          paddingBottom: 'env(safe-area-inset-bottom, 8px)' // Safe area for notched phones
         }}
       >
         <div className="flex justify-around items-center h-full max-w-md mx-auto">

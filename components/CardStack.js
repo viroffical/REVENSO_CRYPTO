@@ -166,7 +166,7 @@ const SwipeableCard = ({ profile, onSwipe, isTop, zIndex }) => {
       custom={onSwipe}
       whileTap={{ scale: 1.01 }}
     >
-      <div className="h-[calc(75vh-72px)] max-h-[600px] shadow-xl rounded-xl overflow-hidden">
+      <div className="h-[calc(75vh-100px)] max-h-[600px] shadow-xl rounded-xl overflow-hidden">
         <Card profile={profile} dragProgress={{ left: leftIndicatorOpacity, right: rightIndicatorOpacity }} />
       </div>
     </motion.div>
