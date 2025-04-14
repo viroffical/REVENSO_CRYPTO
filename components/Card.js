@@ -5,15 +5,16 @@ import { faXTwitter } from '@fortawesome/free-brands-svg-icons';
 
 const Card = ({ profile, dragProgress }) => {
   return (
-    <div className="relative w-full h-full bg-white rounded-3xl overflow-y-auto hide-scrollbar overscroll-y-contain -webkit-overflow-scrolling-touch">
-      <div className="relative h-[100%] min-h-[75%]">
+    <div className="relative w-full h-full bg-white rounded-3xl overflow-y-auto scrollbar-hide overscroll-y-contain -webkit-overflow-scrolling-touch">
+      <div className="relative h-[100%] min-h-[90%]">
         
         {/* Profile Image */}
-        <div className="w-full h-full bg-white">
+        <div className="w-full h-full bg-white flex-grow">
           <img
             src={profile.imageUrl || profile.image}
             alt={profile.name}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover object-center"
+            style={{ minHeight: "calc(100vh - 220px)" }}
           />
         </div>
         
@@ -73,7 +74,7 @@ const Card = ({ profile, dragProgress }) => {
       </div>
       
       {/* Profile Content */}
-      <div className="p-5 bg-white">
+      <div className="p-5 bg-white pt-6 pb-20">
         <h3 className="text-xl font-bold mb-3">About {profile.name}</h3>
         <p className="mb-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin vel sapien ut massa sagittis fringilla. Nullam fringilla, justo eget fermentum volutpat, nibh metus scelerisque dolor, sed fermentum nibh nibh vitae nisi.</p>
         
