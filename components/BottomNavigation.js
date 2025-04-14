@@ -68,7 +68,7 @@ const BottomNavigation = ({ activeTab, setActiveTab }) => {
       </div>
       
       {/* This adds padding at the bottom of the page to ensure content isn't hidden behind nav */}
-      <div className="h-16"></div>
+      <div className="h-24"></div>
     </>
   );
 };

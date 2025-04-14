@@ -100,7 +100,7 @@ const MeetingsComponent = () => {
       </div>
       
       {/* Meeting Cards List - Scrollable */}
-      <div className="flex-1 overflow-y-auto px-4 py-4 pb-28 scrollbar-hide">
+      <div className="flex-1 overflow-y-auto px-4 py-4 pb-32 scrollbar-hide">
         {activeTab === 'upcoming' ? (
           meetings.upcoming.map(meeting => (
             <MeetingCard key={meeting.id} meeting={meeting} />

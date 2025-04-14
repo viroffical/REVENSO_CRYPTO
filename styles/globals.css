@@ -112,7 +112,12 @@ html, body, #__next {
   
   /* Set padding for pages with bottom navigation */
   body.has-bottom-nav {
-    padding-bottom: 64px !important;
+    padding-bottom: 80px !important; /* Increased padding to accommodate taller nav */
+  }
+  
+  /* Increase spacing for content elements that might be cut off */
+  .overflow-y-auto {
+    padding-bottom: 80px !important;
   }
   
   /* Force hardware acceleration on main containers */

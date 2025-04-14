@@ -109,7 +109,7 @@ export default function Home() {
         </header>
         
         {/* Main content area */}
-        <main className="flex-1 overflow-hidden pb-16">
+        <main className="flex-1 overflow-hidden pb-32">
           {renderContent()}
         </main>
       </div>
