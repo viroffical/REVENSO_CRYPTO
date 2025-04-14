@@ -10,6 +10,7 @@ export default function Document() {
       <body>
         <Main />
         <NextScript />
+        <script src="/touch-optimizations.js"></script>
       </body>
     </Html>
   )

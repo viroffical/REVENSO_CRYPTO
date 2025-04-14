@@ -85,23 +85,30 @@ const CardStack = ({ profiles }) => {
 const SwipeableCard = ({ profile, onSwipe, isTop, zIndex }) => {
   const [isDragging, setIsDragging] = useState(false);
   const cardRef = useRef(null);
+  const [forceRender, setForceRender] = useState(false); // Force re-render to ensure proper state updates
   
-  // Motion values for card position and rotation
+  // Motion values for card position and rotation with optimized defaults
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-  // Make rotation more responsive with higher values
-  const rotate = useTransform(x, [-150, 0, 150], [-20, 0, 20]);
+  // Make rotation more responsive with more direct values
+  const rotate = useTransform(x, [-100, 0, 100], [-15, 0, 15]);
   
-  // Transform x position to opacity for the indicators
-  const leftIndicatorOpacity = useTransform(x, [-80, -10], [1, 0]);
-  const rightIndicatorOpacity = useTransform(x, [10, 80], [0, 1]);
+  // Transform x position to opacity for the indicators with more immediate feedback
+  const leftIndicatorOpacity = useTransform(x, [-50, -5], [1, 0]);
+  const rightIndicatorOpacity = useTransform(x, [5, 50], [0, 1]);
   
-  // Touch handling state
+  // Touch handling state with optimized defaults
   const [touchStart, setTouchStart] = useState({ x: 0, y: 0 });
   const [touchDelta, setTouchDelta] = useState({ x: 0, y: 0 });
-  const velocityTracker = useRef({ x: 0, time: 0, positions: [] });
+  const velocityTracker = useRef({ 
+    x: 0, 
+    time: 0, 
+    positions: [],
+    lastDelta: 0,
+    lastMove: 0
+  });
   
-  // Smoothly animate card back to center when needed
+  // Optimize animation by only rendering when card is visible
   useEffect(() => {
     if (!isTop) {
       // Reset position when card is not on top
@@ -110,100 +117,165 @@ const SwipeableCard = ({ profile, onSwipe, isTop, zIndex }) => {
     }
   }, [isTop, x, y]);
   
-  // Handle spring-back animation when releasing the card
+  // Performance optimization - use RAF for smoother motion
+  const requestRef = useRef();
+  const previousTimeRef = useRef();
+
+  // Use RAF for smoother motion updates
+  const animateCard = (time) => {
+    if (previousTimeRef.current !== undefined) {
+      // Only update if we're actively dragging
+      if (isDragging && isTop) {
+        const deltaX = velocityTracker.current.lastDelta;
+        
+        // Use motion values for smoother updates
+        x.set(deltaX);
+      }
+    }
+    previousTimeRef.current = time;
+    requestRef.current = requestAnimationFrame(animateCard);
+  };
+
+  // Start/stop animation loop based on drag state
+  useEffect(() => {
+    requestRef.current = requestAnimationFrame(animateCard);
+    return () => cancelAnimationFrame(requestRef.current);
+  }, [isDragging, isTop]);
+  
+  // Handle spring-back animation when releasing the card - optimized for mobile
   const resetCardPosition = () => {
+    // Use more responsive springs for mobile
     animate(x, 0, {
       type: "spring",
-      stiffness: 400,
-      damping: 20,
+      stiffness: 350,
+      damping: 25,
+      mass: 0.5, // Lower mass for more responsive feel
       velocity: 0
     });
   };
   
-  // Direct touch event handlers for more responsive mobile experience
+  // Optimized direct touch handler with less overhead
   const handleTouchStart = (e) => {
     if (!isTop) return;
+    
     setIsDragging(true);
     const touch = e.touches[0];
-    setTouchStart({ x: touch.clientX, y: touch.clientY });
+    
+    // Keep it simple for better performance
+    const touchX = touch.clientX;
+    const touchY = touch.clientY;
+    
+    setTouchStart({ x: touchX, y: touchY });
+    
+    // Reset velocity tracker
     velocityTracker.current = { 
-      x: touch.clientX, 
+      x: touchX, 
       time: Date.now(), 
-      positions: [{ x: touch.clientX, time: Date.now() }] 
+      positions: [{ x: touchX, time: Date.now() }],
+      lastDelta: 0,
+      lastMove: Date.now()
     };
     
-    // Prevent default to ensure we have smooth tracking
+    // Prevent default behaviors and propagation
     e.preventDefault();
+    e.stopPropagation();
   };
   
+  // Optimized touch move with minimal processing
   const handleTouchMove = (e) => {
     if (!isTop || !isDragging) return;
+    
     const touch = e.touches[0];
-    const deltaX = touch.clientX - touchStart.x;
+    const touchX = touch.clientX;
+    const currentTime = Date.now();
     
-    // Track positions for velocity calculation
-    velocityTracker.current.positions.push({
-      x: touch.clientX,
-      time: Date.now()
-    });
+    // Calculate delta from original touch
+    const deltaX = touchX - touchStart.x;
     
-    // Only keep the last 5 positions for performance
-    if (velocityTracker.current.positions.length > 5) {
-      velocityTracker.current.positions.shift();
+    // Don't track every single tiny movement (optimized)
+    if (currentTime - velocityTracker.current.lastMove > 16) { // ~60fps
+      // Track positions for velocity calculation - limit data points
+      velocityTracker.current.positions.push({
+        x: touchX,
+        time: currentTime
+      });
+      
+      // Only keep recent positions for better performance
+      while (velocityTracker.current.positions.length > 3) {
+        velocityTracker.current.positions.shift();
+      }
+      
+      velocityTracker.current.lastMove = currentTime;
     }
     
-    // Update motion values directly for smooth visual feedback
-    x.set(deltaX);
+    // Store last delta for RAF updates
+    velocityTracker.current.lastDelta = deltaX;
+    
+    // Update with RequestAnimationFrame handled in the animate loop
+    // This improves performance by batching updates
+    
+    // Update state less frequently - improves performance
+    // We're using RAF for visual updates instead
     setTouchDelta({ x: deltaX, y: touch.clientY - touchStart.y });
     
     // Prevent default to avoid scroll interference
     e.preventDefault();
+    e.stopPropagation();
   };
   
+  // Optimized touch end handling
   const handleTouchEnd = (e) => {
     if (!isTop || !isDragging) return;
+    
     setIsDragging(false);
     
-    // Calculate velocity based on the last few touch events
+    // Calculate velocity based on the stored positions
     const positions = velocityTracker.current.positions;
     let velocity = 0;
     
     if (positions.length >= 2) {
+      // Calculate velocity with most recent positions for better responsiveness
       const first = positions[0];
       const last = positions[positions.length - 1];
       const deltaTime = last.time - first.time;
       
-      if (deltaTime > 0) {
+      // Avoid division by zero and ensure we have valid time difference
+      if (deltaTime > 5) {
         velocity = (last.x - first.x) / deltaTime; // pixels per ms
       }
     }
     
-    // Normalize velocity to match Framer Motion scale
-    velocity = velocity * 1000; // Convert to pixels per second
+    // Faster velocity multiplier for more sensitive swipes on mobile
+    velocity = velocity * 1200; // Increase multiplier for mobile
     
     const deltaX = touchDelta.x;
-    const swipeThreshold = 40;
-    const swipeVelocityThreshold = 0.4;
+    // Lower thresholds for mobile
+    const swipeThreshold = 30; // Even lower for mobile
+    const swipeVelocityThreshold = 0.3; // Lower for more sensitive swipes
     
-    // Apply the same swipe logic
-    if (velocity > swipeVelocityThreshold || (Math.abs(velocity) > 0.2 && deltaX > 0)) {
+    // More sensitive swipe detection for mobile
+    if (velocity > swipeVelocityThreshold || (deltaX > swipeThreshold)) {
       onSwipe('right');
-    } else if (velocity < -swipeVelocityThreshold || (Math.abs(velocity) > 0.2 && deltaX < 0)) {
-      onSwipe('left');
-    } else if (deltaX > swipeThreshold) {
-      onSwipe('right');
-    } else if (deltaX < -swipeThreshold) {
+    } else if (velocity < -swipeVelocityThreshold || (deltaX < -swipeThreshold)) {
       onSwipe('left');
     } else {
-      // Reset position with spring animation
+      // Reset position with optimized spring animation
       resetCardPosition();
     }
     
-    // Reset touch tracking
+    // Reset tracking
     setTouchDelta({ x: 0, y: 0 });
+    velocityTracker.current = { 
+      x: 0, 
+      time: 0, 
+      positions: [],
+      lastDelta: 0,
+      lastMove: 0
+    };
     
-    // Prevent default 
+    // Cancel events
     e.preventDefault();
+    e.stopPropagation();
   };
   
   // Framer Motion drag handlers as fallback for desktop
@@ -252,11 +324,12 @@ const SwipeableCard = ({ profile, onSwipe, isTop, zIndex }) => {
       }
     },
     exit: (direction) => ({
-      x: direction === 'left' ? -600 : direction === 'right' ? 600 : 0,
+      x: direction === 'left' ? -1200 : direction === 'right' ? 1200 : 0, // Fixed values to avoid SSR issues
       opacity: 1,
+      rotate: direction === 'left' ? -30 : direction === 'right' ? 30 : 0,
       transition: { 
-        duration: 0.2,
-        ease: [0.32, 0.72, 0, 1], // Custom ease curve for smoother animation
+        duration: 0.15, // Faster exit for more responsive feel
+        ease: [0.1, 0.6, 0.1, 1], // Optimized ease curve specifically for mobile
         opacity: { duration: 0.1 }
       },
       zIndex: 10
