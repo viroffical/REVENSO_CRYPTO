@@ -392,21 +392,19 @@ const OnboardingPage = () => {
           ></div>
         </div>
         
-        {/* Step indicators */}
-        <div className="flex justify-center my-6 px-4">
+        {/* Step indicators - simplified circles */}
+        <div className="flex justify-center my-8 px-4 gap-5">
           {[1, 2, 3].map((step) => (
             <div 
               key={step}
-              className={`w-8 h-8 mx-2 rounded-full flex items-center justify-center text-sm 
+              className={`w-5 h-5 rounded-full border 
                 ${step === currentStep + 1 
                   ? 'border-2 border-yellow-500' 
                   : step < currentStep + 1 
-                    ? 'bg-yellow-500' 
+                    ? 'bg-yellow-500 border-transparent' 
                     : 'border-2 border-gray-300'
                 }`}
-            >
-              {/* Removed the numbers */}
-            </div>
+            ></div>
           ))}
         </div>
         
