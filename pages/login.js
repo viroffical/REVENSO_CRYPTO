@@ -16,7 +16,7 @@ export default function Login() {
   
   const router = useRouter();
   const { user, login, error, success } = useAuth();
-  const { darkMode, toggleDarkMode } = useTheme();
+  const { darkMode, toggleDarkMode } = useTheme ? useTheme() : { darkMode: false, toggleDarkMode: () => {} };
   
   // Handle client-side only features
   useEffect(() => {
@@ -37,7 +37,7 @@ export default function Login() {
   };
 
   if (!mounted) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    return <div className="loading-screen">Loading...</div>;
   }
 
   return (
@@ -45,46 +45,46 @@ export default function Login() {
       <Head>
         <title>Login | REVENSO</title>
       </Head>
-      <div className="min-h-screen flex items-center justify-center px-4 bg-white dark:bg-gray-900">
-        <div className="absolute top-4 right-4">
+      <div className={`auth-container ${darkMode ? 'dark' : ''}`}>
+        <div className="theme-toggle">
           <button
             onClick={toggleDarkMode}
-            className="p-2 rounded-full bg-gray-200 dark:bg-gray-700"
+            className="theme-button"
             aria-label="Toggle Dark Mode"
           >
             <FontAwesomeIcon 
               icon={darkMode ? faSun : faMoon} 
-              className="text-black dark:text-yellow-300"
+              style={{ color: darkMode ? '#FCD34D' : '#000000' }}
             />
           </button>
         </div>
 
-        <div className="w-full max-w-md p-8 bg-white dark:bg-gray-800 rounded-xl shadow-md">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-center mb-1 text-yellow-500">REVENSO</h1>
-            <p className="text-gray-600 dark:text-gray-400">Sign in to your account</p>
+        <div className="auth-card">
+          <div className="auth-header">
+            <h1 className="auth-title">REVENSO</h1>
+            <p className="auth-subtitle">Sign in to your account</p>
           </div>
 
           {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <div className="error-alert">
               <span>{error}</span>
             </div>
           )}
 
           {success && (
-            <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <div className="success-alert">
               <span>{success}</span>
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          <form onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label htmlFor="email" className="form-label">
                 Email
               </label>
-              <div className="mt-1 relative rounded-md shadow-sm">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <FontAwesomeIcon icon={faEnvelope} className="text-gray-400 text-sm" />
+              <div className="input-wrapper">
+                <div className="input-icon">
+                  <FontAwesomeIcon icon={faEnvelope} />
                 </div>
                 <input
                   id="email"
@@ -94,19 +94,19 @@ export default function Login() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 pl-10 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 dark:bg-gray-700 dark:text-white"
+                  className="input-field"
                   placeholder="you@example.com"
                 />
               </div>
             </div>
 
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            <div className="form-group">
+              <label htmlFor="password" className="form-label">
                 Password
               </label>
-              <div className="mt-1 relative rounded-md shadow-sm">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <FontAwesomeIcon icon={faLock} className="text-gray-400 text-sm" />
+              <div className="input-wrapper">
+                <div className="input-icon">
+                  <FontAwesomeIcon icon={faLock} />
                 </div>
                 <input
                   id="password"
@@ -116,66 +116,251 @@ export default function Login() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 pl-10 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 dark:bg-gray-700 dark:text-white"
+                  className="input-field"
                   placeholder="••••••••"
                 />
-                <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="text-gray-400"
-                  >
-                    <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} className="text-sm" />
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="password-toggle"
+                >
+                  <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+                </button>
               </div>
             </div>
 
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
+            <div className="form-options">
+              <div className="remember-me">
                 <input
                   id="remember-me"
                   name="remember-me"
                   type="checkbox"
                   checked={rememberMe}
                   onChange={() => setRememberMe(!rememberMe)}
-                  className="h-4 w-4 text-yellow-500 focus:ring-yellow-500 border-gray-300 rounded"
+                  className="checkbox"
                 />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
+                <label htmlFor="remember-me">
                   Remember me
                 </label>
               </div>
 
-              <div className="text-sm">
-                <a href="#" className="font-medium text-yellow-500 hover:text-yellow-400">
+              <div className="forgot-password">
+                <a href="#">
                   Forgot password?
                 </a>
               </div>
             </div>
 
-            <div>
+            <div className="form-action">
               <button
                 type="submit"
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-yellow-500 hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
+                className="btn-primary"
               >
                 Sign in
               </button>
             </div>
           </form>
 
-          <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+          <div className="auth-footer">
+            <p className="signup-text">
               Don't have an account?{' '}
-              <Link href="/signup" className="font-medium text-yellow-500 hover:text-yellow-400">
+              <Link href="/signup">
                 Sign up
               </Link>
             </p>
-            <p className="mt-4 text-xs text-gray-500 dark:text-gray-400">
+            <p className="demo-credentials">
               Demo credentials: test@demo.com / password123
             </p>
           </div>
         </div>
       </div>
+      
+      <style jsx>{`
+        .auth-container {
+          min-height: 100vh;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 1rem;
+          background-color: #f9fafb;
+        }
+        
+        .dark {
+          background-color: #111827;
+          color: white;
+        }
+        
+        .theme-toggle {
+          position: absolute;
+          top: 1rem;
+          right: 1rem;
+        }
+        
+        .theme-button {
+          background-color: #e5e7eb;
+          padding: 0.5rem;
+          border-radius: 9999px;
+          border: none;
+          cursor: pointer;
+        }
+        
+        .dark .theme-button {
+          background-color: #374151;
+        }
+        
+        .auth-card {
+          width: 100%;
+          max-width: 420px;
+          padding: 2rem;
+          background-color: white;
+          border-radius: 0.75rem;
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
+        .dark .auth-card {
+          background-color: #1f2937;
+        }
+        
+        .auth-header {
+          text-align: center;
+          margin-bottom: 2rem;
+        }
+        
+        .auth-title {
+          font-size: 1.875rem;
+          font-weight: 700;
+          margin-bottom: 0.25rem;
+          color: #F59E0B;
+        }
+        
+        .auth-subtitle {
+          color: #6b7280;
+        }
+        
+        .dark .auth-subtitle {
+          color: #9ca3af;
+        }
+        
+        .error-alert {
+          background-color: #fee2e2;
+          border: 1px solid #f87171;
+          color: #b91c1c;
+          padding: 0.75rem 1rem;
+          border-radius: 0.375rem;
+          margin-bottom: 1rem;
+        }
+        
+        .success-alert {
+          background-color: #d1fae5;
+          border: 1px solid #34d399;
+          color: #047857;
+          padding: 0.75rem 1rem;
+          border-radius: 0.375rem;
+          margin-bottom: 1rem;
+        }
+        
+        .form-group {
+          margin-bottom: 1.5rem;
+        }
+        
+        .input-wrapper {
+          position: relative;
+        }
+        
+        .input-icon {
+          position: absolute;
+          left: 0.75rem;
+          top: 50%;
+          transform: translateY(-50%);
+          color: #9ca3af;
+          width: 1rem;
+        }
+        
+        .input-field {
+          padding-left: 2.5rem;
+        }
+        
+        .password-toggle {
+          position: absolute;
+          right: 0.75rem;
+          top: 50%;
+          transform: translateY(-50%);
+          background: none;
+          border: none;
+          color: #9ca3af;
+          cursor: pointer;
+        }
+        
+        .form-options {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 1.5rem;
+        }
+        
+        .remember-me {
+          display: flex;
+          align-items: center;
+        }
+        
+        .checkbox {
+          margin-right: 0.5rem;
+        }
+        
+        .forgot-password a {
+          color: #F59E0B;
+          font-weight: 500;
+          text-decoration: none;
+        }
+        
+        .forgot-password a:hover {
+          color: #D97706;
+        }
+        
+        .form-action {
+          margin-bottom: 1.5rem;
+        }
+        
+        .auth-footer {
+          text-align: center;
+        }
+        
+        .signup-text {
+          font-size: 0.875rem;
+          color: #6b7280;
+          margin-bottom: 0.5rem;
+        }
+        
+        .dark .signup-text {
+          color: #9ca3af;
+        }
+        
+        .signup-text a {
+          color: #F59E0B;
+          font-weight: 500;
+          text-decoration: none;
+        }
+        
+        .signup-text a:hover {
+          color: #D97706;
+        }
+        
+        .demo-credentials {
+          font-size: 0.75rem;
+          color: #9ca3af;
+        }
+        
+        .dark .demo-credentials {
+          color: #6b7280;
+        }
+        
+        .loading-screen {
+          min-height: 100vh;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+      `}</style>
     </>
   );
 }

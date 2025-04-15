@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars, faUser, faUserCircle, faSlidersH } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faSignOutAlt, faSlidersH } from '@fortawesome/free-solid-svg-icons';
+import { useAuth } from '../context/AuthContext';
 
 // Use dynamic import for components to avoid SSR issues with animations
 const CardStack = dynamic(() => import('../components/CardStack'), { ssr: false })
@@ -18,6 +20,20 @@ import { profiles } from '../data/profiles'
 export default function Home() {
   const [activeTab, setActiveTab] = useState('people');
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  
+  const router = useRouter();
+  const { user, logout } = useAuth();
+
+  // Check authentication on client-side
+  useEffect(() => {
+    setMounted(true);
+    
+    // If no user is logged in, redirect to login
+    if (mounted && !user) {
+      router.push('/login');
+    }
+  }, [user, router, mounted]);
 
   // Listen for custom events from the sidebar to switch tabs
   useEffect(() => {
@@ -38,6 +54,11 @@ export default function Home() {
 
   const closeDrawer = () => {
     setDrawerOpen(false);
+  };
+  
+  const handleLogout = () => {
+    logout();
+    router.push('/login');
   };
 
   const renderContent = () => {
@@ -64,11 +85,17 @@ export default function Home() {
         );
     }
   };
+  
+  // If not mounted or no user, show loading
+  if (!mounted || !user) {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  }
 
+  // Create a user profile from auth data
   const userProfile = {
-    name: 'Alex Johnson',
-    username: '@alexj',
-    email: 'alex.johnson@example.com',
+    name: user.name || `${user.firstName} ${user.lastName}`,
+    username: `@${user.firstName.toLowerCase()}${user.lastName.charAt(0).toLowerCase()}`,
+    email: user.email,
     phone: '+1 (555) 123-4567',
     address: 'San Francisco, CA',
     dateOfBirth: 'June 15, 1992',
@@ -102,9 +129,10 @@ export default function Home() {
           </div>
           <button 
             className="p-2 touch-manipulation"
-            onClick={() => setActiveTab('profile')}
+            onClick={handleLogout}
+            title="Logout"
           >
-            <FontAwesomeIcon icon={faSlidersH} className="h-5 w-5 text-gray-600" />
+            <FontAwesomeIcon icon={faSignOutAlt} className="h-5 w-5 text-gray-600" />
           </button>
         </header>
         
