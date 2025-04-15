@@ -8,7 +8,8 @@ import {
   faCheck, 
   faImage, 
   faUser,
-  faUpload
+  faCamera,
+  faCircleInfo
 } from '@fortawesome/free-solid-svg-icons';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
@@ -170,25 +171,24 @@ const ProfileSetup = () => {
             transition={pageTransition}
             className="step-container"
           >
-            <h2 className="step-title">Let's get started</h2>
-            <p className="step-description">Tell us a bit about yourself</p>
+            <h2 className="step-title">Oh hey! Let's start with an intro.</h2>
             
             <div className="form-group">
-              <label htmlFor="name" className="form-label">Your Name</label>
+              <label htmlFor="name" className="form-label">Your first name</label>
               <input
                 type="text"
                 id="name"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                className="form-input"
-                placeholder="Enter your full name"
+                className="form-input bumble-input"
+                placeholder=""
                 required
               />
             </div>
             
             <div className="form-group">
-              <label className="form-label">Date of Birth</label>
+              <label className="form-label">Your birthday</label>
               <div className="date-inputs">
                 <div className="date-input-container">
                   <input
@@ -196,8 +196,8 @@ const ProfileSetup = () => {
                     name="birthDay"
                     value={formData.birthDay}
                     onChange={handleChange}
-                    className="form-input date-input"
-                    placeholder="DD"
+                    className="form-input date-input bumble-input"
+                    placeholder=""
                     min="1"
                     max="31"
                     required
@@ -210,8 +210,8 @@ const ProfileSetup = () => {
                     name="birthMonth"
                     value={formData.birthMonth}
                     onChange={handleChange}
-                    className="form-input date-input"
-                    placeholder="MM"
+                    className="form-input date-input bumble-input"
+                    placeholder=""
                     min="1"
                     max="12"
                     required
@@ -224,8 +224,8 @@ const ProfileSetup = () => {
                     name="birthYear"
                     value={formData.birthYear}
                     onChange={handleChange}
-                    className="form-input date-input"
-                    placeholder="YYYY"
+                    className="form-input date-input bumble-input"
+                    placeholder=""
                     min="1900"
                     max={new Date().getFullYear()}
                     required
@@ -233,6 +233,7 @@ const ProfileSetup = () => {
                   <label className="mini-label">Year</label>
                 </div>
               </div>
+              <p className="date-hint">It's never too early to count down</p>
             </div>
           </motion.div>
         );
@@ -248,42 +249,46 @@ const ProfileSetup = () => {
             transition={pageTransition}
             className="step-container"
           >
-            <h2 className="step-title">Which gender best describes you?</h2>
-            <p className="step-description">You can always update this later.</p>
+            <h2 className="step-title">{formData.name} is a great name</h2>
+            <p className="step-description">
+              We love that you're here. Pick the gender that best describes you, then add more about it if you like.
+            </p>
             
-            <div className="gender-options">
-              <div 
-                className={`gender-option ${formData.gender === 'Woman' ? 'selected' : ''}`}
-                onClick={() => handleGenderSelect('Woman')}
-              >
-                <span className="gender-text">Woman</span>
-                {formData.gender === 'Woman' && (
-                  <span className="gender-check">
-                    <FontAwesomeIcon icon={faCheck} />
-                  </span>
-                )}
+            <div className="form-group">
+              <label className="form-label">Which gender best describes you?</label>
+              <div className="gender-options">
+                <div 
+                  className={`gender-option bumble-option ${formData.gender === 'Woman' ? 'selected' : ''}`}
+                  onClick={() => handleGenderSelect('Woman')}
+                >
+                  <span className="gender-text">Woman</span>
+                  <div className="radio-circle">
+                    {formData.gender === 'Woman' && <div className="radio-dot"></div>}
+                  </div>
+                </div>
+                <div 
+                  className={`gender-option bumble-option ${formData.gender === 'Man' ? 'selected' : ''}`}
+                  onClick={() => handleGenderSelect('Man')}
+                >
+                  <span className="gender-text">Man</span>
+                  <div className="radio-circle">
+                    {formData.gender === 'Man' && <div className="radio-dot"></div>}
+                  </div>
+                </div>
+                <div 
+                  className={`gender-option bumble-option ${formData.gender === 'Nonbinary' ? 'selected' : ''}`}
+                  onClick={() => handleGenderSelect('Nonbinary')}
+                >
+                  <span className="gender-text">Nonbinary</span>
+                  <div className="radio-circle">
+                    {formData.gender === 'Nonbinary' && <div className="radio-dot"></div>}
+                  </div>
+                </div>
               </div>
-              <div 
-                className={`gender-option ${formData.gender === 'Man' ? 'selected' : ''}`}
-                onClick={() => handleGenderSelect('Man')}
-              >
-                <span className="gender-text">Man</span>
-                {formData.gender === 'Man' && (
-                  <span className="gender-check">
-                    <FontAwesomeIcon icon={faCheck} />
-                  </span>
-                )}
-              </div>
-              <div 
-                className={`gender-option ${formData.gender === 'Nonbinary' ? 'selected' : ''}`}
-                onClick={() => handleGenderSelect('Nonbinary')}
-              >
-                <span className="gender-text">Nonbinary</span>
-                {formData.gender === 'Nonbinary' && (
-                  <span className="gender-check">
-                    <FontAwesomeIcon icon={faCheck} />
-                  </span>
-                )}
+              <div className="gender-note">
+                <FontAwesomeIcon icon={faCircleInfo} className="info-icon" />
+                <span>You can always update this later.</span>
+                <a href="#" className="gender-note-link">A note about gender on Bumble.</a>
               </div>
             </div>
           </motion.div>
@@ -300,19 +305,19 @@ const ProfileSetup = () => {
             transition={pageTransition}
             className="step-container"
           >
-            <h2 className="step-title">Contact Information</h2>
-            <p className="step-description">How can people connect with you?</p>
+            <h2 className="step-title">Let's make sure we can reach you</h2>
+            <p className="step-description">We'll keep your contact information secure</p>
             
             <div className="form-group">
-              <label htmlFor="email" className="form-label">Email Address</label>
+              <label htmlFor="email" className="form-label">Email</label>
               <input
                 type="email"
                 id="email"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="form-input"
-                placeholder="youremail@example.com"
+                className="form-input bumble-input"
+                placeholder=""
                 required
               />
             </div>
@@ -325,7 +330,7 @@ const ProfileSetup = () => {
                 name="twitter"
                 value={formData.twitter}
                 onChange={handleChange}
-                className="form-input"
+                className="form-input bumble-input"
                 placeholder="@yourhandle"
               />
             </div>
@@ -343,30 +348,22 @@ const ProfileSetup = () => {
             transition={pageTransition}
             className="step-container"
           >
-            <h2 className="step-title">Profile Images</h2>
-            <p className="step-description">Add a profile photo and cover image</p>
+            <h2 className="step-title">Time to put a face to the name</h2>
+            <p className="step-description">You do you! Add at least 4 photos, whether it's you with your pet, eating your fave food, or in a place you love.</p>
             
-            <div className="upload-container">
+            <div className="photo-grid">
               <div 
-                className="profile-upload-area"
-                onDrop={(e) => handleDrop(e, 'profileImage')}
-                onDragOver={handleDragOver}
+                className="photo-upload-box"
                 onClick={() => profileImageRef.current.click()}
               >
                 {formData.profileImagePreview ? (
-                  <div className="profile-preview-container">
-                    <img 
-                      src={formData.profileImagePreview} 
-                      alt="Profile Preview" 
-                      className="profile-image-preview" 
-                    />
-                  </div>
+                  <img 
+                    src={formData.profileImagePreview} 
+                    alt="Profile" 
+                    className="uploaded-photo" 
+                  />
                 ) : (
-                  <div className="upload-placeholder">
-                    <FontAwesomeIcon icon={faUser} className="upload-icon" />
-                    <p>Profile Photo</p>
-                    <span>Click or drop image here</span>
-                  </div>
+                  <span className="plus-icon">+</span>
                 )}
                 <input
                   type="file"
@@ -378,25 +375,17 @@ const ProfileSetup = () => {
               </div>
               
               <div 
-                className="timeline-upload-area"
-                onDrop={(e) => handleDrop(e, 'timelineImage')}
-                onDragOver={handleDragOver}
+                className="photo-upload-box"
                 onClick={() => timelineImageRef.current.click()}
               >
                 {formData.timelineImagePreview ? (
-                  <div className="timeline-preview-container">
-                    <img 
-                      src={formData.timelineImagePreview} 
-                      alt="Timeline Preview" 
-                      className="timeline-image-preview" 
-                    />
-                  </div>
+                  <img 
+                    src={formData.timelineImagePreview} 
+                    alt="Timeline" 
+                    className="uploaded-photo" 
+                  />
                 ) : (
-                  <div className="upload-placeholder">
-                    <FontAwesomeIcon icon={faImage} className="upload-icon" />
-                    <p>Cover Image</p>
-                    <span>Click or drop image here</span>
-                  </div>
+                  <span className="plus-icon">+</span>
                 )}
                 <input
                   type="file"
@@ -405,6 +394,30 @@ const ProfileSetup = () => {
                   accept="image/*"
                   style={{ display: 'none' }}
                 />
+              </div>
+              
+              {/* Placeholder boxes for additional photos */}
+              <div className="photo-upload-box">
+                <span className="plus-icon">+</span>
+              </div>
+              <div className="photo-upload-box">
+                <span className="plus-icon">+</span>
+              </div>
+              <div className="photo-upload-box">
+                <span className="plus-icon">+</span>
+              </div>
+              <div className="photo-upload-box">
+                <span className="plus-icon">+</span>
+              </div>
+            </div>
+            
+            <div className="photo-tips">
+              <div className="photo-tips-icon">
+                <FontAwesomeIcon icon={faCamera} />
+              </div>
+              <div className="photo-tips-text">
+                Want to make sure you really shine?
+                <a href="#" className="photo-tips-link">Check out our photo tips</a>
               </div>
             </div>
           </motion.div>
@@ -729,6 +742,134 @@ const ProfileSetup = () => {
         
         .gender-check {
           color: #F59E0B;
+        }
+
+        /* Bumble-style inputs */
+        .bumble-input {
+          border-radius: 16px;
+          border: 1px solid #E5E7EB;
+          padding: 16px;
+          font-size: 16px;
+          height: 55px;
+        }
+
+        .bumble-option {
+          background-color: #F3F4F6;
+          border: none;
+          border-radius: 16px;
+          padding: 16px 20px;
+        }
+
+        .bumble-option.selected {
+          background-color: #F3F4F6;
+          border: none;
+        }
+
+        .radio-circle {
+          width: 24px;
+          height: 24px;
+          border-radius: 50%;
+          border: 2px solid #D1D5DB;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .radio-dot {
+          width: 12px;
+          height: 12px;
+          border-radius: 50%;
+          background-color: #F59E0B;
+        }
+
+        .gender-note {
+          display: flex;
+          align-items: center;
+          font-size: 12px;
+          color: #6B7280;
+          margin-top: 16px;
+        }
+
+        .info-icon {
+          margin-right: 6px;
+          font-size: 14px;
+        }
+
+        .gender-note-link {
+          margin-left: 4px;
+          color: #F59E0B;
+          text-decoration: underline;
+        }
+        
+        .date-hint {
+          font-size: 12px;
+          color: #6B7280;
+          margin-top: 8px;
+        }
+
+        /* Photo Grid */
+        .photo-grid {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          grid-gap: 16px;
+          margin-bottom: 32px;
+        }
+
+        .photo-upload-box {
+          aspect-ratio: 1/1;
+          border-radius: 16px;
+          border: 1px solid #D1D5DB;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          overflow: hidden;
+          position: relative;
+        }
+
+        .plus-icon {
+          font-size: 32px;
+          color: #9CA3AF;
+        }
+
+        .uploaded-photo {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        .photo-tips {
+          display: flex;
+          align-items: center;
+          background-color: #F3F4F6;
+          padding: 12px 16px;
+          border-radius: 12px;
+          margin-top: 16px;
+        }
+
+        .photo-tips-icon {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          background-color: black;
+          color: white;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-right: 12px;
+        }
+
+        .photo-tips-text {
+          font-size: 14px;
+          color: #4B5563;
+          display: flex;
+          flex-direction: column;
+        }
+
+        .photo-tips-link {
+          color: #F59E0B;
+          text-decoration: underline;
+          margin-top: 4px;
         }
         
         .upload-container {
