@@ -2,8 +2,7 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/login": "pages/login.js",
-  "/signup": "pages/signup.js",
   "/profile-setup": "pages/profile-setup.js",
+  "/login": "pages/login.js",
   "/onboarding": "pages/onboarding.js"
 }

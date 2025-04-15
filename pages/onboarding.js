@@ -127,7 +127,7 @@ const OnboardingPage = () => {
             animate="center"
             exit="exit"
             transition={{ type: 'tween', duration: 0.4 }}
-            className="w-full max-w-md mx-auto px-6 py-8"
+            className="w-full max-w-md mx-auto px-6 py-8 overflow-y-auto max-h-[80vh]"
           >
             <h1 className="text-3xl font-bold mb-2">Oh hey! Let's start with an intro.</h1>
             
@@ -206,7 +206,7 @@ const OnboardingPage = () => {
             animate="center"
             exit="exit"
             transition={{ type: 'tween', duration: 0.4 }}
-            className="w-full max-w-md mx-auto px-6 py-8"
+            className="w-full max-w-md mx-auto px-6 py-8 overflow-y-auto max-h-[80vh]"
           >
             <h1 className="text-3xl font-bold mb-2">{formData.firstName || 'You'} is a great name</h1>
             <p className="text-gray-600 mb-8">We love that you're here. Pick the gender that best describes you, then add more about it if you like.</p>
@@ -289,7 +289,7 @@ const OnboardingPage = () => {
             animate="center"
             exit="exit"
             transition={{ type: 'tween', duration: 0.4 }}
-            className="w-full max-w-md mx-auto px-6 py-8"
+            className="w-full max-w-md mx-auto px-6 py-8 overflow-y-auto max-h-[80vh]"
           >
             <h1 className="text-3xl font-bold mb-2">Time to put a face to the name</h1>
             <p className="text-gray-600 mb-8">You do you! Add at least 4 photos, whether it's you with your pet, eating your fave food, or in a place you love.</p>
@@ -411,7 +411,7 @@ const OnboardingPage = () => {
         </div>
         
         {/* Form content */}
-        <div className="relative overflow-hidden">
+        <div className="relative overflow-hidden pb-20">
           <AnimatePresence initial={false} custom={direction} mode="wait">
             {renderStep()}
           </AnimatePresence>

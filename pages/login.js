@@ -169,7 +169,7 @@ export default function Login() {
               </Link>
             </p>
             <p className="profile-setup-link">
-              Already registered? <Link href="/profile-setup">Complete your profile</Link>
+              Already registered? <Link href="/onboarding">Complete your profile</Link>
             </p>
             <p className="demo-credentials">
               Demo credentials: test@demo.com / password123
