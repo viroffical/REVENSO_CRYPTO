@@ -56,7 +56,8 @@ export default function Signup() {
     });
     
     if (success) {
-      router.push('/');
+      // Redirect to profile setup instead of home
+      router.push('/profile-setup');
     }
   };
   
@@ -86,7 +87,7 @@ export default function Signup() {
         <div className="auth-card">
           <div className="auth-header">
             <h1 className="auth-title">REVENSO</h1>
-            <p className="auth-subtitle">Create your account</p>
+            <p className="auth-subtitle">Create Account</p>
           </div>
 
           {error && (
