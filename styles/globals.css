@@ -2,225 +2,112 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Custom utilities */
-@layer utilities {
-  .hide-scrollbar {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
-  }
-  .hide-scrollbar::-webkit-scrollbar {
-    display: none;  /* Chrome, Safari and Opera */
-  }
+:root {
+  --primary: #FFDE59;
+  --primary-hover: #FFD700;
+  --primary-focus: #FFEB99;
+  --error: #ef4444;
+  --success: #10b981;
 }
 
-/* Logout button style - From Uiverse.io by BHARGAVPATEL1244 */
-.logout-button {
-  outline: none;
-  cursor: pointer;
-  border: none;
-  padding: 0.9rem 2rem;
-  margin: 0;
-  font-family: inherit;
-  font-size: inherit;
-  position: relative;
-  display: inline-block;
-  letter-spacing: 0.05rem;
+.dark {
+  --primary: #FFD700;
+  --primary-hover: #FFEB99;
+  --primary-focus: #FFDE59;
+}
+
+/* Button styles */
+.btn-primary {
+  background-color: var(--primary);
+  color: #000;
   font-weight: 700;
-  font-size: 17px;
-  border-radius: 500px;
+  padding: 0.5rem 1.5rem;
+  border-radius: 9999px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--primary-focus);
+}
+
+/* Card styles */
+.card {
+  background-color: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  background: #66ff66;
-  color: ghostwhite;
 }
 
-.logout-button span {
-  position: relative;
-  z-index: 10;
-  transition: color 0.4s;
+.dark .card {
+  background-color: #1f2937;
+  color: white;
 }
 
-.logout-button:hover span {
-  color: black;
-}
-
-.logout-button::before,
-.logout-button::after {
-  position: absolute;
-  top: 0;
-  left: 0;
+/* Form input styles */
+.input-field {
   width: 100%;
-  height: 100%;
-  z-index: 0;
+  padding: 0.75rem 1rem;
+  margin-top: 0.5rem;
+  border-radius: 0.375rem;
+  background-color: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  color: #111827;
 }
 
-.logout-button::before {
-  content: "";
-  background: #000;
-  width: 120%;
-  left: -10%;
-  transform: skew(30deg);
-  transition: transform 0.4s cubic-bezier(0.3, 1, 0.8, 1);
+.input-field:focus {
+  border-color: var(--primary);
+  background-color: white;
+  outline: none;
 }
 
-.logout-button:hover::before {
-  transform: translate3d(100%, 0, 0);
+.dark .input-field {
+  background-color: #374151;
+  border-color: #4b5563;
+  color: white;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+.dark .input-field:focus {
+  border-color: var(--primary);
 }
 
-html, body, #__next {
-  height: 100vh;
-  overflow: hidden;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background-color: #f5f5f5;
-  -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
+/* Glassmorphism effect */
+.glassmorphism {
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(8px);
 }
 
-/* Improved mobile support */
-@media (max-width: 640px) {
-  * {
-    touch-action: manipulation;
-  }
-  
-  button {
-    -webkit-tap-highlight-color: transparent;
-  }
-  
-  /* Fix for z-index stacking issues on mobile */
-  .fixed {
-    -webkit-transform: translateZ(0);
-    transform: translateZ(0);
-  }
-  
-  /* Ensure bottom navigation is always visible */
-  .nav-container {
-    -webkit-transform: translateZ(9999px);
-    transform: translateZ(9999px);
-    z-index: 9999999 !important;
-    position: fixed !important;
-    bottom: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    width: 100% !important;
-  }
-  
-  /* Set padding for pages with bottom navigation */
-  body.has-bottom-nav {
-    padding-bottom: 80px !important; /* Increased padding to accommodate taller nav */
-  }
-  
-  /* Increase spacing for content elements that might be cut off */
-  .overflow-y-auto {
-    padding-bottom: 80px !important;
-  }
-  
-  /* Force hardware acceleration on main containers */
-  #__next > div {
-    -webkit-transform: translateZ(0);
-    transform: translateZ(0);
-  }
-  
-  /* Smooth scrolling for card content */
-  .overflow-y-auto {
-    -webkit-overflow-scrolling: touch;
-    scroll-behavior: smooth;
-  }
-  
-  /* Better touch handling for swipe cards */
-  .card-stack {
-    touch-action: manipulation;
-    -webkit-touch-callout: none;
-  }
-  
-  /* Hardware acceleration for better performance */
-  .will-change-transform {
-    will-change: transform;
-  }
-  
-  /* Improved touch feedback */
-  .cursor-grab:active {
-    cursor: grabbing;
-  }
+.dark .glassmorphism {
+  background-color: rgba(31, 41, 55, 0.8);
 }
 
-@keyframes fadeInRight {
-  from {
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes slideUp {
+  from { 
     opacity: 0;
-    transform: translateY(-50%) translateX(-50px);
+    transform: translateY(20px);
   }
-  to {
+  to { 
     opacity: 1;
-    transform: translateY(-50%) translateX(0);
+    transform: translateY(0);
   }
 }
 
-@keyframes fadeInLeft {
-  from {
-    opacity: 0;
-    transform: translateY(-50%) translateX(50px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(-50%) translateX(0);
-  }
-}
-
-button:active {
-  transform: scale(0.98);
-}
-
-/* Hide scrollbar while still allowing scrolling */
-.scrollbar-hide {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
-}
-
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;  /* Chrome, Safari and Opera */
-}
-
-/* Swipe card optimizations */
-.card-stack {
-  -webkit-perspective: 1000px;
-  perspective: 1000px;
-  touch-action: pan-y;
-}
-
-.card-stack * {
-  -webkit-tap-highlight-color: transparent;
-}
-
-@supports (-webkit-touch-callout: none) {
-  /* iOS-specific optimizations */
-  .card-stack {
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-  }
-  
-  /* iOS touch optimizations */
-  .card-stack * {
-    -webkit-overflow-scrolling: touch;
-    -webkit-tap-highlight-color: transparent;
-  }
-  
-  /* Prevent accidental text selection on dragging */
-  .cursor-grab, .cursor-grabbing {
-    -webkit-user-select: none !important;
-    user-select: none !important;
-    -webkit-touch-callout: none !important;
-    touch-callout: none !important;
-  }
-  
-  /* Smooth scrolling for iOS touch events */
-  .will-change-transform {
-    transform: translate3d(0,0,0);
-    backface-visibility: hidden;
-    perspective: 1000px;
-  }
+.animate-slide-up {
+  animation: slideUp 0.4s ease-out;
 }
