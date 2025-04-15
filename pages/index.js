@@ -1,177 +1,121 @@
-import React, { useState, useEffect } from 'react';
-import Head from 'next/head';
-import { useAuth } from '../context/AuthContext';
-import { useTheme } from '../context/ThemeContext';
+import { useState, useEffect } from 'react'
+import dynamic from 'next/dynamic'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMoon, faSun, faEnvelope, faLock, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faUser, faUserCircle, faSlidersH } from '@fortawesome/free-solid-svg-icons';
 
-export default function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [rememberMe, setRememberMe] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [mounted, setMounted] = useState(false);
+// Use dynamic import for components to avoid SSR issues with animations
+const CardStack = dynamic(() => import('../components/CardStack'), { ssr: false })
+const BottomNavigation = dynamic(() => import('../components/BottomNavigation'), { ssr: false })
+const MeetingsComponent = dynamic(() => import('../components/MeetingsComponent'), { ssr: false })
+const EventsComponent = dynamic(() => import('../components/EventsComponent'), { ssr: false })
+const ChatsComponent = dynamic(() => import('../components/ChatsComponent'), { ssr: false })
+const MapDetailComponent = dynamic(() => import('../components/MapDetailComponent'), { ssr: false })
+const DashboardComponent = dynamic(() => import('../components/DashboardComponent'), { ssr: false })
+const ProfileComponent = dynamic(() => import('../components/ProfileComponent'), { ssr: false })
+const SideDrawer = dynamic(() => import('../components/SideDrawer'), { ssr: false })
+import { profiles } from '../data/profiles'
 
-  // Get auth and theme contexts with client-side only
-  const auth = useAuth ? useAuth() : { login: () => {}, error: '', success: '' };
-  const theme = useTheme ? useTheme() : { darkMode: false, toggleDarkMode: () => {} };
-  
-  // Handle client-side only features
+export default function Home() {
+  const [activeTab, setActiveTab] = useState('people');
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  // Listen for custom events from the sidebar to switch tabs
   useEffect(() => {
-    setMounted(true);
+    const handleSetActiveTab = (event) => {
+      setActiveTab(event.detail);
+    };
+    
+    window.addEventListener('setActiveTab', handleSetActiveTab);
+    
+    return () => {
+      window.removeEventListener('setActiveTab', handleSetActiveTab);
+    };
   }, []);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (auth.login) {
-      auth.login(email, password, rememberMe);
-    } else {
-      console.log('Login function not available');
+  const toggleDrawer = () => {
+    setDrawerOpen(!drawerOpen);
+  };
+
+  const closeDrawer = () => {
+    setDrawerOpen(false);
+  };
+
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'people':
+        return <CardStack profiles={profiles} />;
+      case 'maps':
+        return <MapDetailComponent />;
+      case 'meetings':
+        return <MeetingsComponent />;
+      case 'events':
+        return <EventsComponent />;
+      case 'chats':
+        return <ChatsComponent />;
+      case 'dashboard':
+        return <DashboardComponent />;
+      case 'profile':
+        return <ProfileComponent userProfile={userProfile} />;
+      default:
+        return (
+          <div className="flex items-center justify-center h-full">
+            <p className="text-lg text-gray-500">This tab is under development</p>
+          </div>
+        );
     }
   };
 
-  if (!mounted) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
-  }
+  const userProfile = {
+    name: 'Alex Johnson',
+    username: '@alexj',
+    email: 'alex.johnson@example.com',
+    phone: '+1 (555) 123-4567',
+    address: 'San Francisco, CA',
+    dateOfBirth: 'June 15, 1992',
+    occupation: 'Senior Product Designer',
+    bio: 'Creative designer with a passion for user experience and innovative solutions.',
+    following: 196,
+    followers: 1176,
+    isPremium: true,
+    role: 'Gold Member',
+    profileImgUrl: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=256&q=80',
+    socialLinks: [
+      { platform: 'Twitter', handle: '@alexjohnson' },
+      { platform: 'LinkedIn', handle: 'alex-johnson' },
+      { platform: 'Instagram', handle: '@alex.creates' }
+    ]
+  };
 
   return (
     <>
-      <Head>
-        <title>Login | REVENSO</title>
-      </Head>
-      <div className="min-h-screen flex items-center justify-center px-4">
-        <div className="absolute top-4 right-4">
-          <button
-            onClick={theme.toggleDarkMode}
-            className="p-2 rounded-full bg-gray-200 dark:bg-gray-700"
-            aria-label="Toggle Dark Mode"
-          >
-            <FontAwesomeIcon 
-              icon={theme.darkMode ? faSun : faMoon} 
-              className="text-black dark:text-yellow-300"
-            />
+      <div className="relative flex flex-col h-screen max-w-md mx-auto bg-white overflow-hidden">
+        {/* Side Drawer */}
+        <SideDrawer isOpen={drawerOpen} onClose={closeDrawer} userProfile={userProfile} />
+
+        {/* Header - always showing the app name REVENSO */}
+        <header className="flex justify-between items-center p-3 bg-white shadow-sm z-10 sticky top-0">
+          <button className="p-2 touch-manipulation" onClick={toggleDrawer}>
+            <FontAwesomeIcon icon={faBars} className="h-5 w-5 text-gray-600" />
           </button>
-        </div>
-
-        <div className="card w-full max-w-md p-8 animate-fade-in">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-center mb-1">REVENSO</h1>
-            <p className="text-gray-600 dark:text-gray-400">Sign in to your account</p>
+          <div>
+            <h1 className="text-2xl font-bold text-black-500">REVENSO</h1>
           </div>
-
-          {auth.error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-              <span>{auth.error}</span>
-            </div>
-          )}
-
-          {auth.success && (
-            <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
-              <span>{auth.success}</span>
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Email
-              </label>
-              <div className="mt-1 relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <FontAwesomeIcon icon={faEnvelope} className="text-gray-400 text-sm" />
-                </div>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="input-field pl-10"
-                  placeholder="you@example.com"
-                  style={{ paddingLeft: '2.5rem' }}
-                />
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Password
-              </label>
-              <div className="mt-1 relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <FontAwesomeIcon icon={faLock} className="text-gray-400 text-sm" />
-                </div>
-                <input
-                  id="password"
-                  name="password"
-                  type={showPassword ? "text" : "password"}
-                  autoComplete="current-password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="input-field pl-10"
-                  placeholder="••••••••"
-                  style={{ paddingLeft: '2.5rem' }}
-                />
-                <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="text-gray-400"
-                  >
-                    <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} className="text-sm" />
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <input
-                  id="remember-me"
-                  name="remember-me"
-                  type="checkbox"
-                  checked={rememberMe}
-                  onChange={() => setRememberMe(!rememberMe)}
-                  className="h-4 w-4 border-gray-300 rounded"
-                />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
-                  Remember me
-                </label>
-              </div>
-
-              <div className="text-sm">
-                <a href="#" className="font-medium text-yellow-500 hover:text-yellow-400">
-                  Forgot your password?
-                </a>
-              </div>
-            </div>
-
-            <div>
-              <button
-                type="submit"
-                className="btn-primary w-full"
-              >
-                Sign in
-              </button>
-            </div>
-          </form>
-
-          <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              Don't have an account?{' '}
-              <a href="#" className="font-medium text-yellow-500 hover:text-yellow-400">
-                Sign up
-              </a>
-            </p>
-            <p className="mt-4 text-xs text-gray-500 dark:text-gray-400">
-              Demo credentials: test@demo.com / password123
-            </p>
-          </div>
-        </div>
+          <button 
+            className="p-2 touch-manipulation"
+            onClick={() => setActiveTab('profile')}
+          >
+            <FontAwesomeIcon icon={faSlidersH} className="h-5 w-5 text-gray-600" />
+          </button>
+        </header>
+        
+        {/* Main content area */}
+        <main className="flex-1 overflow-hidden pb-32">
+          {renderContent()}
+        </main>
       </div>
+      
+      {/* Bottom navigation - rendered outside the main container to ensure it's always on top */}
+      <BottomNavigation activeTab={activeTab} setActiveTab={setActiveTab} />
     </>
-  );
+  )
 }
