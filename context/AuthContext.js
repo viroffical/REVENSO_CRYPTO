@@ -6,25 +6,28 @@ const MOCK_USER = {
   email: 'test@demo.com',
   password: 'password123',
   name: 'Demo User',
-  avatar: '/avatar-placeholder.png'
+  avatar: '/avatar-placeholder.svg'
 };
 
-const AuthContext = createContext({});
+const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => {
+export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const router = useRouter();
 
-  // Check for existing session on load
+  // Check for existing session on load (client-side only)
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
+    // Make sure code only runs in browser environment
+    if (typeof window !== 'undefined') {
+      const storedUser = localStorage.getItem('user');
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
+      }
+      setLoading(false);
     }
-    setLoading(false);
   }, []);
 
   // Login function with validation
@@ -84,6 +87,8 @@ export const AuthProvider = ({ children }) => {
       {children}
     </AuthContext.Provider>
   );
-};
+}
 
-export const useAuth = () => useContext(AuthContext);
+export function useAuth() {
+  return useContext(AuthContext);
+}

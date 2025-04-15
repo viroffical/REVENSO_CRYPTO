@@ -1,13 +1,12 @@
 import { createContext, useState, useContext, useEffect } from 'react';
 
-const ThemeContext = createContext({});
+const ThemeContext = createContext();
 
-export const ThemeProvider = ({ children }) => {
+export function ThemeProvider({ children }) {
   const [darkMode, setDarkMode] = useState(false);
 
-  // Check for stored theme preference on load
   useEffect(() => {
-    // Check localStorage
+    // Check for stored theme preference on load
     const storedDarkMode = localStorage.getItem('darkMode') === 'true';
     
     // Check system preference if no stored preference
@@ -45,6 +44,8 @@ export const ThemeProvider = ({ children }) => {
       {children}
     </ThemeContext.Provider>
   );
-};
+}
 
-export const useTheme = () => useContext(ThemeContext);
+export function useTheme() {
+  return useContext(ThemeContext);
+}

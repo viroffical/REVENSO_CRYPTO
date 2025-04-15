@@ -2,25 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --primary: #FFDE59;
-  --primary-hover: #FFD700;
-  --primary-focus: #FFEB99;
-  --error: #ef4444;
-  --success: #10b981;
+/* Custom styles without @apply */
+body {
+  background-color: #f9fafb;
+  min-height: 100vh;
 }
 
-.dark {
-  --primary: #FFD700;
-  --primary-hover: #FFEB99;
-  --primary-focus: #FFDE59;
+.dark body {
+  background-color: #111827;
+  color: white;
 }
 
 /* Button styles */
 .btn-primary {
-  background-color: var(--primary);
+  background-color: #facc15;
   color: #000;
-  font-weight: 700;
+  font-weight: 600;
   padding: 0.5rem 1.5rem;
   border-radius: 9999px;
   transition: all 0.3s ease;
@@ -28,13 +25,13 @@
 }
 
 .btn-primary:hover {
-  background-color: var(--primary-hover);
+  background-color: #eab308;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
 .btn-primary:focus {
   outline: none;
-  box-shadow: 0 0 0 3px var(--primary-focus);
+  box-shadow: 0 0 0 3px rgba(250, 204, 21, 0.5);
 }
 
 /* Card styles */
@@ -62,7 +59,7 @@
 }
 
 .input-field:focus {
-  border-color: var(--primary);
+  border-color: #facc15;
   background-color: white;
   outline: none;
 }
@@ -74,17 +71,7 @@
 }
 
 .dark .input-field:focus {
-  border-color: var(--primary);
-}
-
-/* Glassmorphism effect */
-.glassmorphism {
-  background-color: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(8px);
-}
-
-.dark .glassmorphism {
-  background-color: rgba(31, 41, 55, 0.8);
+  border-color: #facc15;
 }
 
 /* Animations */
