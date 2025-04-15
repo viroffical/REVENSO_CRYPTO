@@ -24,9 +24,6 @@ const OnboardingPage = () => {
   const profileImageRef = useRef(null);
   const coverImageRef = useRef(null);
   
-  // Calculate progress percentage
-  const progressPercentage = ((currentStep + 1) / 3) * 100;
-  
   // Handle form data changes
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -384,29 +381,9 @@ const OnboardingPage = () => {
       </Head>
       
       <div className="min-h-screen bg-white">
-        {/* Progress bar */}
-        <div className="h-1 w-full bg-gray-200">
-          <div 
-            className="h-full bg-yellow-500 transition-all duration-300"
-            style={{ width: `${progressPercentage}%` }}
-          ></div>
-        </div>
+        {/* Progress bar removed as requested */}
         
-        {/* Step indicators - simplified circles */}
-        <div className="flex justify-center my-8 px-4 gap-5">
-          {[1, 2, 3].map((step) => (
-            <div 
-              key={step}
-              className={`w-5 h-5 rounded-full border 
-                ${step === currentStep + 1 
-                  ? 'border-2 border-yellow-500' 
-                  : step < currentStep + 1 
-                    ? 'bg-yellow-500 border-transparent' 
-                    : 'border-2 border-gray-300'
-                }`}
-            ></div>
-          ))}
-        </div>
+        {/* Step indicators removed as requested */}
         
         {/* Form content */}
         <div className="relative overflow-hidden pb-20">
