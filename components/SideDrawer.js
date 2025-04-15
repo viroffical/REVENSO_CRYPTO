@@ -1,4 +1,5 @@
 import React from 'react';
+import { useRouter } from 'next/router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faUser, 
@@ -7,8 +8,11 @@ import {
   faArrowRightFromBracket
 } from '@fortawesome/free-solid-svg-icons';
 import { motion } from 'framer-motion';
+import { useAuth } from '../context/AuthContext';
 
 const SideDrawer = ({ isOpen, onClose, userProfile }) => {
+  const router = useRouter();
+  const { logout } = useAuth();
   const drawerVariants = {
     open: {
       x: 0,
@@ -133,7 +137,14 @@ const SideDrawer = ({ isOpen, onClose, userProfile }) => {
         {/* Footer - with extra space to ensure visibility above bottom navigation */}
         <div className="p-4 pt-2 flex flex-col mt-auto">
           {/* Logout Button */}
-          <button className="logout-button w-full mb-4">
+          <button 
+            className="logout-button w-full mb-4"
+            onClick={() => {
+              logout();
+              onClose();
+              router.push('/login');
+            }}
+          >
             <span className="flex items-center justify-center">
               <FontAwesomeIcon icon={faArrowRightFromBracket} className="mr-2" />
               Logout
