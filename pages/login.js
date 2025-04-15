@@ -165,8 +165,11 @@ export default function Login() {
             <p className="signup-text">
               Don't have an account?{' '}
               <Link href="/signup">
-                Sign up
+                Create Account
               </Link>
+            </p>
+            <p className="profile-setup-link">
+              Already registered? <Link href="/profile-setup">Complete your profile</Link>
             </p>
             <p className="demo-credentials">
               Demo credentials: test@demo.com / password123
@@ -342,6 +345,26 @@ export default function Login() {
         }
         
         .signup-text a:hover {
+          color: #D97706;
+        }
+        
+        .profile-setup-link {
+          font-size: 0.875rem;
+          color: #6b7280;
+          margin-bottom: 0.5rem;
+        }
+        
+        .dark .profile-setup-link {
+          color: #9ca3af;
+        }
+        
+        .profile-setup-link a {
+          color: #F59E0B;
+          font-weight: 500;
+          text-decoration: none;
+        }
+        
+        .profile-setup-link a:hover {
           color: #D97706;
         }
         
