@@ -1,5 +1,7 @@
 import '../styles/globals.css'
 import Head from 'next/head'
+import { ThemeProvider } from '../context/ThemeContext'
+import { AuthProvider } from '../context/AuthContext'
 
 export default function App({ Component, pageProps }) {
   return (
@@ -11,7 +13,11 @@ export default function App({ Component, pageProps }) {
         <meta name="description" content="Bumble-like swipeable card interface" />
         <title>Revenso | Crypto Networking App</title>
       </Head>
-      <Component {...pageProps} />
+      <ThemeProvider>
+        <AuthProvider>
+          <Component {...pageProps} />
+        </AuthProvider>
+      </ThemeProvider>
     </>
   )
 }
