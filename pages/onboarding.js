@@ -181,7 +181,7 @@ const OnboardingPage = () => {
             animate="center"
             exit="exit"
             transition={{ type: 'tween', duration: 0.4 }}
-            className="w-full max-w-md mx-auto px-6 py-8 overflow-y-auto max-h-[80vh]"
+            className="w-full max-w-md mx-auto px-6 py-8 overflow-y-auto max-h-[70vh]"
           >
             <form onSubmit={handleSubmitStep1(onSubmitStep1)}>
               <h1 className="text-3xl font-bold mb-2">Oh hey! Let's start with an intro.</h1>
@@ -314,7 +314,7 @@ const OnboardingPage = () => {
             animate="center"
             exit="exit"
             transition={{ type: 'tween', duration: 0.4 }}
-            className="w-full max-w-md mx-auto px-6 py-8 overflow-y-auto max-h-[80vh]"
+            className="w-full max-w-md mx-auto px-6 py-8 overflow-y-auto max-h-[70vh]"
           >
             <form onSubmit={handleSubmitStep2(onSubmitStep2)}>
               <h1 className="text-3xl font-bold mb-2">{formData.firstName || 'You'} is a great name</h1>
@@ -416,7 +416,7 @@ const OnboardingPage = () => {
             animate="center"
             exit="exit"
             transition={{ type: 'tween', duration: 0.4 }}
-            className="w-full max-w-md mx-auto px-6 py-8 overflow-y-auto max-h-[80vh]"
+            className="w-full max-w-md mx-auto px-6 py-8 overflow-y-auto max-h-[70vh]"
           >
             <form onSubmit={handleSubmitStep3(onSubmitStep3)}>
               <h1 className="text-3xl font-bold mb-2">Time to put a face to the name</h1>
@@ -514,30 +514,30 @@ const OnboardingPage = () => {
       
       <div className="min-h-screen bg-white">
         {/* Form content */}
-        <div className="relative overflow-hidden pb-20">
+        <div className="relative overflow-hidden pb-28">
           <AnimatePresence initial={false} custom={direction} mode="wait">
             {renderStep()}
           </AnimatePresence>
         </div>
         
         {/* Navigation buttons */}
-        <div className="fixed bottom-8 right-8 flex space-x-4">
+        <div className="fixed bottom-16 right-8 flex space-x-4 z-50">
           {currentStep > 0 && (
             <button
               onClick={customPrevStep}
-              className="w-12 h-12 rounded-full bg-white shadow-md flex items-center justify-center text-gray-700 hover:bg-gray-100 transition-colors"
+              className="w-14 h-14 rounded-full bg-white shadow-lg flex items-center justify-center text-gray-700 hover:bg-gray-100 transition-colors"
             >
-              <IoIosArrowBack size={24} />
+              <IoIosArrowBack size={28} />
             </button>
           )}
           
           {currentStep < 2 && (
             <button
               onClick={() => isCurrentStepValid().then(valid => valid && customNextStep())}
-              className={`w-12 h-12 rounded-full shadow-md flex items-center justify-center transition-colors
+              className={`w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-colors
                 bg-yellow-500 text-white hover:bg-yellow-600`}
             >
-              <IoIosArrowForward size={24} />
+              <IoIosArrowForward size={28} />
             </button>
           )}
         </div>
