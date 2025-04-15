@@ -8,18 +8,18 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMoon, faSun, faEnvelope, faLock, faEye, faEyeSlash, faUser } from '@fortawesome/free-solid-svg-icons';
 
 export default function Signup() {
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-  });
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
   const [mounted, setMounted] = useState(false);
   
   const router = useRouter();
-  const { user, register, error, success } = useAuth();
-  const { darkMode, toggleDarkMode } = useTheme();
+  const { user, register } = useAuth();
+  const { darkMode, toggleDarkMode } = useTheme ? useTheme() : { darkMode: false, toggleDarkMode: () => {} };
   
   // Handle client-side only features
   useEffect(() => {
@@ -31,24 +31,37 @@ export default function Signup() {
     }
   }, [user, router]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
-    const success = register(formData);
+    
+    setError('');
+    
+    // Basic validations
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+    
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters');
+      return;
+    }
+    
+    // The register function is called from authContext
+    const success = register({
+      firstName,
+      lastName,
+      email,
+      password
+    });
+    
     if (success) {
       router.push('/');
     }
   };
-
+  
   if (!mounted) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    return <div className="loading-screen">Loading...</div>;
   }
 
   return (
@@ -56,90 +69,84 @@ export default function Signup() {
       <Head>
         <title>Sign Up | REVENSO</title>
       </Head>
-      <div className="min-h-screen flex items-center justify-center px-4 bg-white dark:bg-gray-900">
-        <div className="absolute top-4 right-4">
+      <div className={`auth-container ${darkMode ? 'dark' : ''}`}>
+        <div className="theme-toggle">
           <button
             onClick={toggleDarkMode}
-            className="p-2 rounded-full bg-gray-200 dark:bg-gray-700"
+            className="theme-button"
             aria-label="Toggle Dark Mode"
           >
             <FontAwesomeIcon 
               icon={darkMode ? faSun : faMoon} 
-              className="text-black dark:text-yellow-300"
+              style={{ color: darkMode ? '#FCD34D' : '#000000' }}
             />
           </button>
         </div>
 
-        <div className="w-full max-w-md p-8 bg-white dark:bg-gray-800 rounded-xl shadow-md">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-center mb-1 text-yellow-500">REVENSO</h1>
-            <p className="text-gray-600 dark:text-gray-400">Create your account</p>
+        <div className="auth-card">
+          <div className="auth-header">
+            <h1 className="auth-title">REVENSO</h1>
+            <p className="auth-subtitle">Create your account</p>
           </div>
 
           {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <div className="error-alert">
               <span>{error}</span>
             </div>
           )}
 
-          {success && (
-            <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
-              <span>{success}</span>
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  First name
+          <form onSubmit={handleSubmit}>
+            <div className="name-fields">
+              <div className="form-group">
+                <label htmlFor="firstName" className="form-label">
+                  First Name
                 </label>
-                <div className="mt-1 relative rounded-md shadow-sm">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <FontAwesomeIcon icon={faUser} className="text-gray-400 text-sm" />
+                <div className="input-wrapper">
+                  <div className="input-icon">
+                    <FontAwesomeIcon icon={faUser} />
                   </div>
                   <input
                     id="firstName"
                     name="firstName"
                     type="text"
                     required
-                    value={formData.firstName}
-                    onChange={handleChange}
-                    className="appearance-none block w-full px-3 py-2 pl-10 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 dark:bg-gray-700 dark:text-white"
-                    placeholder="Max"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    className="input-field"
+                    placeholder="John"
                   />
                 </div>
               </div>
               
-              <div>
-                <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Last name
+              <div className="form-group">
+                <label htmlFor="lastName" className="form-label">
+                  Last Name
                 </label>
-                <div className="mt-1 relative rounded-md shadow-sm">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <FontAwesomeIcon icon={faUser} className="text-gray-400 text-sm" />
+                <div className="input-wrapper">
+                  <div className="input-icon">
+                    <FontAwesomeIcon icon={faUser} />
                   </div>
                   <input
                     id="lastName"
                     name="lastName"
                     type="text"
                     required
-                    value={formData.lastName}
-                    onChange={handleChange}
-                    className="appearance-none block w-full px-3 py-2 pl-10 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 dark:bg-gray-700 dark:text-white"
-                    placeholder="Robinson"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    className="input-field"
+                    placeholder="Doe"
                   />
                 </div>
               </div>
             </div>
 
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            <div className="form-group">
+              <label htmlFor="email" className="form-label">
                 Email
               </label>
-              <div className="mt-1 relative rounded-md shadow-sm">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <FontAwesomeIcon icon={faEnvelope} className="text-gray-400 text-sm" />
+              <div className="input-wrapper">
+                <div className="input-icon">
+                  <FontAwesomeIcon icon={faEnvelope} />
                 </div>
                 <input
                   id="email"
@@ -147,65 +154,274 @@ export default function Signup() {
                   type="email"
                   autoComplete="email"
                   required
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="appearance-none block w-full px-3 py-2 pl-10 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 dark:bg-gray-700 dark:text-white"
-                  placeholder="m@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="input-field"
+                  placeholder="you@example.com"
                 />
               </div>
             </div>
 
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            <div className="form-group">
+              <label htmlFor="password" className="form-label">
                 Password
               </label>
-              <div className="mt-1 relative rounded-md shadow-sm">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <FontAwesomeIcon icon={faLock} className="text-gray-400 text-sm" />
+              <div className="input-wrapper">
+                <div className="input-icon">
+                  <FontAwesomeIcon icon={faLock} />
                 </div>
                 <input
                   id="password"
                   name="password"
                   type={showPassword ? "text" : "password"}
-                  autoComplete="new-password"
                   required
-                  value={formData.password}
-                  onChange={handleChange}
-                  className="appearance-none block w-full px-3 py-2 pl-10 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 dark:bg-gray-700 dark:text-white"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="input-field"
                   placeholder="••••••••"
                 />
-                <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="text-gray-400"
-                  >
-                    <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} className="text-sm" />
-                  </button>
-                </div>
               </div>
             </div>
 
-            <div>
+            <div className="form-group">
+              <label htmlFor="confirmPassword" className="form-label">
+                Confirm Password
+              </label>
+              <div className="input-wrapper">
+                <div className="input-icon">
+                  <FontAwesomeIcon icon={faLock} />
+                </div>
+                <input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type={showPassword ? "text" : "password"}
+                  required
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="input-field"
+                  placeholder="••••••••"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="password-toggle"
+                >
+                  <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+                </button>
+              </div>
+            </div>
+
+            <div className="form-action">
               <button
                 type="submit"
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-yellow-500 hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
+                className="btn-primary"
               >
-                Create an account
+                Create Account
               </button>
             </div>
           </form>
 
-          <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+          <div className="auth-footer">
+            <p className="signup-text">
               Already have an account?{' '}
-              <Link href="/login" className="font-medium text-yellow-500 hover:text-yellow-400">
+              <Link href="/login">
                 Sign in
               </Link>
             </p>
           </div>
         </div>
       </div>
+      
+      <style jsx>{`
+        .auth-container {
+          min-height: 100vh;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 1rem;
+          background-color: #f9fafb;
+        }
+        
+        .dark {
+          background-color: #111827;
+          color: white;
+        }
+        
+        .theme-toggle {
+          position: absolute;
+          top: 1rem;
+          right: 1rem;
+        }
+        
+        .theme-button {
+          background-color: #e5e7eb;
+          padding: 0.5rem;
+          border-radius: 9999px;
+          border: none;
+          cursor: pointer;
+        }
+        
+        .dark .theme-button {
+          background-color: #374151;
+        }
+        
+        .auth-card {
+          width: 100%;
+          max-width: 480px;
+          padding: 2rem;
+          background-color: white;
+          border-radius: 0.75rem;
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
+        .dark .auth-card {
+          background-color: #1f2937;
+        }
+        
+        .auth-header {
+          text-align: center;
+          margin-bottom: 2rem;
+        }
+        
+        .auth-title {
+          font-size: 1.875rem;
+          font-weight: 700;
+          margin-bottom: 0.25rem;
+          color: #F59E0B;
+        }
+        
+        .auth-subtitle {
+          color: #6b7280;
+        }
+        
+        .dark .auth-subtitle {
+          color: #9ca3af;
+        }
+        
+        .error-alert {
+          background-color: #fee2e2;
+          border: 1px solid #f87171;
+          color: #b91c1c;
+          padding: 0.75rem 1rem;
+          border-radius: 0.375rem;
+          margin-bottom: 1rem;
+        }
+        
+        .form-group {
+          margin-bottom: 1.5rem;
+        }
+        
+        .name-fields {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 1rem;
+        }
+        
+        @media (max-width: 480px) {
+          .name-fields {
+            grid-template-columns: 1fr;
+          }
+        }
+        
+        .input-wrapper {
+          position: relative;
+        }
+        
+        .input-icon {
+          position: absolute;
+          left: 0.75rem;
+          top: 50%;
+          transform: translateY(-50%);
+          color: #9ca3af;
+          width: 1rem;
+        }
+        
+        .input-field {
+          padding-left: 2.5rem;
+          width: 100%;
+          padding: 0.5rem 0.75rem 0.5rem 2.5rem;
+          border: 1px solid #d1d5db;
+          border-radius: 0.375rem;
+          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+          font-size: 0.875rem;
+        }
+        
+        .dark .input-field {
+          background-color: #374151;
+          border-color: #4B5563;
+          color: white;
+        }
+        
+        .input-field:focus {
+          outline: none;
+          border-color: #F59E0B;
+          box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+        }
+        
+        .password-toggle {
+          position: absolute;
+          right: 0.75rem;
+          top: 50%;
+          transform: translateY(-50%);
+          background: none;
+          border: none;
+          color: #9ca3af;
+          cursor: pointer;
+        }
+        
+        .form-action {
+          margin: 1.5rem 0;
+        }
+        
+        .btn-primary {
+          display: flex;
+          width: 100%;
+          justify-content: center;
+          padding: 0.5rem 1rem;
+          border: 1px solid transparent;
+          border-radius: 0.375rem;
+          font-size: 0.875rem;
+          font-weight: 500;
+          background-color: #F59E0B;
+          color: white;
+          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+          cursor: pointer;
+        }
+        
+        .btn-primary:hover {
+          background-color: #D97706;
+        }
+        
+        .auth-footer {
+          text-align: center;
+        }
+        
+        .signup-text {
+          font-size: 0.875rem;
+          color: #6b7280;
+        }
+        
+        .dark .signup-text {
+          color: #9ca3af;
+        }
+        
+        .signup-text a {
+          color: #F59E0B;
+          font-weight: 500;
+          text-decoration: none;
+        }
+        
+        .signup-text a:hover {
+          color: #D97706;
+        }
+        
+        .loading-screen {
+          min-height: 100vh;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+      `}</style>
     </>
   );
 }

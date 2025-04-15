@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faSignOutAlt, faSlidersH } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../context/AuthContext';
+import ProtectedRoute from '../components/ProtectedRoute';
 
 // Use dynamic import for components to avoid SSR issues with animations
 const CardStack = dynamic(() => import('../components/CardStack'), { ssr: false })
@@ -25,18 +26,15 @@ export default function Home() {
   const router = useRouter();
   const { user, logout } = useAuth();
 
-  // Check authentication on client-side
+  // Check client-side mounting
   useEffect(() => {
     setMounted(true);
-    
-    // If no user is logged in, redirect to login
-    if (mounted && !user) {
-      router.push('/login');
-    }
-  }, [user, router, mounted]);
+  }, []);
 
   // Listen for custom events from the sidebar to switch tabs
   useEffect(() => {
+    if (!mounted) return;
+    
     const handleSetActiveTab = (event) => {
       setActiveTab(event.detail);
     };
@@ -46,7 +44,7 @@ export default function Home() {
     return () => {
       window.removeEventListener('setActiveTab', handleSetActiveTab);
     };
-  }, []);
+  }, [mounted]);
 
   const toggleDrawer = () => {
     setDrawerOpen(!drawerOpen);
@@ -85,16 +83,11 @@ export default function Home() {
         );
     }
   };
-  
-  // If not mounted or no user, show loading
-  if (!mounted || !user) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
-  }
 
   // Create a user profile from auth data
-  const userProfile = {
+  const userProfile = user ? {
     name: user.name || `${user.firstName} ${user.lastName}`,
-    username: `@${user.firstName.toLowerCase()}${user.lastName.charAt(0).toLowerCase()}`,
+    username: `@${user.firstName?.toLowerCase() || ''}${user.lastName?.charAt(0)?.toLowerCase() || ''}`,
     email: user.email,
     phone: '+1 (555) 123-4567',
     address: 'San Francisco, CA',
@@ -111,39 +104,62 @@ export default function Home() {
       { platform: 'LinkedIn', handle: 'alex-johnson' },
       { platform: 'Instagram', handle: '@alex.creates' }
     ]
+  } : null;
+
+  // Main app content
+  const AppContent = () => {
+    if (!mounted) {
+      return <div className="loading-screen">Loading...</div>;
+    }
+    
+    return (
+      <>
+        <div className="relative flex flex-col h-screen max-w-md mx-auto bg-white overflow-hidden">
+          {/* Side Drawer */}
+          <SideDrawer isOpen={drawerOpen} onClose={closeDrawer} userProfile={userProfile} />
+
+          {/* Header - always showing the app name REVENSO */}
+          <header className="flex justify-between items-center p-3 bg-white shadow-sm z-10 sticky top-0">
+            <button className="p-2 touch-manipulation" onClick={toggleDrawer}>
+              <FontAwesomeIcon icon={faBars} className="h-5 w-5 text-gray-600" />
+            </button>
+            <div>
+              <h1 className="text-2xl font-bold text-black-500">REVENSO</h1>
+            </div>
+            <button 
+              className="p-2 touch-manipulation"
+              onClick={handleLogout}
+              title="Logout"
+            >
+              <FontAwesomeIcon icon={faSignOutAlt} className="h-5 w-5 text-gray-600" />
+            </button>
+          </header>
+          
+          {/* Main content area */}
+          <main className="flex-1 overflow-hidden pb-32">
+            {renderContent()}
+          </main>
+        </div>
+        
+        {/* Bottom navigation - rendered outside the main container to ensure it's always on top */}
+        <BottomNavigation activeTab={activeTab} setActiveTab={setActiveTab} />
+        
+        <style jsx>{`
+          .loading-screen {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+        `}</style>
+      </>
+    );
   };
 
+  // Wrap the app content with the protected route
   return (
-    <>
-      <div className="relative flex flex-col h-screen max-w-md mx-auto bg-white overflow-hidden">
-        {/* Side Drawer */}
-        <SideDrawer isOpen={drawerOpen} onClose={closeDrawer} userProfile={userProfile} />
-
-        {/* Header - always showing the app name REVENSO */}
-        <header className="flex justify-between items-center p-3 bg-white shadow-sm z-10 sticky top-0">
-          <button className="p-2 touch-manipulation" onClick={toggleDrawer}>
-            <FontAwesomeIcon icon={faBars} className="h-5 w-5 text-gray-600" />
-          </button>
-          <div>
-            <h1 className="text-2xl font-bold text-black-500">REVENSO</h1>
-          </div>
-          <button 
-            className="p-2 touch-manipulation"
-            onClick={handleLogout}
-            title="Logout"
-          >
-            <FontAwesomeIcon icon={faSignOutAlt} className="h-5 w-5 text-gray-600" />
-          </button>
-        </header>
-        
-        {/* Main content area */}
-        <main className="flex-1 overflow-hidden pb-32">
-          {renderContent()}
-        </main>
-      </div>
-      
-      {/* Bottom navigation - rendered outside the main container to ensure it's always on top */}
-      <BottomNavigation activeTab={activeTab} setActiveTab={setActiveTab} />
-    </>
-  )
+    <ProtectedRoute>
+      <AppContent />
+    </ProtectedRoute>
+  );
 }
