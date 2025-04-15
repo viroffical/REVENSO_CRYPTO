@@ -78,7 +78,7 @@ export default function Login() {
               </label>
               <div className="mt-1 relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <FontAwesomeIcon icon={faEnvelope} className="text-gray-400" />
+                  <FontAwesomeIcon icon={faEnvelope} className="text-gray-400 text-sm" />
                 </div>
                 <input
                   id="email"
@@ -90,6 +90,7 @@ export default function Login() {
                   onChange={(e) => setEmail(e.target.value)}
                   className="input-field pl-10"
                   placeholder="you@example.com"
+                  style={{ paddingLeft: '2.5rem' }}
                 />
               </div>
             </div>
@@ -100,7 +101,7 @@ export default function Login() {
               </label>
               <div className="mt-1 relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <FontAwesomeIcon icon={faLock} className="text-gray-400" />
+                  <FontAwesomeIcon icon={faLock} className="text-gray-400 text-sm" />
                 </div>
                 <input
                   id="password"
@@ -112,6 +113,7 @@ export default function Login() {
                   onChange={(e) => setPassword(e.target.value)}
                   className="input-field pl-10"
                   placeholder="••••••••"
+                  style={{ paddingLeft: '2.5rem' }}
                 />
                 <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
                   <button
@@ -119,7 +121,7 @@ export default function Login() {
                     onClick={() => setShowPassword(!showPassword)}
                     className="text-gray-400"
                   >
-                    <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+                    <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} className="text-sm" />
                   </button>
                 </div>
               </div>

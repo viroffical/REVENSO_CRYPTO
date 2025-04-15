@@ -4,43 +4,47 @@ const ThemeContext = createContext();
 
 export function ThemeProvider({ children }) {
   const [darkMode, setDarkMode] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
+  // Initialize theme from localStorage (client-side only)
   useEffect(() => {
-    // Check for stored theme preference on load
-    const storedDarkMode = localStorage.getItem('darkMode') === 'true';
-    
-    // Check system preference if no stored preference
-    if (localStorage.getItem('darkMode') === null && 
-        window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      setDarkMode(true);
-      document.documentElement.classList.add('dark');
-    } else if (storedDarkMode) {
-      setDarkMode(true);
-      document.documentElement.classList.add('dark');
+    // Make sure code only runs in browser environment
+    if (typeof window !== 'undefined') {
+      // Check for saved theme preference or system preference
+      const savedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      
+      if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+        setDarkMode(true);
+        document.documentElement.classList.add('dark');
+      } else {
+        setDarkMode(false);
+        document.documentElement.classList.remove('dark');
+      }
+      
+      setMounted(true);
     }
   }, []);
 
   // Toggle dark mode
   const toggleDarkMode = () => {
-    setDarkMode(prevMode => {
-      const newMode = !prevMode;
-      localStorage.setItem('darkMode', newMode.toString());
-      
-      if (newMode) {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
-      
-      return newMode;
-    });
+    setDarkMode(!darkMode);
+    if (!darkMode) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
   };
 
+  // Avoid hydration mismatch by only rendering children when mounted
+  if (!mounted) {
+    return <>{children}</>;
+  }
+
   return (
-    <ThemeContext.Provider value={{ 
-      darkMode, 
-      toggleDarkMode
-    }}>
+    <ThemeContext.Provider value={{ darkMode, toggleDarkMode }}>
       {children}
     </ThemeContext.Provider>
   );
