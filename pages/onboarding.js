@@ -399,13 +399,13 @@ const OnboardingPage = () => {
               key={step}
               className={`w-8 h-8 mx-2 rounded-full flex items-center justify-center text-sm 
                 ${step === currentStep + 1 
-                  ? 'border-2 border-yellow-500 text-yellow-500' 
+                  ? 'border-2 border-yellow-500' 
                   : step < currentStep + 1 
-                    ? 'bg-yellow-500 text-white' 
-                    : 'border-2 border-gray-300 text-gray-500'
+                    ? 'bg-yellow-500' 
+                    : 'border-2 border-gray-300'
                 }`}
             >
-              {step}
+              {/* Removed the numbers */}
             </div>
           ))}
         </div>
