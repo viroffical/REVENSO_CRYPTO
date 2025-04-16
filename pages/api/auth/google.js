@@ -1,4 +1,4 @@
-import { supabase } from '../../../lib/supabaseClient';
+import { createClient } from '../../../utils/supabase/client';
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
@@ -6,6 +6,7 @@ export default async function handler(req, res) {
   }
 
   try {
+    const supabase = createClient();
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
