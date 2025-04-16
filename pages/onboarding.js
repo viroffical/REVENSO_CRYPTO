@@ -9,7 +9,6 @@ import {
 } from 'react-icons/io';
 import { FaCamera } from 'react-icons/fa';
 import { IoInformationCircleOutline } from 'react-icons/io5';
-import CaseNavigator from './case-navigator';
 
 const OnboardingPage = () => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -620,7 +619,6 @@ const OnboardingPage = () => {
       </Head>
       
       <div className="min-h-screen bg-white overflow-y-auto h-full" ref={containerRef}>
-        <CaseNavigator />
         {/* Form content */}
         <div className="relative pb-28 overflow-y-auto">
           <AnimatePresence initial={false} custom={direction} mode="wait">
