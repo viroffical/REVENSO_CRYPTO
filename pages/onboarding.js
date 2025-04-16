@@ -688,75 +688,39 @@ const OnboardingPage = () => {
                 
                 <div className="space-y-2">
                   <label className="block text-lg font-medium">What event are you interested in?</label>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div
-                      className={`p-3 border-2 rounded-xl cursor-pointer ${formData.event === 'Networking' ? 'border-yellow-500' : 'border-gray-200'} transition-colors`}
-                      onClick={() => handleChange({ target: { name: 'event', value: 'Networking' } })}
-                    >
-                      <div className="h-24 mb-2 rounded-lg overflow-hidden bg-gray-100">
-                        <img 
-                          src="https://images.unsplash.com/photo-1540317580384-e5d43867caa6?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" 
-                          alt="Networking" 
-                          className="w-full h-full object-cover"
-                          onError={(e) => e.target.src = 'https://via.placeholder.com/150?text=Networking'}
-                        />
+                  <div className="mb-4">
+                    <div className={`p-4 border-2 rounded-xl ${formData.event ? 'border-yellow-500' : 'border-gray-300'}`}>
+                      <div className="flex items-center">
+                        <div className="w-24 h-24 rounded-lg overflow-hidden bg-blue-600 flex-shrink-0">
+                          <img 
+                            src="/events/token2049.jpg" 
+                            alt="Token 2049 Dubai" 
+                            className="w-full h-full object-cover"
+                            onError={(e) => e.target.src = 'https://via.placeholder.com/150?text=Token2049'}
+                          />
+                        </div>
+                        <div className="ml-4 flex-grow">
+                          <h3 className="font-bold text-lg">Token 2049 Dubai</h3>
+                          <p className="text-gray-600 text-sm">The flagship crypto & blockchain event in the Middle East</p>
+                          <select
+                            {...registerStep4('event', { 
+                              required: 'Please select your participation type'
+                            })}
+                            name="event"
+                            value={formData.event}
+                            onChange={handleChange}
+                            className={`mt-2 w-full p-2 border-2 ${errorsStep4?.event ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent`}
+                          >
+                            <option value="">Select your participation</option>
+                            <option value="Attendee">Attendee</option>
+                            <option value="Speaker">Speaker</option>
+                            <option value="Exhibitor">Exhibitor</option>
+                            <option value="Investor">Investor</option>
+                          </select>
+                        </div>
                       </div>
-                      <div className="font-medium text-center">Networking</div>
-                    </div>
-                    
-                    <div
-                      className={`p-3 border-2 rounded-xl cursor-pointer ${formData.event === 'Workshop' ? 'border-yellow-500' : 'border-gray-200'} transition-colors`}
-                      onClick={() => handleChange({ target: { name: 'event', value: 'Workshop' } })}
-                    >
-                      <div className="h-24 mb-2 rounded-lg overflow-hidden bg-gray-100">
-                        <img 
-                          src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" 
-                          alt="Workshop" 
-                          className="w-full h-full object-cover"
-                          onError={(e) => e.target.src = 'https://via.placeholder.com/150?text=Workshop'}
-                        />
-                      </div>
-                      <div className="font-medium text-center">Workshop</div>
-                    </div>
-                    
-                    <div
-                      className={`p-3 border-2 rounded-xl cursor-pointer ${formData.event === 'Conference' ? 'border-yellow-500' : 'border-gray-200'} transition-colors`}
-                      onClick={() => handleChange({ target: { name: 'event', value: 'Conference' } })}
-                    >
-                      <div className="h-24 mb-2 rounded-lg overflow-hidden bg-gray-100">
-                        <img 
-                          src="https://images.unsplash.com/photo-1515187029135-18ee286d815b?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" 
-                          alt="Conference" 
-                          className="w-full h-full object-cover"
-                          onError={(e) => e.target.src = 'https://via.placeholder.com/150?text=Conference'}
-                        />
-                      </div>
-                      <div className="font-medium text-center">Conference</div>
-                    </div>
-                    
-                    <div
-                      className={`p-3 border-2 rounded-xl cursor-pointer ${formData.event === 'Seminar' ? 'border-yellow-500' : 'border-gray-200'} transition-colors`}
-                      onClick={() => handleChange({ target: { name: 'event', value: 'Seminar' } })}
-                    >
-                      <div className="h-24 mb-2 rounded-lg overflow-hidden bg-gray-100">
-                        <img 
-                          src="https://images.unsplash.com/photo-1558403194-611308249627?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" 
-                          alt="Seminar" 
-                          className="w-full h-full object-cover"
-                          onError={(e) => e.target.src = 'https://via.placeholder.com/150?text=Seminar'}
-                        />
-                      </div>
-                      <div className="font-medium text-center">Seminar</div>
                     </div>
                   </div>
-                  <input
-                    {...registerStep4('event', { 
-                      required: 'Please select an event'
-                    })}
-                    type="hidden"
-                    name="event"
-                    value={formData.event}
-                  />
                   {errorsStep4?.event && <ErrorMessage message={errorsStep4.event.message} />}
                 </div>
                 
