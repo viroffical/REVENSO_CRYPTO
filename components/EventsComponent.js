@@ -27,15 +27,18 @@ const EventsComponent = () => {
         const { data, error } = await supabase
           .from('event')
           .select('*');
-          
+        const sorted = data.sort((a, b) => {
+          const parse = d => new Date(Date.parse(d));
+          return parse(a.date) - parse(b.date);
+        })
         if (error) throw error;
         
         // If we got data, set the events
-        if (data) {
-          setEvents(data);
+        if (sorted) {
+          setEvents(sorted);
           
           // Extract unique categories
-          const uniqueCategories = [...new Set(data.map(event => event.category))];
+          const uniqueCategories = [...new Set(data.map(event => event.type))];
           setCategories(['All', ...uniqueCategories]);
         }
         
@@ -57,7 +60,7 @@ const EventsComponent = () => {
   // Filter events by selected category
   const filteredEvents = selectedCategory === 'All'
     ? events
-    : events.filter(event => event.category === selectedCategory);
+    : events.filter(event => event.type === selectedCategory);
 
   // Render attendees with count
   const renderAttendees = (attendees) => {
@@ -103,7 +106,7 @@ const EventsComponent = () => {
           </div>
 
           {/* Category Filters */}
-          <div className="mb-2 flex overflow-x-auto -mx-4 px-4 pb-2">
+          <div className="mb-2 flex overflow-x-auto -mx-4 px-4 pb-2 scrollbar-hide">
             {categories.map(category => (
               <button 
                 key={category}
@@ -155,16 +158,16 @@ const EventsComponent = () => {
             {filteredEvents.map((event) => (
               <div key={event.id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 <div className="flex min-h-[140px]">
-                  <div className="w-28 bg-gray-200 flex-shrink-0">
+                  <div className="w-36 bg-gray-200 flex-shrink-0">
                     <img 
-                      src={event.image} 
-                      alt={event.event_name} 
+                      src={event.cover_url} 
+                      alt={event.name} 
                       className="w-full h-full object-cover"
                     />
                   </div>
                   <div className="p-3 flex-1 flex flex-col justify-between">
                     <div>
-                      <h3 className="font-semibold text-base line-clamp-1">{event.event_name}</h3>
+                      <h3 className="font-semibold text-base line-clamp-1">{event.name}</h3>
                       
                       <div className="flex flex-col mt-1.5 space-y-0.5">
                         <div className="flex items-center text-xs text-gray-500">
@@ -181,17 +184,16 @@ const EventsComponent = () => {
                     <div className="mt-auto">
                       <div className="mt-1.5">
                         <span className="text-xs px-2 py-0.5 bg-yellow-100 text-yellow-800 rounded-md inline-block mr-2">
-                          {event.category}
+                          {event.type}
                         </span>
                         <span className="text-xs text-green-500 font-medium inline-block">
-                          {event.entry}
+                          {event.price === "Free" ? "Free" : `$${event.price}`}
                         </span>
                       </div>
 
-                      <div className="flex justify-between items-center mt-2">
+                      {/* <div className="flex justify-between items-center mt-2">
                         {event.invited_users && (() => {
                           try {
-                            // Try to parse JSON if it's a string or use it directly if it's already an array
                             const attendees = typeof event.invited_users === 'string' 
                               ? JSON.parse(event.invited_users) 
                               : event.invited_users;
@@ -204,7 +206,7 @@ const EventsComponent = () => {
                         <span className={`text-xs font-medium px-2.5 py-0.5 rounded-full ${statusColors[event.status] || 'bg-gray-500 text-white'}`}>
                           {event.status}
                         </span>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 </div>
