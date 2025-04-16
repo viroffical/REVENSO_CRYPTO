@@ -620,14 +620,155 @@ const OnboardingPage = () => {
                 </div>
               </div>
               
-              {currentStep === 2 && (
-                <button
-                  type="submit"
-                  className="w-full py-3 bg-yellow-500 text-white font-bold rounded-full hover:bg-yellow-600 transition-colors"
-                >
-                  Complete Profile
-                </button>
-              )}
+              {/* Submit button moved to step 4 */}
+            </form>
+          </motion.div>
+        );
+        
+      case 3:
+        return (
+          <motion.div 
+            id="step4Form"
+            key="step4"
+            custom={direction}
+            variants={slideVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ type: 'tween', duration: 0.4 }}
+            className="w-full max-w-md mx-auto px-6 py-8 pb-32 overflow-visible min-h-full"
+          >
+            <form onSubmit={handleSubmitStep4(onSubmitStep4)}>
+              <h1 className="text-3xl font-bold mb-2">Tell us about your professional self</h1>
+              <p className="text-gray-600 mb-8">Let others know what you do and what you're passionate about.</p>
+              
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <label className="block text-lg font-medium">Occupation</label>
+                  <input
+                    {...registerStep4('occupation', { 
+                      required: 'Occupation is required'
+                    })}
+                    type="text"
+                    name="occupation"
+                    value={formData.occupation}
+                    onChange={handleChange}
+                    className={`w-full p-4 border-2 ${errorsStep4?.occupation ? 'border-red-500' : 'border-gray-300'} rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent`}
+                    placeholder="What do you do?"
+                  />
+                  {errorsStep4?.occupation && <ErrorMessage message={errorsStep4.occupation.message} />}
+                </div>
+                
+                <div className="space-y-2">
+                  <label className="block text-lg font-medium">Bio</label>
+                  <textarea
+                    {...registerStep4('bio', { 
+                      required: 'Bio is required',
+                      minLength: {
+                        value: 10,
+                        message: 'Bio must be at least 10 characters'
+                      },
+                      maxLength: {
+                        value: 500,
+                        message: 'Bio must be less than 500 characters'
+                      }
+                    })}
+                    name="bio"
+                    value={formData.bio}
+                    onChange={handleChange}
+                    className={`w-full p-4 border-2 ${errorsStep4?.bio ? 'border-red-500' : 'border-gray-300'} rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent min-h-[120px]`}
+                    placeholder="Tell us a bit about yourself..."
+                    rows={4}
+                  />
+                  {errorsStep4?.bio && <ErrorMessage message={errorsStep4.bio.message} />}
+                  <div className="flex justify-end">
+                    <span className="text-sm text-gray-500">{formData.bio ? formData.bio.length : 0}/500</span>
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <label className="block text-lg font-medium">What event are you interested in?</label>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div
+                      className={`p-3 border-2 rounded-xl cursor-pointer ${formData.event === 'Networking' ? 'border-yellow-500' : 'border-gray-200'} transition-colors`}
+                      onClick={() => handleChange({ target: { name: 'event', value: 'Networking' } })}
+                    >
+                      <div className="h-24 mb-2 rounded-lg overflow-hidden bg-gray-100">
+                        <img 
+                          src="https://images.unsplash.com/photo-1540317580384-e5d43867caa6?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" 
+                          alt="Networking" 
+                          className="w-full h-full object-cover"
+                          onError={(e) => e.target.src = 'https://via.placeholder.com/150?text=Networking'}
+                        />
+                      </div>
+                      <div className="font-medium text-center">Networking</div>
+                    </div>
+                    
+                    <div
+                      className={`p-3 border-2 rounded-xl cursor-pointer ${formData.event === 'Workshop' ? 'border-yellow-500' : 'border-gray-200'} transition-colors`}
+                      onClick={() => handleChange({ target: { name: 'event', value: 'Workshop' } })}
+                    >
+                      <div className="h-24 mb-2 rounded-lg overflow-hidden bg-gray-100">
+                        <img 
+                          src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" 
+                          alt="Workshop" 
+                          className="w-full h-full object-cover"
+                          onError={(e) => e.target.src = 'https://via.placeholder.com/150?text=Workshop'}
+                        />
+                      </div>
+                      <div className="font-medium text-center">Workshop</div>
+                    </div>
+                    
+                    <div
+                      className={`p-3 border-2 rounded-xl cursor-pointer ${formData.event === 'Conference' ? 'border-yellow-500' : 'border-gray-200'} transition-colors`}
+                      onClick={() => handleChange({ target: { name: 'event', value: 'Conference' } })}
+                    >
+                      <div className="h-24 mb-2 rounded-lg overflow-hidden bg-gray-100">
+                        <img 
+                          src="https://images.unsplash.com/photo-1515187029135-18ee286d815b?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" 
+                          alt="Conference" 
+                          className="w-full h-full object-cover"
+                          onError={(e) => e.target.src = 'https://via.placeholder.com/150?text=Conference'}
+                        />
+                      </div>
+                      <div className="font-medium text-center">Conference</div>
+                    </div>
+                    
+                    <div
+                      className={`p-3 border-2 rounded-xl cursor-pointer ${formData.event === 'Seminar' ? 'border-yellow-500' : 'border-gray-200'} transition-colors`}
+                      onClick={() => handleChange({ target: { name: 'event', value: 'Seminar' } })}
+                    >
+                      <div className="h-24 mb-2 rounded-lg overflow-hidden bg-gray-100">
+                        <img 
+                          src="https://images.unsplash.com/photo-1558403194-611308249627?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" 
+                          alt="Seminar" 
+                          className="w-full h-full object-cover"
+                          onError={(e) => e.target.src = 'https://via.placeholder.com/150?text=Seminar'}
+                        />
+                      </div>
+                      <div className="font-medium text-center">Seminar</div>
+                    </div>
+                  </div>
+                  <input
+                    {...registerStep4('event', { 
+                      required: 'Please select an event'
+                    })}
+                    type="hidden"
+                    name="event"
+                    value={formData.event}
+                  />
+                  {errorsStep4?.event && <ErrorMessage message={errorsStep4.event.message} />}
+                </div>
+                
+                {currentStep === 3 && (
+                  <button
+                    type="submit"
+                    className="w-full py-3 bg-yellow-500 text-white font-bold rounded-full hover:bg-yellow-600 transition-colors mt-8"
+                  >
+                    Complete Profile
+                  </button>
+                )}
+              </div>
             </form>
           </motion.div>
         );
