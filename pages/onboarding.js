@@ -20,6 +20,10 @@ const OnboardingPage = () => {
     gender: '',
     email: '',
     twitter: '',
+    password: '',
+    occupation: '',
+    bio: '',
+    event: '',
     profileImage: null,
     profileImagePreview: null,
     coverImage: null,
@@ -57,6 +61,20 @@ const OnboardingPage = () => {
     handleSubmit: handleSubmitStep3,
   } = useForm({
     mode: 'onChange',
+  });
+  
+  const {
+    register: registerStep4,
+    handleSubmit: handleSubmitStep4,
+    formState: { errors: errorsStep4 },
+    trigger: triggerStep4,
+  } = useForm({
+    mode: 'onChange',
+    defaultValues: {
+      occupation: formData.occupation || '',
+      bio: formData.bio || '',
+      event: formData.event || ''
+    }
   });
 
   const profileImageRef = useRef(null);
@@ -134,6 +152,10 @@ const OnboardingPage = () => {
   };
 
   const onSubmitStep3 = (data) => {
+    customNextStep();
+  };
+  
+  const onSubmitStep4 = (data) => {
     handleFinalSubmit();
   };
   
@@ -146,7 +168,7 @@ const OnboardingPage = () => {
   
   // Navigate to next step
   const nextStep = () => {
-    setCurrentStep(prev => Math.min(prev + 1, 2));
+    setCurrentStep(prev => Math.min(prev + 1, 3));
   };
   
   // Navigate to previous step
@@ -178,6 +200,9 @@ const OnboardingPage = () => {
         return step2Valid;
       case 2:
         return true; // Photos are optional
+      case 3:
+        const step4Valid = await triggerStep4(['occupation', 'bio', 'event']);
+        return step4Valid;
       default:
         return false;
     }
@@ -637,7 +662,7 @@ const OnboardingPage = () => {
             </button>
           )}
           
-          {currentStep < 2 && (
+          {currentStep < 3 && (
             <button
               onClick={() => isCurrentStepValid().then(valid => valid && customNextStep())}
               className={`w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-colors
