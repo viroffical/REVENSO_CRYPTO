@@ -181,7 +181,7 @@ const OnboardingPage = () => {
             animate="center"
             exit="exit"
             transition={{ type: 'tween', duration: 0.4 }}
-            className="w-full max-w-md mx-auto px-6 py-8 overflow-y-auto max-h-[70vh]"
+            className="w-full max-w-md mx-auto px-6 py-8 h-full scrollbar-hide"
           >
             <form onSubmit={handleSubmitStep1(onSubmitStep1)}>
               <h1 className="text-3xl font-bold mb-2">Oh hey! Let's start with an intro.</h1>
@@ -314,7 +314,7 @@ const OnboardingPage = () => {
             animate="center"
             exit="exit"
             transition={{ type: 'tween', duration: 0.4 }}
-            className="w-full max-w-md mx-auto px-6 py-8 overflow-y-auto max-h-[70vh]"
+            className="w-full max-w-md mx-auto px-6 py-8 h-full scrollbar-hide"
           >
             <form onSubmit={handleSubmitStep2(onSubmitStep2)}>
               <h1 className="text-3xl font-bold mb-2">{formData.firstName || 'You'} is a great name</h1>
@@ -416,7 +416,7 @@ const OnboardingPage = () => {
             animate="center"
             exit="exit"
             transition={{ type: 'tween', duration: 0.4 }}
-            className="w-full max-w-md mx-auto px-6 py-8 overflow-y-auto max-h-[70vh]"
+            className="w-full max-w-md mx-auto px-6 py-8 h-full scrollbar-hide"
           >
             <form onSubmit={handleSubmitStep3(onSubmitStep3)}>
               <h1 className="text-3xl font-bold mb-2">Time to put a face to the name</h1>
@@ -512,9 +512,9 @@ const OnboardingPage = () => {
         <title>Complete Your Profile</title>
       </Head>
       
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-white overflow-hidden">
         {/* Form content */}
-        <div className="relative overflow-hidden pb-28">
+        <div className="relative pb-28 scrollbar-hide">
           <AnimatePresence initial={false} custom={direction} mode="wait">
             {renderStep()}
           </AnimatePresence>
