@@ -46,6 +46,8 @@ const OnboardingPage = () => {
     handleSubmit: handleSubmitStep2,
     formState: { errors: errorsStep2 },
     trigger: triggerStep2,
+    setValue: setValueStep2,
+    clearErrors: clearErrorsStep2
   } = useForm({
     mode: 'onChange',
     defaultValues: {
@@ -149,25 +151,25 @@ const OnboardingPage = () => {
       };
       
       // Call the register API endpoint (we'll need to create this)
-      const response = await fetch('/api/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(userData),
-      });
+      // const response = await fetch('/api/register', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify(userData),
+      // });
       
-      const data = await response.json();
+      // const data = await response.json();
       
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to create account');
-      }
+      // if (!response.ok) {
+      //   throw new Error(data.error || 'Failed to create account');
+      // }
       
-      // Registration successful, redirect to the main app
-      alert('Account created successfully! Redirecting to login...');
-      setTimeout(() => {
-        window.location.href = '/login';
-      }, 1500);
+      // // Registration successful, redirect to the main app
+      // alert('Account created successfully! Redirecting to login...');
+      // setTimeout(() => {
+      //   window.location.href = '/login';
+      // }, 1500);
     } catch (error) {
       console.error('Registration error:', error);
       alert(`Registration failed: ${error.message}`);
