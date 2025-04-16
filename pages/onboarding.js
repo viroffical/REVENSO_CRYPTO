@@ -393,29 +393,29 @@ const OnboardingPage = () => {
                 </div>
                 
                 <div className="space-y-2">
-                  <label className="block text-lg font-medium">Bio</label>
+                  <label className="block text-lg font-medium">Looking for</label>
                   <textarea
                     {...registerStep2('bio', { 
-                      required: 'Bio is required',
+                      required: 'Looking for is required',
                       minLength: {
-                        value: 10,
-                        message: 'Bio must be at least 10 characters'
+                        value: 5,
+                        message: 'Must be at least 5 characters'
                       },
                       maxLength: {
-                        value: 500,
-                        message: 'Bio must be less than 500 characters'
+                        value: 50,
+                        message: 'Must be less than 50 characters'
                       }
                     })}
                     name="bio"
                     value={formData.bio}
                     onChange={handleChange}
-                    className={`w-full p-4 border-2 ${errorsStep2?.bio ? 'border-red-500' : 'border-gray-300'} rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent min-h-[120px]`}
-                    placeholder="Tell us a bit about yourself..."
-                    rows={4}
+                    className={`w-full p-4 border-2 ${errorsStep2?.bio ? 'border-red-500' : 'border-gray-300'} rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent`}
+                    placeholder="What are you looking for at this event?"
+                    rows={2}
                   />
                   {errorsStep2?.bio && <ErrorMessage message={errorsStep2.bio.message} />}
                   <div className="flex justify-end">
-                    <span className="text-sm text-gray-500">{formData.bio ? formData.bio.length : 0}/500</span>
+                    <span className="text-sm text-gray-500">{formData.bio ? formData.bio.length : 0}/50</span>
                   </div>
                 </div>
                 
