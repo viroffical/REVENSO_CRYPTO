@@ -1,0 +1,97 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  height: 100%;
+  overflow: auto; /* Changed from hidden to auto to allow scrolling */
+}
+
+:root {
+  --primary-color: rgb(249, 158, 11); /* Yellow-500 */
+  --primary-hover-color: rgb(217, 119, 6); /* Yellow-600 */
+}
+
+#__next {
+  height: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Custom utility for hiding scrollbars while maintaining scroll functionality */
+@layer utilities {
+  /* Chrome, Safari and Opera */
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* IE, Edge and Firefox */
+  .scrollbar-hide {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+}
+
+/* Custom component classes */
+.btn-primary {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  background-color: var(--primary-color);
+  color: white;
+  font-weight: bold;
+  border-radius: 9999px;
+  transition: background-color 0.15s ease-in-out;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-hover-color);
+}
+
+.btn-primary:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px white, 0 0 0 4px var(--primary-color);
+}
+
+.btn-secondary {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  border: 1px solid #d1d5db;
+  color: #374151;
+  font-weight: bold;
+  border-radius: 9999px;
+  transition: background-color 0.15s ease-in-out;
+}
+
+.btn-secondary:hover {
+  background-color: #f9fafb;
+}
+
+.btn-secondary:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px white, 0 0 0 4px var(--primary-color);
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 9999px;
+}
+
+.form-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px white, 0 0 0 4px var(--primary-color);
+  border-color: transparent;
+}

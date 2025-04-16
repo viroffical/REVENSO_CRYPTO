@@ -1,5 +1,5 @@
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useState } from 'react';
+import { createClientSupabase } from '../lib/supabase';
 
 interface SignInWithGoogleButtonProps {
   mode: 'signin' | 'signup';
@@ -10,7 +10,7 @@ export default function SignInWithGoogleButton({
   mode,
   className = '',
 }: SignInWithGoogleButtonProps) {
-  const supabase = createClientComponentClient();
+  const supabase = createClientSupabase();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSignInWithGoogle = async () => {
