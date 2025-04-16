@@ -429,7 +429,6 @@ const OnboardingPage = () => {
                     className={`w-full p-4 border-2 ${errorsStep2?.bio ? 'border-red-500' : 'border-gray-300'} rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent`}
                     placeholder="Who are you hoping to meet at this event?"
                     rows={3}
-                    maxLength={100}
                   />
                   {errorsStep2?.bio && <ErrorMessage message={errorsStep2.bio.message} />}
                   <div className="flex justify-end">
