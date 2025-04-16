@@ -227,6 +227,9 @@ const OnboardingPage = () => {
   // Track the direction of navigation
   const [direction, setDirection] = useState(0);
   
+  // Track dropdown state
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  
   const customNextStep = async () => {
     const isValid = await isCurrentStepValid();
     
@@ -689,20 +692,84 @@ const OnboardingPage = () => {
                 <div className="space-y-2">
                   <label className="block text-lg font-medium">Are you Attending?</label>
                   <div className="mb-4">
-                    <select
+                    <input
                       {...registerStep4('event', { 
                         required: 'Please select an event'
                       })}
+                      type="hidden"
                       name="event"
                       value={formData.event}
-                      onChange={handleChange}
-                      className={`w-full p-4 border-2 ${errorsStep4?.event ? 'border-red-500' : 'border-gray-300'} rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-lg`}
-                    >
-                      <option value="">Select an event</option>
-                      <option value="TOKEN 2049">TOKEN 2049</option>
-                      <option value="ETH Denver">ETH Denver</option>
-                      <option value="Solana Breakpoint">Solana Breakpoint</option>
-                    </select>
+                    />
+                    
+                    <div className={`p-4 border-2 ${errorsStep4?.event ? 'border-red-500' : 'border-gray-300'} rounded-xl`}>
+                      <div className="relative">
+                        <div 
+                          className="flex items-center justify-between cursor-pointer"
+                          onClick={() => setDropdownOpen(!dropdownOpen)}
+                        >
+                          {formData.event ? (
+                            <div className="flex items-center">
+                              {formData.event === "TOKEN 2049" && (
+                                <div className="w-8 h-8 rounded-md overflow-hidden bg-blue-600 mr-3">
+                                  <img 
+                                    src="/events/token2049.jpg" 
+                                    alt="TOKEN 2049" 
+                                    className="w-full h-full object-cover"
+                                    onError={(e) => e.target.src = 'https://via.placeholder.com/150?text=Token2049'}
+                                  />
+                                </div>
+                              )}
+                              <span>{formData.event}</span>
+                            </div>
+                          ) : (
+                            <span className="text-gray-500">Select an event</span>
+                          )}
+                          <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+                          </svg>
+                        </div>
+                        
+                        {dropdownOpen && (
+                          <div className="absolute z-10 w-full bg-white mt-2 rounded-xl border-2 border-gray-300 overflow-hidden">
+                            <div 
+                              className="flex items-center p-3 hover:bg-gray-100 cursor-pointer"
+                              onClick={() => {
+                                handleChange({ target: { name: 'event', value: 'TOKEN 2049' } });
+                                setDropdownOpen(false);
+                              }}
+                            >
+                              <div className="w-8 h-8 rounded-md overflow-hidden bg-blue-600 mr-3">
+                                <img 
+                                  src="/events/token2049.jpg" 
+                                  alt="TOKEN 2049" 
+                                  className="w-full h-full object-cover"
+                                  onError={(e) => e.target.src = 'https://via.placeholder.com/150?text=Token2049'}
+                                />
+                              </div>
+                              <span>TOKEN 2049</span>
+                            </div>
+                            <div 
+                              className="p-3 hover:bg-gray-100 cursor-pointer"
+                              onClick={() => {
+                                handleChange({ target: { name: 'event', value: 'ETH Denver' } });
+                                setDropdownOpen(false);
+                              }}
+                            >
+                              ETH Denver
+                            </div>
+                            <div 
+                              className="p-3 hover:bg-gray-100 cursor-pointer"
+                              onClick={() => {
+                                handleChange({ target: { name: 'event', value: 'Solana Breakpoint' } });
+                                setDropdownOpen(false);
+                              }}
+                            >
+                              Solana Breakpoint
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
                     
                     {formData.event === "TOKEN 2049" && (
                       <div className="mt-4 p-4 bg-gray-50 rounded-xl flex items-center">
