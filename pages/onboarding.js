@@ -377,45 +377,45 @@ const OnboardingPage = () => {
               
               <div className="space-y-6">
                 <div className="space-y-2">
-                  <label className="block text-lg font-medium">Occupation</label>
+                  <label className="block text-lg font-medium">Role and Project</label>
                   <input
                     {...registerStep2('occupation', { 
-                      required: 'Occupation is required'
+                      required: 'Role and Project is required'
                     })}
                     type="text"
                     name="occupation"
                     value={formData.occupation}
                     onChange={handleChange}
                     className={`w-full p-4 border-2 ${errorsStep2?.occupation ? 'border-red-500' : 'border-gray-300'} rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent`}
-                    placeholder="What do you do?"
+                    placeholder="Your role and current project"
                   />
                   {errorsStep2?.occupation && <ErrorMessage message={errorsStep2.occupation.message} />}
                 </div>
                 
                 <div className="space-y-2">
-                  <label className="block text-lg font-medium">Looking for</label>
+                  <label className="block text-lg font-medium">Looking to meet</label>
                   <textarea
                     {...registerStep2('bio', { 
-                      required: 'Looking for is required',
+                      required: 'Looking to meet is required',
                       minLength: {
                         value: 5,
                         message: 'Must be at least 5 characters'
                       },
                       maxLength: {
-                        value: 50,
-                        message: 'Must be less than 50 characters'
+                        value: 100,
+                        message: 'Must be less than 100 characters'
                       }
                     })}
                     name="bio"
                     value={formData.bio}
                     onChange={handleChange}
                     className={`w-full p-4 border-2 ${errorsStep2?.bio ? 'border-red-500' : 'border-gray-300'} rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent`}
-                    placeholder="What are you looking for at this event?"
-                    rows={2}
+                    placeholder="Who are you hoping to meet at this event?"
+                    rows={3}
                   />
                   {errorsStep2?.bio && <ErrorMessage message={errorsStep2.bio.message} />}
                   <div className="flex justify-end">
-                    <span className="text-sm text-gray-500">{formData.bio ? formData.bio.length : 0}/50</span>
+                    <span className="text-sm text-gray-500">{formData.bio ? formData.bio.length : 0}/100</span>
                   </div>
                 </div>
                 
