@@ -260,7 +260,7 @@ const OnboardingPage = () => {
             animate="center"
             exit="exit"
             transition={{ type: 'tween', duration: 0.4 }}
-            className="w-full max-w-md mx-auto px-6 py-8 overflow-visible min-h-full"
+            className="w-full max-w-md mx-auto px-6 py-8 pb-32 overflow-visible min-h-full"
           >
             <form onSubmit={handleSubmitStep1(onSubmitStep1)}>
               <h1 className="text-3xl font-bold mb-2">Oh hey! Let's start with an intro.</h1>
@@ -394,7 +394,7 @@ const OnboardingPage = () => {
             animate="center"
             exit="exit"
             transition={{ type: 'tween', duration: 0.4 }}
-            className="w-full max-w-md mx-auto px-6 py-8 overflow-visible"
+            className="w-full max-w-md mx-auto px-6 py-8 pb-32 overflow-visible min-h-full"
           >
             <form onSubmit={handleSubmitStep2(onSubmitStep2)}>
               <h1 className="text-3xl font-bold mb-2">{formData.firstName || 'You'} is a great name</h1>
@@ -507,9 +507,7 @@ const OnboardingPage = () => {
                 </div>
               </div>
             </form>
-            <div>
-              Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-            </div>
+            {/* Remove placeholder text that was taking space and causing scroll issues */}
           </motion.div>
         );
         
@@ -524,7 +522,7 @@ const OnboardingPage = () => {
             animate="center"
             exit="exit"
             transition={{ type: 'tween', duration: 0.4 }}
-            className="w-full max-w-md mx-auto px-6 py-8 overflow-visible"
+            className="w-full max-w-md mx-auto px-6 py-8 pb-32 overflow-visible min-h-full"
           >
             <form onSubmit={handleSubmitStep3(onSubmitStep3)}>
               <h1 className="text-3xl font-bold mb-2">Time to put a face to the name</h1>
@@ -620,7 +618,7 @@ const OnboardingPage = () => {
         <title>Complete Your Profile</title>
       </Head>
       
-      <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide h-full" ref={containerRef}>
+      <div className="min-h-screen bg-white overflow-y-auto h-full" ref={containerRef}>
         {/* Form content */}
         <div className="relative pb-28 overflow-y-auto">
           <AnimatePresence initial={false} custom={direction} mode="wait">
