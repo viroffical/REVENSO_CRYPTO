@@ -53,6 +53,23 @@ const OnboardingPage = () => {
 
   const profileImageRef = useRef(null);
   const coverImageRef = useRef(null);
+  const containerRef = useRef(null);
+  
+  // Auto-scroll to top on step changes
+  useEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+    
+    // Reset scroll position in window
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  }, [currentStep]);
   
   // Handle form data changes with validation
   const handleChange = (e) => {
@@ -111,6 +128,14 @@ const OnboardingPage = () => {
     setCurrentStep(prev => Math.max(prev - 1, 0));
   };
   
+  // Helper function to scroll to element
+  const scrollToElement = (elementId) => {
+    const element = document.getElementById(elementId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+  
   // Check if current step is valid to proceed
   const isCurrentStepValid = async () => {
     switch (currentStep) {
@@ -152,12 +177,34 @@ const OnboardingPage = () => {
     if (isValid) {
       setDirection(1);
       nextStep();
+      
+      // Smooth scroll to top of container
+      if (containerRef.current) {
+        containerRef.current.scrollTop = 0;
+      }
+      
+      // Scroll to the appropriate form based on next step
+      setTimeout(() => {
+        const nextStepId = `step${currentStep + 2 > 3 ? 3 : currentStep + 2}Form`;
+        scrollToElement(nextStepId);
+      }, 100);
     }
   };
   
   const customPrevStep = () => {
     setDirection(-1);
     prevStep();
+    
+    // Smooth scroll to top of container
+    if (containerRef.current) {
+      containerRef.current.scrollTop = 0;
+    }
+    
+    // Scroll to the appropriate form based on prev step
+    setTimeout(() => {
+      const prevStepId = `step${currentStep > 0 ? currentStep : 1}Form`;
+      scrollToElement(prevStepId);
+    }, 100);
   };
   
   // Render validation error message
@@ -174,6 +221,7 @@ const OnboardingPage = () => {
       case 0:
         return (
           <motion.div 
+            id="step1Form"
             key="step1"
             custom={direction}
             variants={slideVariants}
@@ -307,6 +355,7 @@ const OnboardingPage = () => {
       case 1:
         return (
           <motion.div 
+            id="step2Form"
             key="step2"
             custom={direction}
             variants={slideVariants}
@@ -412,6 +461,7 @@ const OnboardingPage = () => {
       case 2:
         return (
           <motion.div 
+            id="step3Form"
             key="step3"
             custom={direction}
             variants={slideVariants}
@@ -515,9 +565,9 @@ const OnboardingPage = () => {
         <title>Complete Your Profile</title>
       </Head>
       
-      <div className="min-h-screen bg-white overflow-y-auto">
+      <div className="min-h-screen bg-white overflow-y-auto" ref={containerRef}>
         {/* Form content */}
-        <div className="relative pb-28">
+        <div className="relative pb-28 overflow-visible">
           <AnimatePresence initial={false} custom={direction} mode="wait">
             {renderStep()}
           </AnimatePresence>
