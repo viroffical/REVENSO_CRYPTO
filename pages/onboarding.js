@@ -13,11 +13,7 @@ import { IoInformationCircleOutline } from 'react-icons/io5';
 const OnboardingPage = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState({
-    firstName: '',
-    birthDay: '',
-    birthMonth: '',
-    birthYear: '',
-    gender: '',
+    fullName: '',
     email: '',
     twitter: '',
     password: '',
@@ -26,8 +22,6 @@ const OnboardingPage = () => {
     event: '',
     profileImage: null,
     profileImagePreview: null,
-    coverImage: null,
-    coverImagePreview: null,
   });
 
   // React Hook Form setup for each step
@@ -38,36 +32,19 @@ const OnboardingPage = () => {
     trigger: triggerStep1,
   } = useForm({
     mode: 'onChange',
-  });
-
-  const {
-    register: registerStep2,
-    handleSubmit: handleSubmitStep2,
-    formState: { errors: errorsStep2 },
-    trigger: triggerStep2,
-    setValue: setValueStep2,
-    clearErrors: clearErrorsStep2,
-  } = useForm({
-    mode: 'onChange',
     defaultValues: {
-      gender: formData.gender || '',
+      fullName: formData.fullName || '',
       email: formData.email || '',
       twitter: formData.twitter || '',
       password: formData.password || ''
     }
   });
-
-  const {
-    handleSubmit: handleSubmitStep3,
-  } = useForm({
-    mode: 'onChange',
-  });
   
   const {
-    register: registerStep4,
-    handleSubmit: handleSubmitStep4,
-    formState: { errors: errorsStep4 },
-    trigger: triggerStep4,
+    register: registerStep2,
+    handleSubmit: handleSubmitStep2,
+    formState: { errors: errorsStep2 },
+    trigger: triggerStep2,
   } = useForm({
     mode: 'onChange',
     defaultValues: {
@@ -148,14 +125,6 @@ const OnboardingPage = () => {
   };
 
   const onSubmitStep2 = (data) => {
-    customNextStep();
-  };
-
-  const onSubmitStep3 = (data) => {
-    customNextStep();
-  };
-  
-  const onSubmitStep4 = (data) => {
     handleFinalSubmit();
   };
   
@@ -168,7 +137,7 @@ const OnboardingPage = () => {
   
   // Navigate to next step
   const nextStep = () => {
-    setCurrentStep(prev => Math.min(prev + 1, 3));
+    setCurrentStep(prev => Math.min(prev + 1, 1));
   };
   
   // Navigate to previous step
@@ -188,21 +157,11 @@ const OnboardingPage = () => {
   const isCurrentStepValid = async () => {
     switch (currentStep) {
       case 0:
-        const step1Valid = await triggerStep1(['firstName', 'birthDay', 'birthMonth', 'birthYear']);
-        return step1Valid;
+        const step1Valid = await triggerStep1(['fullName', 'email', 'twitter', 'password']);
+        return step1Valid && formData.profileImagePreview !== null;
       case 1:
-        // First check if gender is selected
-        if (!formData.gender) {
-          return false;
-        }
-        // Then validate email, twitter, and password (gender is already validated)
-        const step2Valid = await triggerStep2(['email', 'twitter', 'password']);
+        const step2Valid = await triggerStep2(['occupation', 'bio', 'event']);
         return step2Valid;
-      case 2:
-        return true; // Photos are optional
-      case 3:
-        const step4Valid = await triggerStep4(['occupation', 'bio', 'event']);
-        return step4Valid;
       default:
         return false;
     }
@@ -244,7 +203,7 @@ const OnboardingPage = () => {
       
       // Scroll to the appropriate form based on next step
       setTimeout(() => {
-        const nextStepId = `step${currentStep + 2 > 3 ? 3 : currentStep + 2}Form`;
+        const nextStepId = `step${currentStep + 2 > 1 ? 2 : currentStep + 2}Form`;
         scrollToElement(nextStepId);
       }, 100);
     }
@@ -288,200 +247,33 @@ const OnboardingPage = () => {
             animate="center"
             exit="exit"
             transition={{ type: 'tween', duration: 0.4 }}
-            className="w-full max-w-md mx-auto px-6 py-8 pb-32 overflow-visible min-h-full"
+            className="w-full max-w-md mx-auto px-6 py-8 pb-32 overflow-y-auto scrollbar-hide min-h-full"
           >
             <form onSubmit={handleSubmitStep1(onSubmitStep1)}>
-              <h1 className="text-3xl font-bold mb-2">Oh hey! Let's start with an intro.</h1>
+              <h1 className="text-3xl font-bold mb-2">Welcome to REVENSO</h1>
+              <p className="text-gray-600 mb-8">Let's set up your profile to get you connected.</p>
               
               <div className="space-y-6 mt-8">
                 <div className="space-y-2">
-                  <label className="block text-lg font-medium">Your first name</label>
+                  <label className="block text-lg font-medium">Full Name</label>
                   <input
-                    {...registerStep1('firstName', { 
-                      required: 'First name is required',
-                      pattern: { 
-                        value: /^[A-Za-z]+$/,
-                        message: 'Only letters allowed (A-Z, a-z)'
-                      }
+                    {...registerStep1('fullName', { 
+                      required: 'Full name is required'
                     })}
                     type="text"
-                    name="firstName"
-                    value={formData.firstName}
+                    name="fullName"
+                    value={formData.fullName}
                     onChange={handleChange}
-                    className={`w-full p-4 border-2 ${errorsStep1.firstName ? 'border-red-500' : 'border-gray-300'} rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent`}
-                    placeholder="First name"
+                    className={`w-full p-4 border-2 ${errorsStep1?.fullName ? 'border-red-500' : 'border-gray-300'} rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent`}
+                    placeholder="Your full name"
                   />
-                  {errorsStep1.firstName && <ErrorMessage message={errorsStep1.firstName.message} />}
+                  {errorsStep1?.fullName && <ErrorMessage message={errorsStep1.fullName.message} />}
                 </div>
                 
-                <div className="space-y-2">
-                  <label className="block text-lg font-medium">Your birthday</label>
-                  <div className="flex space-x-4">
-                    <div className="flex-1 space-y-1">
-                      <input
-                        {...registerStep1('birthDay', { 
-                          required: 'Day is required',
-                          pattern: { 
-                            value: /^[0-9]{1,2}$/,
-                            message: 'Numbers only'
-                          },
-                          min: {
-                            value: 1,
-                            message: 'Min 1'
-                          },
-                          max: {
-                            value: 31,
-                            message: 'Max 31'
-                          }
-                        })}
-                        type="text"
-                        name="birthDay"
-                        value={formData.birthDay}
-                        onChange={handleChange}
-                        className={`w-full p-4 border-2 ${errorsStep1.birthDay ? 'border-red-500' : 'border-gray-300'} rounded-2xl focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent`}
-                        placeholder="DD"
-                        maxLength="2"
-                      />
-                      <span className="block text-sm text-gray-500 text-center">Day</span>
-                      {errorsStep1.birthDay && <ErrorMessage message={errorsStep1.birthDay.message} />}
-                    </div>
-                    
-                    <div className="flex-1 space-y-1">
-                      <input
-                        {...registerStep1('birthMonth', { 
-                          required: 'Month is required',
-                          pattern: { 
-                            value: /^[0-9]{1,2}$/,
-                            message: 'Numbers only'
-                          },
-                          min: {
-                            value: 1,
-                            message: 'Min 1'
-                          },
-                          max: {
-                            value: 12,
-                            message: 'Max 12'
-                          }
-                        })}
-                        type="text"
-                        name="birthMonth"
-                        value={formData.birthMonth}
-                        onChange={handleChange}
-                        className={`w-full p-4 border-2 ${errorsStep1.birthMonth ? 'border-red-500' : 'border-gray-300'} rounded-2xl focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent`}
-                        placeholder="MM"
-                        maxLength="2"
-                      />
-                      <span className="block text-sm text-gray-500 text-center">Month</span>
-                      {errorsStep1.birthMonth && <ErrorMessage message={errorsStep1.birthMonth.message} />}
-                    </div>
-                    
-                    <div className="flex-1 space-y-1">
-                      <input
-                        {...registerStep1('birthYear', { 
-                          required: 'Year is required',
-                          pattern: { 
-                            value: /^[0-9]{4}$/,
-                            message: 'Must be 4 digits'
-                          },
-                          min: {
-                            value: 1900,
-                            message: 'Min 1900'
-                          },
-                          max: {
-                            value: new Date().getFullYear(),
-                            message: `Max ${new Date().getFullYear()}`
-                          }
-                        })}
-                        type="text"
-                        name="birthYear"
-                        value={formData.birthYear}
-                        onChange={handleChange}
-                        className={`w-full p-4 border-2 ${errorsStep1.birthYear ? 'border-red-500' : 'border-gray-300'} rounded-2xl focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent`}
-                        placeholder="YYYY"
-                        maxLength="4"
-                      />
-                      <span className="block text-sm text-gray-500 text-center">Year</span>
-                      {errorsStep1.birthYear && <ErrorMessage message={errorsStep1.birthYear.message} />}
-                    </div>
-                  </div>
-                  <p className="text-sm text-gray-500 mt-2">It's never too early to count down</p>
-                </div>
-              </div>
-            </form>
-          </motion.div>
-        );
-        
-      case 1:
-        return (
-          <motion.div 
-            id="step2Form"
-            key="step2"
-            custom={direction}
-            variants={slideVariants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            transition={{ type: 'tween', duration: 0.4 }}
-            className="w-full max-w-md mx-auto px-6 py-8 pb-32 overflow-visible min-h-full"
-          >
-            <form onSubmit={handleSubmitStep2(onSubmitStep2)}>
-              <h1 className="text-3xl font-bold mb-2">{formData.firstName || 'You'} is a great name</h1>
-              <p className="text-gray-600 mb-8">We love that you're here. Pick the gender that best describes you, then add more about it if you like.</p>
-              
-              <div className="space-y-4">
-                <label className="block text-lg font-medium">Which gender best describes you?</label>
-                <input 
-                  {...registerStep2('gender', { 
-                    required: 'Please select a gender' 
-                  })}
-                  type="hidden" 
-                  name="gender" 
-                  value={formData.gender} 
-                />
-                
-                <div 
-                  className={`p-4 rounded-2xl bg-gray-100 flex justify-between items-center cursor-pointer ${formData.gender === 'Woman' ? 'border-2 border-yellow-500' : ''}`}
-                  onClick={() => handleGenderSelect('Woman')}
-                >
-                  <span>Woman</span>
-                  <div className={`w-6 h-6 rounded-full border-2 ${formData.gender === 'Woman' ? 'border-yellow-500 flex items-center justify-center' : 'border-gray-300'}`}>
-                    {formData.gender === 'Woman' && <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>}
-                  </div>
-                </div>
-                
-                <div 
-                  className={`p-4 rounded-2xl bg-gray-100 flex justify-between items-center cursor-pointer ${formData.gender === 'Man' ? 'border-2 border-yellow-500' : ''}`}
-                  onClick={() => handleGenderSelect('Man')}
-                >
-                  <span>Man</span>
-                  <div className={`w-6 h-6 rounded-full border-2 ${formData.gender === 'Man' ? 'border-yellow-500 flex items-center justify-center' : 'border-gray-300'}`}>
-                    {formData.gender === 'Man' && <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>}
-                  </div>
-                </div>
-                
-                <div 
-                  className={`p-4 rounded-2xl bg-gray-100 flex justify-between items-center cursor-pointer ${formData.gender === 'Nonbinary' ? 'border-2 border-yellow-500' : ''}`}
-                  onClick={() => handleGenderSelect('Nonbinary')}
-                >
-                  <span>Nonbinary</span>
-                  <div className={`w-6 h-6 rounded-full border-2 ${formData.gender === 'Nonbinary' ? 'border-yellow-500 flex items-center justify-center' : 'border-gray-300'}`}>
-                    {formData.gender === 'Nonbinary' && <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>}
-                  </div>
-                </div>
-                
-                {errorsStep2.gender && <ErrorMessage message={errorsStep2.gender.message} />}
-                
-                <div className="flex items-center text-sm mt-4 text-gray-500">
-                  <IoInformationCircleOutline className="mr-1" size={16} />
-                  <span>You can always update this later. <a href="#" className="text-yellow-500 underline">A note about gender on our platform.</a></span>
-                </div>
-              </div>
-              
-              <div className="space-y-6 mt-8">
                 <div className="space-y-2">
                   <label className="block text-lg font-medium">Email address</label>
                   <input
-                    {...registerStep2('email', { 
+                    {...registerStep1('email', { 
                       required: 'Email is required',
                       pattern: { 
                         value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
@@ -492,32 +284,16 @@ const OnboardingPage = () => {
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    className={`w-full p-4 border-2 ${errorsStep2.email ? 'border-red-500' : 'border-gray-300'} rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent`}
+                    className={`w-full p-4 border-2 ${errorsStep1?.email ? 'border-red-500' : 'border-gray-300'} rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent`}
                     placeholder="your.email@example.com"
                   />
-                  {errorsStep2.email && <ErrorMessage message={errorsStep2.email.message} />}
-                </div>
-                
-                <div className="space-y-2">
-                  <label className="block text-lg font-medium">Twitter handle</label>
-                  <input
-                    {...registerStep2('twitter', { 
-                      required: 'Twitter handle is required' 
-                    })}
-                    type="text"
-                    name="twitter"
-                    value={formData.twitter}
-                    onChange={handleChange}
-                    className={`w-full p-4 border-2 ${errorsStep2.twitter ? 'border-red-500' : 'border-gray-300'} rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent`}
-                    placeholder="@username"
-                  />
-                  {errorsStep2.twitter && <ErrorMessage message={errorsStep2.twitter.message} />}
+                  {errorsStep1?.email && <ErrorMessage message={errorsStep1.email.message} />}
                 </div>
                 
                 <div className="space-y-2">
                   <label className="block text-lg font-medium">Password</label>
                   <input
-                    {...registerStep2('password', { 
+                    {...registerStep1('password', { 
                       required: 'Password is required',
                       minLength: {
                         value: 8,
@@ -528,35 +304,28 @@ const OnboardingPage = () => {
                     name="password"
                     value={formData.password}
                     onChange={handleChange}
-                    className={`w-full p-4 border-2 ${errorsStep2.password ? 'border-red-500' : 'border-gray-300'} rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent`}
+                    className={`w-full p-4 border-2 ${errorsStep1?.password ? 'border-red-500' : 'border-gray-300'} rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent`}
                     placeholder="••••••••"
                   />
-                  {errorsStep2.password && <ErrorMessage message={errorsStep2.password.message} />}
+                  {errorsStep1?.password && <ErrorMessage message={errorsStep1.password.message} />}
                 </div>
-              </div>
-            </form>
-            {/* Remove placeholder text that was taking space and causing scroll issues */}
-          </motion.div>
-        );
-        
-      case 2:
-        return (
-          <motion.div 
-            id="step3Form"
-            key="step3"
-            custom={direction}
-            variants={slideVariants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            transition={{ type: 'tween', duration: 0.4 }}
-            className="w-full max-w-md mx-auto px-6 py-8 pb-32 overflow-visible min-h-full"
-          >
-            <form onSubmit={handleSubmitStep3(onSubmitStep3)}>
-              <h1 className="text-3xl font-bold mb-2">Time to put a face to the name</h1>
-              <p className="text-gray-600 mb-8">You do you! Add at least 4 photos, whether it's you with your pet, eating your fave food, or in a place you love.</p>
-              
-              <div className="space-y-6 mb-8">
+                
+                <div className="space-y-2">
+                  <label className="block text-lg font-medium">Twitter handle</label>
+                  <input
+                    {...registerStep1('twitter', { 
+                      required: 'Twitter handle is required' 
+                    })}
+                    type="text"
+                    name="twitter"
+                    value={formData.twitter}
+                    onChange={handleChange}
+                    className={`w-full p-4 border-2 ${errorsStep1?.twitter ? 'border-red-500' : 'border-gray-300'} rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent`}
+                    placeholder="@username"
+                  />
+                  {errorsStep1?.twitter && <ErrorMessage message={errorsStep1.twitter.message} />}
+                </div>
+                
                 {/* Profile Avatar */}
                 <div className="space-y-2">
                   <label className="block text-lg font-medium">Profile Avatar</label>
@@ -581,64 +350,28 @@ const OnboardingPage = () => {
                       className="hidden"
                     />
                   </div>
+                  {!formData.profileImagePreview && <p className="text-sm text-gray-500">Please upload a profile picture</p>}
                 </div>
                 
-                {/* Timeline Image */}
-                <div className="space-y-2">
-                  <label className="block text-lg font-medium">Timeline</label>
-                  <div 
-                    className="aspect-[2/1] w-full rounded-2xl border-2 border-gray-300 flex items-center justify-center cursor-pointer overflow-hidden"
-                    onClick={() => coverImageRef.current.click()}
-                  >
-                    {formData.coverImagePreview ? (
-                      <img 
-                        src={formData.coverImagePreview} 
-                        alt="Cover" 
-                        className="w-full h-full object-cover" 
-                      />
-                    ) : (
-                      <span className="text-3xl text-gray-400">+</span>
-                    )}
-                    <input
-                      type="file"
-                      ref={coverImageRef}
-                      onChange={(e) => handleImageChange(e, 'coverImage')}
-                      accept="image/*"
-                      className="hidden"
-                    />
-                  </div>
-                </div>
               </div>
-              
-              <div className="bg-gray-100 p-4 rounded-xl flex items-start space-x-3 mb-8">
-                <div className="bg-black rounded-full w-10 h-10 flex items-center justify-center flex-shrink-0">
-                  <FaCamera className="text-white" />
-                </div>
-                <div>
-                  <p className="text-gray-700">Want to make sure you really shine?</p>
-                  <a href="#" className="text-yellow-500 font-medium">Check out our photo tips</a>
-                </div>
-              </div>
-              
-              {/* Submit button moved to step 4 */}
             </form>
           </motion.div>
         );
         
-      case 3:
+      case 1:
         return (
           <motion.div 
-            id="step4Form"
-            key="step4"
+            id="step2Form"
+            key="step2"
             custom={direction}
             variants={slideVariants}
             initial="enter"
             animate="center"
             exit="exit"
             transition={{ type: 'tween', duration: 0.4 }}
-            className="w-full max-w-md mx-auto px-6 py-8 pb-32 overflow-visible min-h-full"
+            className="w-full max-w-md mx-auto px-6 py-8 pb-32 overflow-y-auto scrollbar-hide min-h-full"
           >
-            <form onSubmit={handleSubmitStep4(onSubmitStep4)}>
+            <form onSubmit={handleSubmitStep2(onSubmitStep2)}>
               <h1 className="text-3xl font-bold mb-2">Tell us about your professional self</h1>
               <p className="text-gray-600 mb-8">Let others know what you do and what you're passionate about.</p>
               
@@ -646,23 +379,23 @@ const OnboardingPage = () => {
                 <div className="space-y-2">
                   <label className="block text-lg font-medium">Occupation</label>
                   <input
-                    {...registerStep4('occupation', { 
+                    {...registerStep2('occupation', { 
                       required: 'Occupation is required'
                     })}
                     type="text"
                     name="occupation"
                     value={formData.occupation}
                     onChange={handleChange}
-                    className={`w-full p-4 border-2 ${errorsStep4?.occupation ? 'border-red-500' : 'border-gray-300'} rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent`}
+                    className={`w-full p-4 border-2 ${errorsStep2?.occupation ? 'border-red-500' : 'border-gray-300'} rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent`}
                     placeholder="What do you do?"
                   />
-                  {errorsStep4?.occupation && <ErrorMessage message={errorsStep4.occupation.message} />}
+                  {errorsStep2?.occupation && <ErrorMessage message={errorsStep2.occupation.message} />}
                 </div>
                 
                 <div className="space-y-2">
                   <label className="block text-lg font-medium">Bio</label>
                   <textarea
-                    {...registerStep4('bio', { 
+                    {...registerStep2('bio', { 
                       required: 'Bio is required',
                       minLength: {
                         value: 10,
@@ -676,11 +409,11 @@ const OnboardingPage = () => {
                     name="bio"
                     value={formData.bio}
                     onChange={handleChange}
-                    className={`w-full p-4 border-2 ${errorsStep4?.bio ? 'border-red-500' : 'border-gray-300'} rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent min-h-[120px]`}
+                    className={`w-full p-4 border-2 ${errorsStep2?.bio ? 'border-red-500' : 'border-gray-300'} rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent min-h-[120px]`}
                     placeholder="Tell us a bit about yourself..."
                     rows={4}
                   />
-                  {errorsStep4?.bio && <ErrorMessage message={errorsStep4.bio.message} />}
+                  {errorsStep2?.bio && <ErrorMessage message={errorsStep2.bio.message} />}
                   <div className="flex justify-end">
                     <span className="text-sm text-gray-500">{formData.bio ? formData.bio.length : 0}/500</span>
                   </div>
@@ -690,7 +423,7 @@ const OnboardingPage = () => {
                   <label className="block text-lg font-medium">Are you Attending?</label>
                   <div className="mb-4">
                     <input
-                      {...registerStep4('event', { 
+                      {...registerStep2('event', { 
                         required: 'Please select an event'
                       })}
                       type="hidden"
@@ -698,7 +431,7 @@ const OnboardingPage = () => {
                       value={formData.event}
                     />
                     
-                    <div className={`p-4 border-2 ${errorsStep4?.event ? 'border-red-500' : 'border-gray-300'} rounded-xl`}>
+                    <div className={`p-4 border-2 ${errorsStep2?.event ? 'border-red-500' : 'border-gray-300'} rounded-xl`}>
                       <div className="relative">
                         <div 
                           className="flex items-center justify-between cursor-pointer"
@@ -768,10 +501,10 @@ const OnboardingPage = () => {
                       </div>
                     </div>
                   </div>
-                  {errorsStep4?.event && <ErrorMessage message={errorsStep4.event.message} />}
+                  {errorsStep2?.event && <ErrorMessage message={errorsStep2.event.message} />}
                 </div>
                 
-                {currentStep === 3 && (
+                {currentStep === 1 && (
                   <button
                     type="submit"
                     className="w-full py-3 bg-yellow-500 text-white font-bold rounded-full hover:bg-yellow-600 transition-colors mt-8"
@@ -814,7 +547,7 @@ const OnboardingPage = () => {
             </button>
           )}
           
-          {currentStep < 3 && (
+          {currentStep < 1 && (
             <button
               onClick={() => isCurrentStepValid().then(valid => valid && customNextStep())}
               className={`w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-colors
