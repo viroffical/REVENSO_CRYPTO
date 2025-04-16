@@ -323,7 +323,18 @@ export default function Login() {
         }
         
         .input-field {
-          padding-left: 2.5rem;
+          width: 100%;
+          border-radius: 0.375rem;
+          border: 1px solid rgba(55, 65, 81, 1);
+          outline: 0;
+          padding: 0.75rem 1rem 0.75rem 2.5rem;
+          color: #1f2937;
+          background-color: white;
+        }
+        
+        .dark .input-field {
+          background-color: #1f2937;
+          color: rgba(243, 244, 246, 1);
         }
         
         .password-toggle {
@@ -365,6 +376,18 @@ export default function Login() {
         
         .form-action {
           margin-bottom: 1.5rem;
+        }
+        
+        .btn-primary {
+          display: block;
+          width: 100%;
+          background-color: rgba(167, 139, 250, 1);
+          padding: 0.75rem;
+          text-align: center;
+          color: rgba(17, 24, 39, 1);
+          border: none;
+          border-radius: 0.375rem;
+          font-weight: 600;
         }
         
         .auth-footer {
@@ -467,11 +490,11 @@ export default function Login() {
           justify-content: center;
           width: 100%;
           padding: 0.75rem 1rem;
-          border: 1px solid #e5e7eb;
-          border-radius: 0.5rem;
+          border: 1px solid rgba(55, 65, 81, 1);
+          border-radius: 0.375rem;
           background-color: white;
           color: #4b5563;
-          font-weight: 500;
+          font-weight: 600;
           transition: all 0.15s ease;
           cursor: pointer;
         }
