@@ -150,26 +150,26 @@ const OnboardingPage = () => {
         // but for now we'll skip this step
       };
       
-      // Call the register API endpoint (we'll need to create this)
-      // const response = await fetch('/api/register', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify(userData),
-      // });
+      // Call the register API endpoint
+      const response = await fetch('/api/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
       
-      // const data = await response.json();
+      const data = await response.json();
       
-      // if (!response.ok) {
-      //   throw new Error(data.error || 'Failed to create account');
-      // }
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to create account');
+      }
       
-      // // Registration successful, redirect to the main app
-      // alert('Account created successfully! Redirecting to login...');
-      // setTimeout(() => {
-      //   window.location.href = '/login';
-      // }, 1500);
+      // Registration successful, redirect to the main app
+      alert('Account created successfully! Redirecting to login...');
+      setTimeout(() => {
+        window.location.href = '/login';
+      }, 1500);
     } catch (error) {
       console.error('Registration error:', error);
       alert(`Registration failed: ${error.message}`);
@@ -521,6 +521,9 @@ const OnboardingPage = () => {
                               className="flex items-center p-3 hover:bg-gray-100 cursor-pointer"
                               onClick={() => {
                                 handleChange({ target: { name: 'event', value: 'TOKEN 2049' } });
+                                // Also update the React Hook Form state and clear errors
+                                setValueStep2('event', 'TOKEN 2049');
+                                clearErrorsStep2('event');
                                 setDropdownOpen(false);
                               }}
                             >
@@ -538,6 +541,9 @@ const OnboardingPage = () => {
                               className="p-3 hover:bg-gray-100 cursor-pointer"
                               onClick={() => {
                                 handleChange({ target: { name: 'event', value: 'ETH Denver' } });
+                                // Also update the React Hook Form state and clear errors
+                                setValueStep2('event', 'ETH Denver');
+                                clearErrorsStep2('event');
                                 setDropdownOpen(false);
                               }}
                             >
@@ -547,6 +553,9 @@ const OnboardingPage = () => {
                               className="p-3 hover:bg-gray-100 cursor-pointer"
                               onClick={() => {
                                 handleChange({ target: { name: 'event', value: 'Solana Breakpoint' } });
+                                // Also update the React Hook Form state and clear errors
+                                setValueStep2('event', 'Solana Breakpoint');
+                                clearErrorsStep2('event');
                                 setDropdownOpen(false);
                               }}
                             >
