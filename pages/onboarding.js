@@ -556,61 +556,58 @@ const OnboardingPage = () => {
               <h1 className="text-3xl font-bold mb-2">Time to put a face to the name</h1>
               <p className="text-gray-600 mb-8">You do you! Add at least 4 photos, whether it's you with your pet, eating your fave food, or in a place you love.</p>
               
-              <div className="grid grid-cols-2 gap-4 mb-8">
-                {/* Photo upload boxes */}
-                <div 
-                  className="aspect-square rounded-2xl border-2 border-gray-300 flex items-center justify-center cursor-pointer overflow-hidden"
-                  onClick={() => profileImageRef.current.click()}
-                >
-                  {formData.profileImagePreview ? (
-                    <img 
-                      src={formData.profileImagePreview} 
-                      alt="Profile" 
-                      className="w-full h-full object-cover" 
-                    />
-                  ) : (
-                    <span className="text-3xl text-gray-400">+</span>
-                  )}
-                  <input
-                    type="file"
-                    ref={profileImageRef}
-                    onChange={(e) => handleImageChange(e, 'profileImage')}
-                    accept="image/*"
-                    className="hidden"
-                  />
-                </div>
-                
-                <div 
-                  className="aspect-square rounded-2xl border-2 border-gray-300 flex items-center justify-center cursor-pointer overflow-hidden"
-                  onClick={() => coverImageRef.current.click()}
-                >
-                  {formData.coverImagePreview ? (
-                    <img 
-                      src={formData.coverImagePreview} 
-                      alt="Cover" 
-                      className="w-full h-full object-cover" 
-                    />
-                  ) : (
-                    <span className="text-3xl text-gray-400">+</span>
-                  )}
-                  <input
-                    type="file"
-                    ref={coverImageRef}
-                    onChange={(e) => handleImageChange(e, 'coverImage')}
-                    accept="image/*"
-                    className="hidden"
-                  />
-                </div>
-                
-                {/* Additional placeholder boxes */}
-                {[...Array(4)].map((_, index) => (
+              <div className="space-y-6 mb-8">
+                {/* Profile Avatar */}
+                <div className="space-y-2">
+                  <label className="block text-lg font-medium">Profile Avatar</label>
                   <div 
-                    key={index}
-                    className="aspect-square rounded-2xl border-2 border-gray-300 flex items-center justify-center cursor-pointer"
+                    className="aspect-square w-full max-w-[200px] rounded-2xl border-2 border-gray-300 flex items-center justify-center cursor-pointer overflow-hidden"
+                    onClick={() => profileImageRef.current.click()}
                   >
-                    <span className="text-3xl text-gray-400">+</span>
+                    {formData.profileImagePreview ? (
+                      <img 
+                        src={formData.profileImagePreview} 
+                        alt="Profile" 
+                        className="w-full h-full object-cover" 
+                      />
+                    ) : (
+                      <span className="text-3xl text-gray-400">+</span>
+                    )}
+                    <input
+                      type="file"
+                      ref={profileImageRef}
+                      onChange={(e) => handleImageChange(e, 'profileImage')}
+                      accept="image/*"
+                      className="hidden"
+                    />
                   </div>
-                ))}
+                </div>
+                
+                {/* Timeline Image */}
+                <div className="space-y-2">
+                  <label className="block text-lg font-medium">Timeline</label>
+                  <div 
+                    className="aspect-[2/1] w-full rounded-2xl border-2 border-gray-300 flex items-center justify-center cursor-pointer overflow-hidden"
+                    onClick={() => coverImageRef.current.click()}
+                  >
+                    {formData.coverImagePreview ? (
+                      <img 
+                        src={formData.coverImagePreview} 
+                        alt="Cover" 
+                        className="w-full h-full object-cover" 
+                      />
+                    ) : (
+                      <span className="text-3xl text-gray-400">+</span>
+                    )}
+                    <input
+                      type="file"
+                      ref={coverImageRef}
+                      onChange={(e) => handleImageChange(e, 'coverImage')}
+                      accept="image/*"
+                      className="hidden"
+                    />
+                  </div>
+                </div>
               </div>
               
               <div className="bg-gray-100 p-4 rounded-xl flex items-start space-x-3 mb-8">
@@ -770,23 +767,6 @@ const OnboardingPage = () => {
                         )}
                       </div>
                     </div>
-                    
-                    {formData.event === "TOKEN 2049" && (
-                      <div className="mt-4 p-4 bg-gray-50 rounded-xl flex items-center">
-                        <div className="w-16 h-16 rounded-lg overflow-hidden bg-blue-600 flex-shrink-0">
-                          <img 
-                            src="/events/token2049.jpg" 
-                            alt="TOKEN 2049" 
-                            className="w-full h-full object-cover"
-                            onError={(e) => e.target.src = 'https://via.placeholder.com/150?text=Token2049'}
-                          />
-                        </div>
-                        <div className="ml-4">
-                          <h3 className="font-bold">TOKEN 2049</h3>
-                          <p className="text-gray-600 text-sm">The flagship crypto & blockchain event</p>
-                        </div>
-                      </div>
-                    )}
                   </div>
                   {errorsStep4?.event && <ErrorMessage message={errorsStep4.event.message} />}
                 </div>
