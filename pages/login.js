@@ -209,15 +209,9 @@ export default function Login() {
           <div className="auth-footer">
             <p className="signup-text">
               Don't have an account?{' '}
-              <Link href="/signup">
+              <Link href="/onboarding">
                 Create Account
               </Link>
-            </p>
-            <p className="profile-setup-link">
-              Already registered? <Link href="/onboarding">Complete your profile</Link>
-            </p>
-            <p className="demo-credentials">
-              Demo credentials: test@demo.com / password123
             </p>
           </div>
         </div>

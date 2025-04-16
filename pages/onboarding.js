@@ -131,10 +131,47 @@ const OnboardingPage = () => {
   };
   
   // Handle final form submission
-  const handleFinalSubmit = () => {
+  const handleFinalSubmit = async () => {
     console.log('Form submitted:', formData);
-    // Here you would typically send the data to your API
-    alert('Profile setup complete!');
+    try {
+      // First, create the user account with email/password
+      const userData = {
+        email: formData.email,
+        password: formData.password,
+        fullName: formData.fullName,
+        twitter: formData.twitter,
+        role: formData.role,
+        project: formData.project,
+        bio: formData.bio,
+        event: formData.event,
+        // We'd normally upload the profile image to storage and store the URL
+        // but for now we'll skip this step
+      };
+      
+      // Call the register API endpoint (we'll need to create this)
+      const response = await fetch('/api/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to create account');
+      }
+      
+      // Registration successful, redirect to the main app
+      alert('Account created successfully! Redirecting to login...');
+      setTimeout(() => {
+        window.location.href = '/login';
+      }, 1500);
+    } catch (error) {
+      console.error('Registration error:', error);
+      alert(`Registration failed: ${error.message}`);
+    }
   };
   
   // Navigate to next step
