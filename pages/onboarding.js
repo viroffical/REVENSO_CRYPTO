@@ -687,39 +687,39 @@ const OnboardingPage = () => {
                 </div>
                 
                 <div className="space-y-2">
-                  <label className="block text-lg font-medium">What event are you interested in?</label>
+                  <label className="block text-lg font-medium">Are you Attending?</label>
                   <div className="mb-4">
-                    <div className={`p-4 border-2 rounded-xl ${formData.event ? 'border-yellow-500' : 'border-gray-300'}`}>
-                      <div className="flex items-center">
-                        <div className="w-24 h-24 rounded-lg overflow-hidden bg-blue-600 flex-shrink-0">
+                    <select
+                      {...registerStep4('event', { 
+                        required: 'Please select an event'
+                      })}
+                      name="event"
+                      value={formData.event}
+                      onChange={handleChange}
+                      className={`w-full p-4 border-2 ${errorsStep4?.event ? 'border-red-500' : 'border-gray-300'} rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-lg`}
+                    >
+                      <option value="">Select an event</option>
+                      <option value="TOKEN 2049">TOKEN 2049</option>
+                      <option value="ETH Denver">ETH Denver</option>
+                      <option value="Solana Breakpoint">Solana Breakpoint</option>
+                    </select>
+                    
+                    {formData.event === "TOKEN 2049" && (
+                      <div className="mt-4 p-4 bg-gray-50 rounded-xl flex items-center">
+                        <div className="w-16 h-16 rounded-lg overflow-hidden bg-blue-600 flex-shrink-0">
                           <img 
                             src="/events/token2049.jpg" 
-                            alt="Token 2049 Dubai" 
+                            alt="TOKEN 2049" 
                             className="w-full h-full object-cover"
                             onError={(e) => e.target.src = 'https://via.placeholder.com/150?text=Token2049'}
                           />
                         </div>
-                        <div className="ml-4 flex-grow">
-                          <h3 className="font-bold text-lg">Token 2049 Dubai</h3>
-                          <p className="text-gray-600 text-sm">The flagship crypto & blockchain event in the Middle East</p>
-                          <select
-                            {...registerStep4('event', { 
-                              required: 'Please select your participation type'
-                            })}
-                            name="event"
-                            value={formData.event}
-                            onChange={handleChange}
-                            className={`mt-2 w-full p-2 border-2 ${errorsStep4?.event ? 'border-red-500' : 'border-gray-300'} rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent`}
-                          >
-                            <option value="">Select your participation</option>
-                            <option value="Attendee">Attendee</option>
-                            <option value="Speaker">Speaker</option>
-                            <option value="Exhibitor">Exhibitor</option>
-                            <option value="Investor">Investor</option>
-                          </select>
+                        <div className="ml-4">
+                          <h3 className="font-bold">TOKEN 2049</h3>
+                          <p className="text-gray-600 text-sm">The flagship crypto & blockchain event</p>
                         </div>
                       </div>
-                    </div>
+                    )}
                   </div>
                   {errorsStep4?.event && <ErrorMessage message={errorsStep4.event.message} />}
                 </div>
