@@ -48,7 +48,8 @@ const OnboardingPage = () => {
     defaultValues: {
       gender: formData.gender || '',
       email: formData.email || '',
-      twitter: formData.twitter || ''
+      twitter: formData.twitter || '',
+      password: formData.password || ''
     }
   });
 
@@ -172,8 +173,8 @@ const OnboardingPage = () => {
         if (!formData.gender) {
           return false;
         }
-        // Then validate email (gender is already validated)
-        const step2Valid = await triggerStep2(['email']);
+        // Then validate email, twitter, and password (gender is already validated)
+        const step2Valid = await triggerStep2(['email', 'twitter', 'password']);
         return step2Valid;
       case 2:
         return true; // Photos are optional
@@ -470,15 +471,39 @@ const OnboardingPage = () => {
                 </div>
                 
                 <div className="space-y-2">
-                  <label className="block text-lg font-medium">Twitter handle (optional)</label>
+                  <label className="block text-lg font-medium">Twitter handle</label>
                   <input
+                    {...registerStep2('twitter', { 
+                      required: 'Twitter handle is required' 
+                    })}
                     type="text"
                     name="twitter"
                     value={formData.twitter}
                     onChange={handleChange}
-                    className="w-full p-4 border-2 border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                    className={`w-full p-4 border-2 ${errorsStep2.twitter ? 'border-red-500' : 'border-gray-300'} rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent`}
                     placeholder="@username"
                   />
+                  {errorsStep2.twitter && <ErrorMessage message={errorsStep2.twitter.message} />}
+                </div>
+                
+                <div className="space-y-2">
+                  <label className="block text-lg font-medium">Password</label>
+                  <input
+                    {...registerStep2('password', { 
+                      required: 'Password is required',
+                      minLength: {
+                        value: 8,
+                        message: 'Password must be at least 8 characters'
+                      }
+                    })}
+                    type="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    className={`w-full p-4 border-2 ${errorsStep2.password ? 'border-red-500' : 'border-gray-300'} rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent`}
+                    placeholder="••••••••"
+                  />
+                  {errorsStep2.password && <ErrorMessage message={errorsStep2.password.message} />}
                 </div>
               </div>
             </form>
@@ -595,7 +620,7 @@ const OnboardingPage = () => {
         <title>Complete Your Profile</title>
       </Head>
       
-      <div className="min-h-screen bg-white overflow-y-auto" ref={containerRef}>
+      <div className="min-h-screen bg-white overflow-y-auto scrollbar-hide" ref={containerRef}>
         {/* Form content */}
         <div className="relative pb-28 overflow-visible">
           <AnimatePresence initial={false} custom={direction} mode="wait">
