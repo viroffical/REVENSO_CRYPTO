@@ -13,9 +13,10 @@ export default function Login() {
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   
   const router = useRouter();
-  const { user, login, error, success } = useAuth();
+  const { user, login, signInWithGoogle, error, success } = useAuth();
   const { darkMode, toggleDarkMode } = useTheme ? useTheme() : { darkMode: false, toggleDarkMode: () => {} };
   
   // Handle client-side only features
@@ -28,11 +29,31 @@ export default function Login() {
     }
   }, [user, router]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const success = login(email, password, rememberMe);
-    if (success) {
-      router.push('/');
+    setIsLoading(true);
+    
+    try {
+      const success = await login(email, password);
+      if (success) {
+        router.push('/');
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  const handleGoogleSignIn = async () => {
+    setIsLoading(true);
+    
+    try {
+      await signInWithGoogle();
+      // Redirect is handled by Supabase OAuth flow
+    } catch (error) {
+      console.error("Google sign-in error:", error);
+      setIsLoading(false);
     }
   };
 
@@ -155,11 +176,33 @@ export default function Login() {
               <button
                 type="submit"
                 className="btn-primary"
+                disabled={isLoading}
               >
-                Sign in
+                {isLoading ? 'Signing in...' : 'Sign in'}
               </button>
             </div>
           </form>
+          
+          <div className="or-divider">
+            <span>OR</span>
+          </div>
+          
+          <div className="social-login">
+            <button 
+              onClick={handleGoogleSignIn}
+              disabled={isLoading}
+              className="google-button"
+              type="button"
+            >
+              <img 
+                className="google-icon" 
+                src="https://www.svgrepo.com/show/475656/google-color.svg" 
+                loading="lazy" 
+                alt="google logo"
+              />
+              <span>Sign in with Google</span>
+            </button>
+          </div>
 
           <div className="auth-footer">
             <p className="signup-text">
@@ -382,6 +425,93 @@ export default function Login() {
           display: flex;
           align-items: center;
           justify-content: center;
+        }
+        
+        .or-divider {
+          display: flex;
+          align-items: center;
+          margin: 1.5rem 0;
+          color: #6b7280;
+        }
+        
+        .dark .or-divider {
+          color: #9ca3af;
+        }
+        
+        .or-divider::before,
+        .or-divider::after {
+          content: '';
+          flex: 1;
+          height: 1px;
+          background-color: #e5e7eb;
+        }
+        
+        .dark .or-divider::before,
+        .dark .or-divider::after {
+          background-color: #374151;
+        }
+        
+        .or-divider span {
+          padding: 0 1rem;
+          font-size: 0.875rem;
+          text-transform: uppercase;
+        }
+        
+        .social-login {
+          margin-bottom: 1.5rem;
+        }
+        
+        .google-button {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          padding: 0.75rem 1rem;
+          border: 1px solid #e5e7eb;
+          border-radius: 0.5rem;
+          background-color: white;
+          color: #4b5563;
+          font-weight: 500;
+          transition: all 0.15s ease;
+          cursor: pointer;
+        }
+        
+        .dark .google-button {
+          background-color: #1f2937;
+          border-color: #374151;
+          color: #e5e7eb;
+        }
+        
+        .google-button:hover {
+          border-color: #d1d5db;
+          box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+        
+        .dark .google-button:hover {
+          border-color: #4b5563;
+        }
+        
+        .google-button:focus {
+          outline: none;
+          ring: 2px;
+          ring-offset: 2px;
+          ring-color: #F59E0B;
+        }
+        
+        .google-button:disabled {
+          opacity: 0.7;
+          cursor: not-allowed;
+        }
+        
+        .google-icon {
+          height: 1.5rem;
+          width: 1.5rem;
+          margin-right: 0.75rem;
+        }
+        
+        .btn-primary:disabled {
+          opacity: 0.7;
+          cursor: not-allowed;
         }
       `}</style>
     </>
