@@ -9,6 +9,7 @@ import {
 } from 'react-icons/io';
 import { FaCamera } from 'react-icons/fa';
 import { IoInformationCircleOutline } from 'react-icons/io5';
+import useRegister from '../lib/useRegister';
 
 const OnboardingPage = () => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -132,11 +133,14 @@ const OnboardingPage = () => {
     handleFinalSubmit();
   };
   
+  // Initialize our custom hook for registration
+  const { registerUser, isLoading, error: registrationError } = useRegister();
+  
   // Handle final form submission
   const handleFinalSubmit = async () => {
     console.log('Form submitted:', formData);
     try {
-      // First, create the user account with email/password
+      // Prepare user data including the profile image preview (base64 data)
       const userData = {
         email: formData.email,
         password: formData.password,
@@ -146,24 +150,11 @@ const OnboardingPage = () => {
         project: formData.project,
         bio: formData.bio,
         event: formData.event,
-        // We'd normally upload the profile image to storage and store the URL
-        // but for now we'll skip this step
+        profileImagePreview: formData.profileImagePreview,
       };
       
-      // Call the register API endpoint
-      const response = await fetch('/api/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(userData),
-      });
-      
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to create account');
-      }
+      // Call the register API through our custom hook
+      const data = await registerUser(userData);
       
       // Registration successful, redirect to the main app
       alert('Account created successfully! Redirecting to login...');
