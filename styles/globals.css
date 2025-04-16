@@ -168,13 +168,14 @@ body {
 }
 
 html, body, #__next {
-  height: 100vh;
-  overflow: hidden;
+  min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #f5f5f5;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 /* Improved mobile support */
