@@ -3,5 +3,7 @@
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
   "/onboarding": "pages/onboarding.js",
-  "/": "pages/index.js"
+  "/": "pages/index.js",
+  "/professional-form": "pages/professional-form.js",
+  "/original-form": "pages/original-form.js"
 }
