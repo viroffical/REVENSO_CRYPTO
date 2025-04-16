@@ -1,0 +1,22 @@
+"use strict";
+/*
+ * ATTENTION: An "eval-source-map" devtool has been used.
+ * This devtool is neither made for production nor for readable output files.
+ * It uses "eval()" calls to create a separate source file with attached SourceMaps in the browser devtools.
+ * If you are trying to read the output file, select a different devtool (https://webpack.js.org/configuration/devtool/)
+ * or disable the default devtool with "devtool: false".
+ * If you are looking for production-ready output files, see mode: "production" (https://webpack.js.org/configuration/mode/).
+ */
+self["webpackHotUpdate_N_E"]("middleware",{
+
+/***/ "(middleware)/./middleware.ts":
+/*!***********************!*\
+  !*** ./middleware.ts ***!
+  \***********************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   config: () => (/* binding */ config),\n/* harmony export */   middleware: () => (/* binding */ middleware)\n/* harmony export */ });\n/* harmony import */ var next_server__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! next/server */ \"(middleware)/./node_modules/next/dist/esm/api/server.js\");\n\nasync function middleware(request) {\n    try {\n        // Temporarily return NextResponse.next() to bypass the updateSession\n        // until we resolve environment variable issues\n        return next_server__WEBPACK_IMPORTED_MODULE_0__.NextResponse.next();\n    // Uncomment this once environment variables are properly available\n    // return await updateSession(request)\n    } catch (error) {\n        console.error('Middleware error:', error);\n        return next_server__WEBPACK_IMPORTED_MODULE_0__.NextResponse.next();\n    }\n}\nconst config = {\n    matcher: [\n        /*\n     * Match all request paths except for the ones starting with:\n     * - _next/static (static files)\n     * - _next/image (image optimization files)\n     * - favicon.ico (favicon file)\n     * Feel free to modify this pattern to include more paths.\n     */ '/((?!_next/static|_next/image|favicon.ico|.*\\\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)'\n    ]\n};\n//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiKG1pZGRsZXdhcmUpLy4vbWlkZGxld2FyZS50cyIsIm1hcHBpbmdzIjoiOzs7Ozs7QUFBNEQ7QUFHckQsZUFBZUMsV0FBV0MsT0FBb0I7SUFDbkQsSUFBSTtRQUNGLHFFQUFxRTtRQUNyRSwrQ0FBK0M7UUFDL0MsT0FBT0YscURBQVlBLENBQUNHLElBQUk7SUFFeEIsbUVBQW1FO0lBQ25FLHNDQUFzQztJQUN4QyxFQUFFLE9BQU9DLE9BQU87UUFDZEMsUUFBUUQsS0FBSyxDQUFDLHFCQUFxQkE7UUFDbkMsT0FBT0oscURBQVlBLENBQUNHLElBQUk7SUFDMUI7QUFDRjtBQUVPLE1BQU1HLFNBQVM7SUFDcEJDLFNBQVM7UUFDUDs7Ozs7O0tBTUMsR0FDRDtLQUNEO0FBQ0gsRUFBQyIsInNvdXJjZXMiOlsiL2hvbWUvcnVubmVyL3dvcmtzcGFjZS9taWRkbGV3YXJlLnRzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IE5leHRSZXNwb25zZSwgdHlwZSBOZXh0UmVxdWVzdCB9IGZyb20gJ25leHQvc2VydmVyJ1xuaW1wb3J0IHsgdXBkYXRlU2Vzc2lvbiB9IGZyb20gJy4vdXRpbHMvc3VwYWJhc2UvbWlkZGxld2FyZSdcblxuZXhwb3J0IGFzeW5jIGZ1bmN0aW9uIG1pZGRsZXdhcmUocmVxdWVzdDogTmV4dFJlcXVlc3QpIHtcbiAgdHJ5IHtcbiAgICAvLyBUZW1wb3JhcmlseSByZXR1cm4gTmV4dFJlc3BvbnNlLm5leHQoKSB0byBieXBhc3MgdGhlIHVwZGF0ZVNlc3Npb25cbiAgICAvLyB1bnRpbCB3ZSByZXNvbHZlIGVudmlyb25tZW50IHZhcmlhYmxlIGlzc3Vlc1xuICAgIHJldHVybiBOZXh0UmVzcG9uc2UubmV4dCgpXG4gICAgXG4gICAgLy8gVW5jb21tZW50IHRoaXMgb25jZSBlbnZpcm9ubWVudCB2YXJpYWJsZXMgYXJlIHByb3Blcmx5IGF2YWlsYWJsZVxuICAgIC8vIHJldHVybiBhd2FpdCB1cGRhdGVTZXNzaW9uKHJlcXVlc3QpXG4gIH0gY2F0Y2ggKGVycm9yKSB7XG4gICAgY29uc29sZS5lcnJvcignTWlkZGxld2FyZSBlcnJvcjonLCBlcnJvcilcbiAgICByZXR1cm4gTmV4dFJlc3BvbnNlLm5leHQoKVxuICB9XG59XG5cbmV4cG9ydCBjb25zdCBjb25maWcgPSB7XG4gIG1hdGNoZXI6IFtcbiAgICAvKlxuICAgICAqIE1hdGNoIGFsbCByZXF1ZXN0IHBhdGhzIGV4Y2VwdCBmb3IgdGhlIG9uZXMgc3RhcnRpbmcgd2l0aDpcbiAgICAgKiAtIF9uZXh0L3N0YXRpYyAoc3RhdGljIGZpbGVzKVxuICAgICAqIC0gX25leHQvaW1hZ2UgKGltYWdlIG9wdGltaXphdGlvbiBmaWxlcylcbiAgICAgKiAtIGZhdmljb24uaWNvIChmYXZpY29uIGZpbGUpXG4gICAgICogRmVlbCBmcmVlIHRvIG1vZGlmeSB0aGlzIHBhdHRlcm4gdG8gaW5jbHVkZSBtb3JlIHBhdGhzLlxuICAgICAqL1xuICAgICcvKCg/IV9uZXh0L3N0YXRpY3xfbmV4dC9pbWFnZXxmYXZpY29uLmljb3wuKlxcXFwuKD86c3ZnfHBuZ3xqcGd8anBlZ3xnaWZ8d2VicCkkKS4qKScsXG4gIF0sXG59Il0sIm5hbWVzIjpbIk5leHRSZXNwb25zZSIsIm1pZGRsZXdhcmUiLCJyZXF1ZXN0IiwibmV4dCIsImVycm9yIiwiY29uc29sZSIsImNvbmZpZyIsIm1hdGNoZXIiXSwiaWdub3JlTGlzdCI6W10sInNvdXJjZVJvb3QiOiIifQ==\n//# sourceURL=webpack-internal:///(middleware)/./middleware.ts\n");
+
+/***/ })
+
+});

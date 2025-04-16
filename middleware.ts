@@ -1,14 +1,13 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { updateSession } from './utils/supabase/middleware'
 
-// Temporarily using a simple middleware that just passes through
-// until we resolve the environment variable issues
 export async function middleware(request: NextRequest) {
   try {
-    // For now, just return the next response
+    // Temporarily return NextResponse.next() to bypass the updateSession
+    // until we resolve environment variable issues
     return NextResponse.next()
     
-    // When environment variables are properly set up, uncomment:
+    // Uncomment this once environment variables are properly available
     // return await updateSession(request)
   } catch (error) {
     console.error('Middleware error:', error)
