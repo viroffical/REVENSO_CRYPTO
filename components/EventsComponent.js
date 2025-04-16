@@ -54,6 +54,10 @@ const EventsComponent = () => {
 
   // Render attendees with count
   const renderAttendees = (attendees) => {
+    if (!attendees || !Array.isArray(attendees) || attendees.length === 0) {
+      return null;
+    }
+    
     const displayCount = 3;
     const hasMore = attendees.length > displayCount;
     
@@ -108,53 +112,95 @@ const EventsComponent = () => {
 
       {/* Scrollable content area */}
       <div className="flex-1 overflow-y-auto px-4 space-y-4 pb-40 scrollbar-hide">
-        {filteredEvents.map((event) => (
-          <div key={event.id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-            <div className="flex min-h-[140px]">
-              <div className="w-28 bg-gray-200 flex-shrink-0">
-                <img 
-                  src={event.image} 
-                  alt={event.event_name} 
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="p-3 flex-1 flex flex-col justify-between">
-                <div>
-                  <h3 className="font-semibold text-base line-clamp-1">{event.event_name}</h3>
-                  
-                  <div className="flex flex-col mt-1.5 space-y-0.5">
-                    <div className="flex items-center text-xs text-gray-500">
-                      <FontAwesomeIcon icon={faCalendarDay} className="mr-1 text-yellow-500 w-3.5" />
-                      <span>{event.date}</span>
-                    </div>
-                    <div className="flex items-center text-xs text-gray-500">
-                      <FontAwesomeIcon icon={faClock} className="mr-1 text-yellow-500 w-3.5" />
-                      <span>{event.start_time} - {event.end_time}</span>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="mt-auto">
-                  <div className="mt-1.5">
-                    <span className="text-xs px-2 py-0.5 bg-yellow-100 text-yellow-800 rounded-md inline-block mr-2">
-                      {event.category}
-                    </span>
-                    <span className="text-xs text-green-500 font-medium inline-block">
-                      {event.entry}
-                    </span>
-                  </div>
-
-                  <div className="flex justify-between items-center mt-2">
-                    {event.invitedUsers && renderAttendees(event.invitedUsers)}
-                    <span className={`text-xs font-medium px-2.5 py-0.5 rounded-full ${statusColors[event.status] || 'bg-gray-500 text-white'}`}>
-                      {event.status}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
+        {loading ? (
+          <div className="flex flex-col items-center justify-center h-64">
+            <FontAwesomeIcon icon={faSpinner} spin className="text-yellow-500 text-4xl mb-4" />
+            <p className="text-gray-500">Loading events...</p>
           </div>
-        ))}
+        ) : error ? (
+          <div className="flex flex-col items-center justify-center h-64">
+            <p className="text-red-500 mb-2">{error}</p>
+            <button 
+              onClick={() => window.location.reload()} 
+              className="px-4 py-2 bg-yellow-500 text-white rounded-full text-sm"
+            >
+              Try Again
+            </button>
+          </div>
+        ) : filteredEvents.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-64">
+            <p className="text-gray-500 mb-2">No events found</p>
+            {selectedCategory !== 'All' && (
+              <button 
+                onClick={() => setSelectedCategory('All')} 
+                className="px-4 py-2 bg-yellow-500 text-white rounded-full text-sm"
+              >
+                Show All Events
+              </button>
+            )}
+          </div>
+        ) : (
+          <>
+            {filteredEvents.map((event) => (
+              <div key={event.id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <div className="flex min-h-[140px]">
+                  <div className="w-28 bg-gray-200 flex-shrink-0">
+                    <img 
+                      src={event.image} 
+                      alt={event.event_name} 
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="p-3 flex-1 flex flex-col justify-between">
+                    <div>
+                      <h3 className="font-semibold text-base line-clamp-1">{event.event_name}</h3>
+                      
+                      <div className="flex flex-col mt-1.5 space-y-0.5">
+                        <div className="flex items-center text-xs text-gray-500">
+                          <FontAwesomeIcon icon={faCalendarDay} className="mr-1 text-yellow-500 w-3.5" />
+                          <span>{event.date}</span>
+                        </div>
+                        <div className="flex items-center text-xs text-gray-500">
+                          <FontAwesomeIcon icon={faClock} className="mr-1 text-yellow-500 w-3.5" />
+                          <span>{event.start_time} - {event.end_time}</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="mt-auto">
+                      <div className="mt-1.5">
+                        <span className="text-xs px-2 py-0.5 bg-yellow-100 text-yellow-800 rounded-md inline-block mr-2">
+                          {event.category}
+                        </span>
+                        <span className="text-xs text-green-500 font-medium inline-block">
+                          {event.entry}
+                        </span>
+                      </div>
+
+                      <div className="flex justify-between items-center mt-2">
+                        {event.invited_users && (() => {
+                          try {
+                            // Try to parse JSON if it's a string or use it directly if it's already an array
+                            const attendees = typeof event.invited_users === 'string' 
+                              ? JSON.parse(event.invited_users) 
+                              : event.invited_users;
+                            return renderAttendees(attendees);
+                          } catch (error) {
+                            console.error('Error parsing invited_users:', error);
+                            return null;
+                          }
+                        })()}
+                        <span className={`text-xs font-medium px-2.5 py-0.5 rounded-full ${statusColors[event.status] || 'bg-gray-500 text-white'}`}>
+                          {event.status}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </>
+        )}
         
         {/* Bottom spacer to ensure last element is fully visible above the navigation bar */}
         <div className="h-28 w-full"></div>
