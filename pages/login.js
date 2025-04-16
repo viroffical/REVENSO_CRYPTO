@@ -49,8 +49,10 @@ export default function Login() {
     setIsLoading(true);
     
     try {
-      await signInWithGoogle();
-      // Redirect is handled by Supabase OAuth flow
+      // This is to ensure we have a smooth transition when we migrate to the Server Actions
+      if (typeof window !== 'undefined') {
+        window.location.href = '/api/auth/google';
+      }
     } catch (error) {
       console.error("Google sign-in error:", error);
       setIsLoading(false);
