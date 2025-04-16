@@ -41,8 +41,15 @@ const OnboardingPage = () => {
     handleSubmit: handleSubmitStep2,
     formState: { errors: errorsStep2 },
     trigger: triggerStep2,
+    setValue: setValueStep2,
+    clearErrors: clearErrorsStep2,
   } = useForm({
     mode: 'onChange',
+    defaultValues: {
+      gender: formData.gender || '',
+      email: formData.email || '',
+      twitter: formData.twitter || ''
+    }
   });
 
   const {
@@ -79,21 +86,25 @@ const OnboardingPage = () => {
   
   // Handle gender selection
   const handleGenderSelect = (gender) => {
-    // Update both the form data and the form register
+    // Update the form data state
     setFormData(prev => ({ ...prev, gender }));
     
-    // Manually set the value in the form
-    const genderEvent = {
-      target: {
-        name: 'gender',
-        value: gender
+    // Update the form value in React Hook Form
+    if (setValueStep2) {
+      setValueStep2('gender', gender);
+      
+      // Clear any gender validation errors
+      if (clearErrorsStep2) {
+        clearErrorsStep2('gender');
       }
-    };
+    }
     
-    // Trigger validation after selection
+    // Force validation to pass for gender field
     setTimeout(() => {
-      triggerStep2('gender');
-    }, 100);
+      if (triggerStep2) {
+        triggerStep2('gender');
+      }
+    }, 50);
   };
   
   // Handle image uploads
