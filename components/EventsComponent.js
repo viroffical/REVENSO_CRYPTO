@@ -1,22 +1,48 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCalendarDay, faClock } from '@fortawesome/free-solid-svg-icons';
-import events from '../data/eventData';
+import { faCalendarDay, faClock, faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { supabase } from '../lib/supabaseClient';
 
 const EventsComponent = () => {
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [events, setEvents] = useState([]);
+  const [categories, setCategories] = useState(['All']);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   
-  // Get unique categories
-  const getUniqueCategories = () => {
-    const categories = events.map(event => event.category);
-    return ['All', ...new Set(categories)];
-  };
-  
-  const categories = getUniqueCategories();
+  // Fetch events from Supabase
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        setLoading(true);
+        
+        // Fetch all events from the "event" table
+        const { data, error } = await supabase
+          .from('event')
+          .select('*');
+          
+        if (error) throw error;
+        
+        setEvents(data);
+        
+        // Extract unique categories
+        const uniqueCategories = [...new Set(data.map(event => event.category))];
+        setCategories(['All', ...uniqueCategories]);
+        
+      } catch (error) {
+        console.error('Error fetching events:', error);
+        setError('Failed to load events. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchEvents();
+  }, []);
   
   // Filter events by selected category
-  const filteredEvents = selectedCategory === 'All' 
-    ? events 
+  const filteredEvents = selectedCategory === 'All'
+    ? events
     : events.filter(event => event.category === selectedCategory);
 
   // Status badge color mapping
