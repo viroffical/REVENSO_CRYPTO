@@ -17,7 +17,8 @@ const OnboardingPage = () => {
     email: '',
     twitter: '',
     password: '',
-    occupation: '',
+    role: '',
+    project: '',
     bio: '',
     event: '',
     profileImage: null,
@@ -48,7 +49,8 @@ const OnboardingPage = () => {
   } = useForm({
     mode: 'onChange',
     defaultValues: {
-      occupation: formData.occupation || '',
+      role: formData.role || '',
+      project: formData.project || '',
       bio: formData.bio || '',
       event: formData.event || ''
     }
@@ -160,7 +162,7 @@ const OnboardingPage = () => {
         const step1Valid = await triggerStep1(['fullName', 'email', 'twitter', 'password']);
         return step1Valid && formData.profileImagePreview !== null;
       case 1:
-        const step2Valid = await triggerStep2(['occupation', 'bio', 'event']);
+        const step2Valid = await triggerStep2(['role', 'project', 'bio', 'event']);
         return step2Valid;
       default:
         return false;
@@ -377,19 +379,34 @@ const OnboardingPage = () => {
               
               <div className="space-y-6">
                 <div className="space-y-2">
-                  <label className="block text-lg font-medium">Role and Project</label>
+                  <label className="block text-lg font-medium">Role</label>
                   <input
-                    {...registerStep2('occupation', { 
-                      required: 'Role and Project is required'
+                    {...registerStep2('role', { 
+                      required: 'Role is required'
                     })}
                     type="text"
-                    name="occupation"
-                    value={formData.occupation}
+                    name="role"
+                    value={formData.role}
                     onChange={handleChange}
-                    className={`w-full p-4 border-2 ${errorsStep2?.occupation ? 'border-red-500' : 'border-gray-300'} rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent`}
-                    placeholder="Your role and current project"
+                    className={`w-full p-4 border-2 ${errorsStep2?.role ? 'border-red-500' : 'border-gray-300'} rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent`}
+                    placeholder="Your professional role"
                   />
-                  {errorsStep2?.occupation && <ErrorMessage message={errorsStep2.occupation.message} />}
+                  {errorsStep2?.role && <ErrorMessage message={errorsStep2.role.message} />}
+                </div>
+                <div className="space-y-2">
+                  <label className="block text-lg font-medium">Project</label>
+                  <input
+                    {...registerStep2('project', { 
+                      required: 'Project is required'
+                    })}
+                    type="text"
+                    name="project"
+                    value={formData.project}
+                    onChange={handleChange}
+                    className={`w-full p-4 border-2 ${errorsStep2?.project ? 'border-red-500' : 'border-gray-300'} rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent`}
+                    placeholder="Your current project"
+                  />
+                  {errorsStep2?.project && <ErrorMessage message={errorsStep2.project.message} />}
                 </div>
                 
                 <div className="space-y-2">
