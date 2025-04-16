@@ -1,4 +1,12 @@
-import { createClient } from '../../../utils/supabase/client';
+import { createClient } from '@supabase/supabase-js';
+
+// Create a server-side Supabase client
+const createServerSupabaseClient = () => {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://rjucgbzerztofpuotjgr.supabase.co";
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJqdWNnYnplcnp0b2ZwdW90amdyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzI2MTAsImV4cCI6MjA2MDIwODYxMH0.jf08hvHlAP5RAXqziUa8rytGR60xqRWnUAuhqfo-pek";
+  
+  return createClient(supabaseUrl, supabaseAnonKey);
+}
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
@@ -6,11 +14,12 @@ export default async function handler(req, res) {
   }
 
   try {
-    const supabase = createClient();
+    const supabase = createServerSupabaseClient();
+    
     const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
+      provider: "google",
       options: {
-        redirectTo: `${process.env.NEXT_PUBLIC_URL || req.headers.origin}/`,
+        redirectTo: `${req.headers.origin}/`,
         queryParams: {
           access_type: 'offline',
           prompt: 'consent',
