@@ -133,13 +133,35 @@ const OnboardingPage = () => {
     handleFinalSubmit();
   };
   
-  // Initialize our custom hook for registration
-  const { registerUser, isLoading, error: registrationError } = useRegister();
+  // Initialize our custom hook for registration with enhanced error handling
+  const { registerUser, isLoading, error: registrationError, clearError, successData } = useRegister();
+  
+  // Handle registration errors
+  useEffect(() => {
+    if (registrationError) {
+      console.error('Registration error:', registrationError);
+      alert(`Registration failed: ${registrationError}`);
+    }
+  }, [registrationError]);
+  
+  // Handle registration success
+  useEffect(() => {
+    if (successData) {
+      // Registration successful, redirect to the main app
+      alert('Account created successfully! Redirecting to login...');
+      setTimeout(() => {
+        window.location.href = '/login';
+      }, 1500);
+    }
+  }, [successData]);
   
   // Handle final form submission
   const handleFinalSubmit = async () => {
     console.log('Form submitted:', formData);
     try {
+      // Clear any previous errors when starting a new submission
+      clearError();
+      
       // Prepare user data including the profile image preview (base64 data)
       const userData = {
         email: formData.email,
@@ -154,13 +176,7 @@ const OnboardingPage = () => {
       };
       
       // Call the register API through our custom hook
-      const data = await registerUser(userData);
-      
-      // Registration successful, redirect to the main app
-      alert('Account created successfully! Redirecting to login...');
-      setTimeout(() => {
-        window.location.href = '/login';
-      }, 1500);
+      await registerUser(userData);
     } catch (error) {
       console.error('Registration error:', error);
       alert(`Registration failed: ${error.message}`);
