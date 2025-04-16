@@ -10,6 +10,13 @@ const EventsComponent = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
+  // Status badge color mapping
+  const statusColors = {
+    'Going': 'bg-green-500 text-white',
+    'Pending': 'bg-yellow-500 text-white',
+    'Invited': 'bg-blue-500 text-white'
+  };
+  
   // Fetch events from Supabase
   useEffect(() => {
     const fetchEvents = async () => {
@@ -23,15 +30,22 @@ const EventsComponent = () => {
           
         if (error) throw error;
         
-        setEvents(data);
-        
-        // Extract unique categories
-        const uniqueCategories = [...new Set(data.map(event => event.category))];
-        setCategories(['All', ...uniqueCategories]);
+        // If we got data, set the events
+        if (data) {
+          setEvents(data);
+          
+          // Extract unique categories
+          const uniqueCategories = [...new Set(data.map(event => event.category))];
+          setCategories(['All', ...uniqueCategories]);
+        }
         
       } catch (error) {
         console.error('Error fetching events:', error);
-        setError('Failed to load events. Please try again later.');
+        if (error.message === 'Supabase not configured') {
+          setError('Please configure your Supabase credentials to load events.');
+        } else {
+          setError('Failed to load events. Please try again later.');
+        }
       } finally {
         setLoading(false);
       }
@@ -45,20 +59,13 @@ const EventsComponent = () => {
     ? events
     : events.filter(event => event.category === selectedCategory);
 
-  // Status badge color mapping
-  const statusColors = {
-    'Going': 'bg-green-500 text-white',
-    'Pending': 'bg-yellow-500 text-white',
-    'Invited': 'bg-blue-500 text-white'
-  };
-
   // Render attendees with count
   const renderAttendees = (attendees) => {
     if (!attendees || !Array.isArray(attendees) || attendees.length === 0) {
       return null;
     }
     
-    const displayCount = 3;
+    const displayCount = Math.min(3, attendees.length);
     const hasMore = attendees.length > displayCount;
     
     return (
@@ -70,6 +77,10 @@ const EventsComponent = () => {
               src={avatar} 
               alt="Attendee" 
               className="w-6 h-6 rounded-full border-2 border-white object-cover"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = 'https://via.placeholder.com/40?text=User';
+              }}
             />
           ))}
           {hasMore && (
@@ -92,7 +103,7 @@ const EventsComponent = () => {
           </div>
 
           {/* Category Filters */}
-          <div className="mb-2 flex overflow-x-auto -mx-4 px-4 pb-2 scrollbar-hide">
+          <div className="mb-2 flex overflow-x-auto -mx-4 px-4 pb-2">
             {categories.map(category => (
               <button 
                 key={category}
@@ -199,11 +210,11 @@ const EventsComponent = () => {
                 </div>
               </div>
             ))}
+            
+            {/* Bottom spacer to ensure last element is fully visible above the navigation bar */}
+            <div className="h-28 w-full"></div>
           </>
         )}
-        
-        {/* Bottom spacer to ensure last element is fully visible above the navigation bar */}
-        <div className="h-28 w-full"></div>
       </div>
     </div>
   );
