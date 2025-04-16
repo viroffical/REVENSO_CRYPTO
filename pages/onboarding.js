@@ -79,7 +79,21 @@ const OnboardingPage = () => {
   
   // Handle gender selection
   const handleGenderSelect = (gender) => {
+    // Update both the form data and the form register
     setFormData(prev => ({ ...prev, gender }));
+    
+    // Manually set the value in the form
+    const genderEvent = {
+      target: {
+        name: 'gender',
+        value: gender
+      }
+    };
+    
+    // Trigger validation after selection
+    setTimeout(() => {
+      triggerStep2('gender');
+    }, 100);
   };
   
   // Handle image uploads
@@ -143,8 +157,13 @@ const OnboardingPage = () => {
         const step1Valid = await triggerStep1(['firstName', 'birthDay', 'birthMonth', 'birthYear']);
         return step1Valid;
       case 1:
-        const step2Valid = await triggerStep2(['email', 'gender']);
-        return step2Valid && formData.gender;
+        // First check if gender is selected
+        if (!formData.gender) {
+          return false;
+        }
+        // Then validate email (gender is already validated)
+        const step2Valid = await triggerStep2(['email']);
+        return step2Valid;
       case 2:
         return true; // Photos are optional
       default:
