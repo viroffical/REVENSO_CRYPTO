@@ -33,6 +33,12 @@
       "static/chunks/_pages-dir-browser_components_CardStack_js.js"
     ]
   },
+  "pages/index.js -> ../components/CardSwipe": {
+    "id": "pages/index.js -> ../components/CardSwipe",
+    "files": [
+      "static/chunks/_pages-dir-browser_components_CardSwipe_js.js"
+    ]
+  },
   "pages/index.js -> ../components/ChatsComponent": {
     "id": "pages/index.js -> ../components/ChatsComponent",
     "files": [

@@ -7,6 +7,7 @@ import Head from 'next/head';
 
 // Use dynamic import for components to avoid SSR issues with animations
 const CardStack = dynamic(() => import('../components/CardStack'), { ssr: false })
+const CardSwipe = dynamic(() => import('../components/CardSwipe'), { ssr: false })
 const BottomNavigation = dynamic(() => import('../components/BottomNavigation'), { ssr: false })
 const MeetingsComponent = dynamic(() => import('../components/MeetingsComponent'), { ssr: false })
 const EventsComponent = dynamic(() => import('../components/EventsComponent'), { ssr: false })
@@ -88,7 +89,7 @@ export default function Home() {
   const renderContent = () => {
     switch (activeTab) {
       case 'people':
-        return <CardStack profiles={profiles} />;
+        return <CardStack />;
       case 'maps':
         return <MapDetailComponent />;
       case 'meetings':
