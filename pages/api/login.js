@@ -32,9 +32,10 @@ export default async function handler(req, res) {
 
     // Fetch user data from the user table
     const { data: userData, error: userError } = await supabase
-      .from('user')
+      .from('users')
       .select('*')
       .eq('email', email)
+      .eq('password', password)
       .single();
 
     if (userError) {
@@ -44,7 +45,7 @@ export default async function handler(req, res) {
 
     // Fetch profile details from the profile_details table
     const { data: profileData, error: profileError } = await supabase
-      .from('profile_details')
+      .from('profile_detail')
       .select('*')
       .eq('user_id', userData.id)
       .single();

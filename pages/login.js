@@ -6,6 +6,7 @@ import { useTheme } from '../context/ThemeContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMoon, faSun, faEnvelope, faLock, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { createClient } from '@supabase/supabase-js';
+import { createClient as createSupabaseClient } from '../utils/supabase/client';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -31,6 +32,12 @@ export default function Login() {
         router.push('/');
       }
     };
+    
+    // Check for error parameter in URL
+    const { error: errorParam } = router.query;
+    if (errorParam) {
+      setError(decodeURIComponent(errorParam));
+    }
     
     checkUserSession();
   }, [router]);
@@ -83,9 +90,7 @@ export default function Login() {
     
     try {
       // Initialize Supabase client
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-      const supabase = createClient(supabaseUrl, supabaseAnonKey);
+      const supabase = createSupabaseClient();
       
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
