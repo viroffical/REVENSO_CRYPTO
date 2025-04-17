@@ -1,16 +1,41 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion, useMotionValue, useTransform, AnimatePresence, animate } from 'framer-motion';
 import Card from './Card';
 import SwipeIndicator from './SwipeIndicator';
+import supabase from '../lib/supabaseClient';
+import { profiles as dummyProfiles } from '../data/profiles';
 
-const CardStack = ({ profiles }) => {
+const CardStack = () => {
+  const [profiles, setProfiles] = useState(dummyProfiles || []);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [exitDirection, setExitDirection] = useState(null);
   const [swipedProfiles, setSwipedProfiles] = useState([]);
+  const [loading, setLoading] = useState(false);
+  
+  // Fetch user profiles from Supabase when component mounts
+  useEffect(() => {
+    async function fetchUserProfiles() {
+      setLoading(true);
+      try {
+        const { data, error } = await supabase.from("users").select("*");
+        if (error) {
+          console.log("Error fetching profiles:", error);
+        } else if (data && data.length > 0) {
+          console.log("Fetched profiles:", data);
+          setProfiles(data);
+        }
+      } catch (error) {
+        console.error("Error in fetch operation:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    
+    fetchUserProfiles();
+  }, []);
   
   // Only show top 3 cards for performance
   const visibleProfiles = profiles.slice(currentIndex, currentIndex + 3);
-  
   const handleSwipe = (direction) => {
     if (currentIndex >= profiles.length) return;
     
@@ -44,7 +69,23 @@ const CardStack = ({ profiles }) => {
         <div className="absolute inset-0 bg-white z-0"></div>
         
         <AnimatePresence mode="popLayout">
-          {visibleProfiles.length > 0 ? (
+          {loading ? (
+            // Loading state
+            <motion.div 
+              className="loading-state text-center p-8 z-10 relative"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <div className="animate-pulse flex flex-col items-center">
+                <div className="rounded-xl bg-gray-200 h-64 w-full max-w-xs mb-4"></div>
+                <div className="h-6 bg-gray-200 rounded w-48 mb-2"></div>
+                <div className="h-4 bg-gray-200 rounded w-64 mb-1"></div>
+                <div className="h-4 bg-gray-200 rounded w-40"></div>
+              </div>
+            </motion.div>
+          ) : visibleProfiles.length > 0 ? (
+            // Show cards when data is loaded
             visibleProfiles.map((profile, index) => (
               <SwipeableCard 
                 key={profile.id} 
@@ -55,6 +96,7 @@ const CardStack = ({ profiles }) => {
               />
             ))
           ) : (
+            // Empty state when no profiles are left to show
             <motion.div 
               className="empty-state text-center p-8 z-10 relative"
               initial={{ opacity: 0, scale: 0.9 }}
@@ -83,7 +125,6 @@ const CardStack = ({ profiles }) => {
 };
 
 const SwipeableCard = ({ profile, onSwipe, isTop, zIndex }) => {
-  console.log(profile)
   const cardRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
   
@@ -209,7 +250,7 @@ const SwipeableCard = ({ profile, onSwipe, isTop, zIndex }) => {
         mass: 0.8
       }}
     >
-      <div className="h-[calc(100vh-220px)] shadow-xl rounded-xl overflow-hidden bg-white">
+      <div className="h-[calc(100vh-180px)] shadow-xl rounded-xl overflow-hidden bg-white">
         <Card profile={profile} dragProgress={{ left: leftIndicatorOpacity, right: rightIndicatorOpacity }} />
       </div>
     </motion.div>

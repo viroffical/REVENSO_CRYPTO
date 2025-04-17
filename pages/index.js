@@ -24,6 +24,7 @@ export default function Home() {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+ 
   
   const router = useRouter();
 
@@ -68,6 +69,7 @@ export default function Home() {
       window.removeEventListener('setActiveTab', handleSetActiveTab);
     };
   }, [mounted]);
+
 
   const toggleDrawer = () => {
     setDrawerOpen(!drawerOpen);

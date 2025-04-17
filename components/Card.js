@@ -43,7 +43,7 @@ const Card = ({ profile, dragProgress }) => {
         userSelect: 'none',
       }}
     >
-      <div className="relative h-[120%] min-h-[90%]">
+      <div className="relative h-[100%] min-h-[90%]">
         
         {/* Profile Image */}
         <div className="w-full h-full bg-white flex-grow will-change-transform">

@@ -11,24 +11,25 @@ import { motion } from "framer-motion";
 import { createClient } from '@supabase/supabase-js';
 import { createClient as createSupabaseClient } from '../utils/supabase/client';
 
-const SideDrawer = ({ isOpen, onClose }) => {
-  const [userProfile, setUserProfile] = useState(null);
+const SideDrawer = ({ isOpen, onClose, userProfile: propUserProfile }) => {
+  const [localUserProfile, setLocalUserProfile] = useState(null);
   const router = useRouter();
   
-  // Safely get user profile from localStorage on client-side only
+  // Use the provided userProfile prop if available, otherwise get from localStorage
   useEffect(() => {
-    // This will only run in the browser
-    if (typeof window !== 'undefined') {
+    if (propUserProfile) {
+      setLocalUserProfile(propUserProfile);
+    } else if (typeof window !== 'undefined') {
       try {
         const storedProfile = localStorage.getItem('revenso_user');
         if (storedProfile) {
-          setUserProfile(JSON.parse(storedProfile));
+          setLocalUserProfile(JSON.parse(storedProfile));
         }
       } catch (error) {
         console.error('Error parsing user profile:', error);
       }
     }
-  }, []);
+  }, [propUserProfile]);
   
   const handleLogout = async () => {
     try {
@@ -134,16 +135,16 @@ const SideDrawer = ({ isOpen, onClose }) => {
 
         {/* Profile section */}
         <div className="p-4 border-b border-gray-200">
-          {userProfile ? (
+          {localUserProfile ? (
             <div className="flex items-center mb-2">
               <img
-                src={userProfile.image_url}
-                alt={userProfile.full_name}
+                src={localUserProfile.image_url || localUserProfile.avatar}
+                alt={localUserProfile.full_name || localUserProfile.name}
                 className="w-12 h-12 rounded-full mr-3 object-cover border border-gray-200"
               />
               <div className="flex-1">
-                <h3 className="font-bold text-lg">{userProfile.full_name}</h3>
-                <p className="text-sm text-gray-500">{userProfile.twitter}</p>
+                <h3 className="font-bold text-lg">{localUserProfile.full_name || localUserProfile.name}</h3>
+                <p className="text-sm text-gray-500">{localUserProfile.twitter || localUserProfile.username}</p>
               </div>
             </div>
           ) : (
