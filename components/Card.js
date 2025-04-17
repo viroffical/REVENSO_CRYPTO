@@ -85,16 +85,22 @@ const Card = ({ profile, dragProgress }) => {
         <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/90 via-black/75 to-transparent text-white">
           <div className="flex items-center mb-1">
             <h2 className="text-xl font-bold mr-2 drop-shadow-md">{userProfile.full_name}</h2>
-            <FontAwesomeIcon 
-              icon={faXTwitter} 
-              style={{
-                height:'1.2rem', 
-                color: 'white', 
-                fontWeight: 'bolder', 
-                cursor: "pointer",
-                filter: 'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5))'
-              }} 
-            />
+            <a 
+              href={userProfile.twitter ? `https://twitter.com/${userProfile.twitter.replace('@', '')}` : '#'} 
+              target="_blank" 
+              rel="noopener noreferrer"
+            >
+              <FontAwesomeIcon 
+                icon={faXTwitter} 
+                style={{
+                  height:'1.2rem', 
+                  color: 'white', 
+                  fontWeight: 'bolder', 
+                  cursor: "pointer",
+                  filter: 'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5))'
+                }} 
+              />
+            </a>
           </div>
           
           {/* Job & Company */}

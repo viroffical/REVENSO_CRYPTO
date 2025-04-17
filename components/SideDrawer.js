@@ -9,9 +9,9 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { motion } from "framer-motion";
 import { useAuth } from "../context/AuthContext";
+const userProfile =  JSON.parse(localStorage.getItem("revenso_user"));
+const SideDrawer = ({ isOpen, onClose }) => {
 
-const SideDrawer = ({ isOpen, onClose, userProfile }) => {
-  console.log(userProfile, "userProfile", JSON.parse(localStorage.getItem("revenso_user")));
   const router = useRouter();
   const { logout } = useAuth();
   const drawerVariants = {
@@ -47,14 +47,14 @@ const SideDrawer = ({ isOpen, onClose, userProfile }) => {
   };
 
   // Default profile if none provided
-  const profile = userProfile || {
-    name: "Your Name",
-    username: "@username",
-    following: 196,
-    followers: 1176,
-    profileImgUrl:
-      "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=256&q=80",
-  };
+  // const profile = userProfile || {
+  //   name: "Your Name",
+  //   username: "@username",
+  //   following: 196,
+  //   followers: 1176,
+  //   profileImgUrl:
+  //     "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=256&q=80",
+  // };
 
   return (
     <>
@@ -89,23 +89,23 @@ const SideDrawer = ({ isOpen, onClose, userProfile }) => {
         <div className="p-4 border-b border-gray-200">
           <div className="flex items-center mb-2">
             <img
-              src={profile.profileImgUrl || profile.image_url}
-              alt={profile.name}
+              src={userProfile.image_url}
+              alt={userProfile.full_name}
               className="w-12 h-12 rounded-full mr-3 object-cover border border-gray-200"
             />
             <div className="flex-1">
-              <h3 className="font-bold text-lg">{profile.name}</h3>
-              <p className="text-sm text-gray-500">{profile.username}</p>
+              <h3 className="font-bold text-lg">{userProfile.full_name}</h3>
+              <p className="text-sm text-gray-500">{userProfile.twitter}</p>
             </div>
           </div>
-          <div className="flex text-sm mt-2">
+          {/* <div className="flex text-sm mt-2">
             <div className="mr-4">
               <span className="font-bold">{profile.following}</span> Following
             </div>
             <div>
               <span className="font-bold">{profile.followers}</span> Followers
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* Navigation menu */}
