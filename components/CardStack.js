@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { motion, useMotionValue, useTransform, AnimatePresence, animate } from 'framer-motion';
 import Card from './Card';
+import ProfileCardBizz from './ProfileCardBizz';
 import SwipeIndicator from './SwipeIndicator';
 
 const CardStack = ({ profiles }) => {
@@ -49,6 +50,7 @@ const CardStack = ({ profiles }) => {
               <SwipeableCard 
                 key={profile.id} 
                 profile={profile} 
+                firstProfile={profiles[0]}
                 onSwipe={handleSwipe}
                 isTop={index === 0}
                 zIndex={visibleProfiles.length - index}
@@ -82,7 +84,7 @@ const CardStack = ({ profiles }) => {
   );
 };
 
-const SwipeableCard = ({ profile, onSwipe, isTop, zIndex }) => {
+const SwipeableCard = ({ profile, firstProfile, onSwipe, isTop, zIndex }) => {
   console.log(profile)
   const cardRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -210,7 +212,12 @@ const SwipeableCard = ({ profile, onSwipe, isTop, zIndex }) => {
       }}
     >
       <div className="h-[calc(100vh-220px)] shadow-xl rounded-xl overflow-hidden bg-white">
-        <Card profile={profile} dragProgress={{ left: leftIndicatorOpacity, right: rightIndicatorOpacity }} />
+        {/* Use Bizz card for the first card in the deck */}
+        {isTop ? (
+          <ProfileCardBizz profile={profile} dragProgress={{ left: leftIndicatorOpacity, right: rightIndicatorOpacity }} />
+        ) : (
+          <Card profile={profile} dragProgress={{ left: leftIndicatorOpacity, right: rightIndicatorOpacity }} />
+        )}
       </div>
     </motion.div>
   );
