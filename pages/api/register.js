@@ -126,62 +126,70 @@ export default async function handler(req, res) {
     
     const userId = authData.user.id;
     
-    // 2. Store user details in the user table
-    const { data: userData, error: userError } = await supabase
-      .from('user')
-      .insert([{
-        id: userId, // Use the auth user ID
-        full_name: fullName,
-        email,
-        twitter,
-        avatar: avatarUrl,
-        created_at: new Date().toISOString()
-      }])
-      .select();
+    try {
+      // 2. Insert into users table
+      const { data: userData, error: userError } = await supabase
+        .from('user')
+        .insert([{
+          id: userId, // Use the auth user ID as foreign key
+          full_name: fullName,
+          email: email,
+          twitter: twitter,
+          avatar: avatarUrl,
+          created_at: new Date().toISOString()
+        }])
+        .select()
+        .single();
+        
+      if (userError) {
+        console.error('User insert error:', userError);
+        // Check if table doesn't exist error
+        if (userError.message?.includes('does not exist')) {
+          return res.status(500).json({ 
+            error: 'Database setup issue: User table does not exist. Please contact the administrator.'
+          });
+        }
+        return res.status(400).json({ error: userError.message });
+      }
       
-    if (userError) {
-      console.error('User insert error:', userError);
-      // Check if table doesn't exist error
-      if (userError.message?.includes('does not exist')) {
-        return res.status(500).json({ 
-          error: 'Database setup issue: User table does not exist. Please contact the administrator.'
-        });
+      // 3. Insert into profile_details table
+      const { data: profileData, error: profileError } = await supabase
+        .from('profile_details')
+        .insert([{
+          user_id: userId,
+          role: role,
+          project: project,
+          description: bio,
+          event_attending: event,
+          created_at: new Date().toISOString()
+        }])
+        .select()
+        .single();
+        
+      if (profileError) {
+        console.error('Profile insert error:', profileError);
+        // Check if table doesn't exist error
+        if (profileError.message?.includes('does not exist')) {
+          return res.status(500).json({ 
+            error: 'Database setup issue: Profile details table does not exist. Please contact the administrator.'
+          });
+        }
+        return res.status(400).json({ error: profileError.message });
       }
-      return res.status(400).json({ error: userError.message });
-    }
-    
-    // 3. Store profile details in the profile_details table
-    const { data: profileData, error: profileError } = await supabase
-      .from('profile_details')
-      .insert([{
-        user_id: userId,
-        role,
-        project,
-        description: bio,
-        event_attending: event,
-        created_at: new Date().toISOString()
-      }])
-      .select();
       
-    if (profileError) {
-      console.error('Profile insert error:', profileError);
-      // Check if table doesn't exist error
-      if (profileError.message?.includes('does not exist')) {
-        return res.status(500).json({ 
-          error: 'Database setup issue: Profile details table does not exist. Please contact the administrator.'
-        });
-      }
-      return res.status(400).json({ error: profileError.message });
+      // Return success response with created user data
+      return res.status(200).json({
+        message: 'User registered successfully!',
+        user: authData.user,
+        profile: {
+          ...userData,
+          ...profileData
+        }
+      });
+    } catch (dbError) {
+      console.error('Database error:', dbError);
+      return res.status(500).json({ error: `Database operation failed: ${dbError.message}` });
     }
-    
-    // Return success response with created user data
-    return res.status(201).json({
-      user: authData.user,
-      profile: {
-        ...userData[0],
-        ...profileData[0]
-      }
-    });
     
   } catch (error) {
     console.error('Registration error:', error);

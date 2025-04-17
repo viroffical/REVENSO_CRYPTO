@@ -213,14 +213,10 @@ const OnboardingPage = () => {
     }
   }, [registrationError]);
   
-  // Handle registration success
+  // Monitor registration status
   useEffect(() => {
     if (successData) {
-      // Registration successful, redirect to the main app
-      alert('Account created successfully! Redirecting to login...');
-      setTimeout(() => {
-        window.location.href = '/login';
-      }, 1500);
+      console.log('Registration successful:', successData);
     }
   }, [successData]);
   
@@ -245,6 +241,9 @@ const OnboardingPage = () => {
       // Clear any previous errors when starting a new submission
       clearError();
       
+      // Show loading state
+      setIsLoading(true);
+      
       // Prepare user data including the profile image
       const userData = {
         email: formData.email,
@@ -263,7 +262,18 @@ const OnboardingPage = () => {
       console.log('User data ready for registration:', userData);
       
       // Call the register API through our custom hook
-      await registerUser(userData);
+      const result = await registerUser(userData);
+      
+      // Check the result
+      if (result) {
+        // Show success message
+        alert('Registration successful! Redirecting to login page...');
+        
+        // Redirect to login page after a short delay
+        setTimeout(() => {
+          window.location.href = '/login';
+        }, 1500);
+      }
     } catch (error) {
       console.error('Registration error:', error);
       alert(`Registration failed: ${error.message}`);
