@@ -174,9 +174,9 @@ const OnboardingPage = () => {
         event: formData.event,
         profileImagePreview: formData.profileImagePreview,
       };
-      
+      console.log('User data:', userData);
       // Call the register API through our custom hook
-      await registerUser(userData);
+      // await registerUser(userData);
     } catch (error) {
       console.error('Registration error:', error);
       alert(`Registration failed: ${error.message}`);

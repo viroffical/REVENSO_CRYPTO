@@ -46,14 +46,11 @@ export default async function handler(req, res) {
     // Handle image upload to Supabase Storage
     let avatarUrl = null;
     
-    // Process image - handle both File object and base64 string
-    if (profileImage || profileImagePreview) {
+    // Process image - handle base64 string from the client
+    if (profileImagePreview) {
       try {
-        const timestamp = new Date().getTime();
-        const filePath = `${timestamp}_${email.replace('@', '_at_')}`;
-        
-        // If we have a base64 string (profileImagePreview)
-        if (profileImagePreview && profileImagePreview.includes('base64')) {
+        // If we have a base64 string
+        if (profileImagePreview.includes('base64')) {
           // Extract the base64 data and determine the type
           const matches = profileImagePreview.match(/^data:([A-Za-z-+/]+);base64,(.+)$/);
           
@@ -74,18 +71,26 @@ export default async function handler(req, res) {
           // Convert base64 to Blob
           const blob = Buffer.from(base64Data, 'base64');
           
+          // Generate a unique filename with timestamp and email
+          const timestamp = new Date().getTime();
+          const emailSanitized = email.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
+          const filePath = `${timestamp}_${emailSanitized}`;
+          
+          console.log(`Uploading profile image to avatar/${filePath}.${fileExtension}`);
+          
           // Upload to Supabase Storage with extension
           const { data: uploadData, error: uploadError } = await supabase
             .storage
             .from('avatar')
             .upload(`${filePath}.${fileExtension}`, blob, {
               contentType, // Use the detected content type
+              cacheControl: '3600',
               upsert: true
             });
             
           if (uploadError) {
             console.error('Error uploading avatar:', uploadError);
-            throw new Error('Failed to upload profile image');
+            throw new Error(`Failed to upload profile image: ${uploadError.message}`);
           }
           
           // Get the public URL with the correct path including extension
@@ -94,14 +99,17 @@ export default async function handler(req, res) {
             .from('avatar')
             .getPublicUrl(`${filePath}.${fileExtension}`);
             
+          console.log(`Profile image uploaded successfully. Public URL: ${publicUrl}`);
           avatarUrl = publicUrl;
+        } else {
+          throw new Error('Profile image must be in base64 format');
         }
-        // If we have a File object, we'd normally handle it here
-        // But since we're in an API route, we should have already received base64
       } catch (error) {
         console.error('Error processing image:', error);
-        return res.status(500).json({ error: 'Failed to process profile image' });
+        return res.status(500).json({ error: `Failed to process profile image: ${error.message}` });
       }
+    } else {
+      console.warn('No profile image provided during registration');
     }
     
     // 1. Register user with Supabase Auth
