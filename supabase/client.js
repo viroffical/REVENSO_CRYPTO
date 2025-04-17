@@ -1,18 +1,19 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from "@supabase/supabase-js";
 
 /**
  * Creates and returns a Supabase client
  * @returns {Object} Supabase client
  */
+
 export function createSupabaseClient() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  
+  const supabaseUrl = "https://rjucgbzerztofpuotjgr.supabase.co";
+  const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJqdWNnYnplcnp0b2ZwdW90amdyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzI2MTAsImV4cCI6MjA2MDIwODYxMH0.jf08hvHlAP5RAXqziUa8rytGR60xqRWnUAuhqfo-pek";
+
   if (!supabaseUrl || !supabaseAnonKey) {
-    console.error('Supabase environment variables are missing');
-    throw new Error('Supabase configuration is incomplete');
+    console.error("Supabase environment variables are missing");
+    throw new Error("Supabase configuration is incomplete");
   }
-  
+
   return createClient(supabaseUrl, supabaseAnonKey);
 }
 
@@ -26,16 +27,16 @@ let supabaseInstance = null;
  * @returns {Object} Supabase client instance
  */
 export function getSupabase() {
-  if (typeof window === 'undefined') {
+  if (typeof window === "undefined") {
     // Server-side: create new instance each time
     return createSupabaseClient();
   }
-  
+
   // Client-side: use singleton
   if (!supabaseInstance) {
     supabaseInstance = createSupabaseClient();
   }
-  
+
   return supabaseInstance;
 }
 
@@ -66,34 +67,34 @@ export async function getCurrentUser() {
  */
 export async function getUserProfile(userId) {
   const supabase = getSupabase();
-  
+
   // Get basic user data
   const { data: userData, error: userError } = await supabase
-    .from('user')
-    .select('*')
-    .eq('id', userId)
+    .from("user")
+    .select("*")
+    .eq("id", userId)
     .single();
-    
+
   if (userError) {
-    console.error('Error fetching user:', userError);
+    console.error("Error fetching user:", userError);
     throw userError;
   }
-  
+
   // Get extended profile data
   const { data: profileData, error: profileError } = await supabase
-    .from('profile_details')
-    .select('*')
-    .eq('user_id', userId)
+    .from("profile_details")
+    .select("*")
+    .eq("user_id", userId)
     .single();
-    
-  if (profileError && !profileError.message.includes('No rows found')) {
-    console.error('Error fetching profile:', profileError);
+
+  if (profileError && !profileError.message.includes("No rows found")) {
+    console.error("Error fetching profile:", profileError);
     throw profileError;
   }
-  
+
   // Combine the data
   return {
     ...userData,
-    profile: profileData || {}
+    profile: profileData || {},
   };
 }
