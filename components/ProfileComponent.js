@@ -26,23 +26,8 @@ import {
   faAward,
   faThumbsUp
 } from '@fortawesome/free-solid-svg-icons';
-import { useEffect, useState } from "react";
 
-
-
-const ProfileComponent = () => {
-  const [userProfile, setUserProfile] = useState(null);
-
-  useEffect(() => {
-    try {
-      const storedProfile = localStorage.getItem("revenso_user");
-      if (storedProfile) {
-        setUserProfile(JSON.parse(storedProfile));
-      }
-    } catch (error) {
-      console.error("Error parsing user profile:", error);
-    }
-  }, []);
+const ProfileComponent = ({ userProfile }) => {
   // Default user profile if none provided
   const profile = userProfile || {
     name: 'Alex Johnson',
@@ -153,8 +138,8 @@ const ProfileComponent = () => {
           </div>
           
           {/* Name and Username */}
-          <h1 className="mt-4 text-2xl font-bold text-gray-900">{profile.full_name}</h1>
-          <p className="text-blue-600 font-medium text-sm">{profile.twitter}</p>
+          <h1 className="mt-4 text-2xl font-bold text-gray-900">{profile.name}</h1>
+          <p className="text-blue-600 font-medium text-sm">{profile.username}</p>
           
           {/* Bio */}
           <p className="mt-1 text-gray-600 text-center text-sm max-w-xs">{profile.bio}</p>
@@ -262,7 +247,7 @@ const ProfileComponent = () => {
         </div>
         
         {/* Social Links */}
-        {/* <div className="mb-4">
+        <div className="mb-4">
           <h3 className="text-sm font-semibold mb-2 text-gray-700">Social Profiles</h3>
           <div className="space-y-2">
             {profile.socialLinks.map((link, index) => (
@@ -277,7 +262,7 @@ const ProfileComponent = () => {
               </div>
             ))}
           </div>
-        </div> */}
+        </div>
       </div>
       
       {/* Membership Section */}
