@@ -7,11 +7,7 @@ import {
   faXmark, 
   faHeart,
   faBars,
-  faGear,
-  faUser,
-  faPeopleGroup,
-  faComment,
-  faThumbsUp
+  faGear
 } from '@fortawesome/free-solid-svg-icons';
 
 const ProfileCardBizz = ({ profile, dragProgress }) => {
@@ -44,25 +40,6 @@ const ProfileCardBizz = ({ profile, dragProgress }) => {
         overscrollBehavior: 'contain',
       }}
     >
-      {/* Bumble Navigation Header (for appearance) */}
-      <div className="absolute top-0 left-0 right-0 z-20 flex justify-between items-center px-4 py-3 text-black">
-        <div className="w-8 h-8 flex items-center justify-center">
-          <FontAwesomeIcon icon={faBars} className="h-5 w-5" />
-        </div>
-        <div className="text-center">
-          <span className="font-bold text-lg">Bumble</span>
-        </div>
-        <div className="w-8 h-8 flex items-center justify-center">
-          <FontAwesomeIcon icon={faGear} className="h-5 w-5" />
-        </div>
-      </div>
-      
-      {/* Badge at top left */}
-      <div className="absolute top-14 left-4 z-10">
-        <div className="bg-gradient-to-r from-orange-500 to-orange-400 text-white px-4 py-1.5 rounded-full font-medium text-sm">
-          bizz
-        </div>
-      </div>
       
       {/* Swipe indicators overlaid on image */}
       {dragProgress && (
@@ -137,34 +114,6 @@ const ProfileCardBizz = ({ profile, dragProgress }) => {
               )}
             </div>
           </div>
-        </div>
-      </div>
-      
-      {/* Bottom Navigation (for appearance) */}
-      <div className="absolute bottom-0 left-0 right-0 bg-white px-4 py-2 flex justify-between items-center z-30">
-        <div className="flex flex-col items-center text-gray-500">
-          <div className="w-6 h-6 flex items-center justify-center mb-1">
-            <FontAwesomeIcon icon={faUser} className="h-5 w-5" />
-          </div>
-          <span className="text-xs">Profile</span>
-        </div>
-        <div className="flex flex-col items-center text-gray-900">
-          <div className="w-6 h-6 flex items-center justify-center mb-1">
-            <FontAwesomeIcon icon={faPeopleGroup} className="h-5 w-5" />
-          </div>
-          <span className="text-xs font-medium">People</span>
-        </div>
-        <div className="flex flex-col items-center text-gray-500">
-          <div className="w-6 h-6 flex items-center justify-center mb-1">
-            <FontAwesomeIcon icon={faThumbsUp} className="h-5 w-5" />
-          </div>
-          <span className="text-xs">Liked You</span>
-        </div>
-        <div className="flex flex-col items-center text-gray-500">
-          <div className="w-6 h-6 flex items-center justify-center mb-1">
-            <FontAwesomeIcon icon={faComment} className="h-5 w-5" />
-          </div>
-          <span className="text-xs">Chats</span>
         </div>
       </div>
     </div>
