@@ -88,7 +88,7 @@ export default function Home() {
   const renderContent = () => {
     switch (activeTab) {
       case 'people':
-        return <CardStack />;
+        return <CardStack profiles={profiles} />;
       case 'maps':
         return <MapDetailComponent />;
       case 'meetings':
