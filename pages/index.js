@@ -2,9 +2,8 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars, faSignOutAlt, faSlidersH } from '@fortawesome/free-solid-svg-icons';
-import { useAuth } from '../context/AuthContext';
-import ProtectedRoute from '../components/ProtectedRoute';
+import { faBars, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
+import Head from 'next/head';
 
 // Use dynamic import for components to avoid SSR issues with animations
 const CardStack = dynamic(() => import('../components/CardStack'), { ssr: false })
@@ -22,14 +21,38 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState('people');
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [user, setUser] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   
   const router = useRouter();
-  const { user, logout } = useAuth();
 
-  // Check client-side mounting
+  // Check client-side mounting and authentication
   useEffect(() => {
     setMounted(true);
-  }, []);
+    
+    // Check if user is authenticated
+    const checkAuth = () => {
+      try {
+        const userData = localStorage.getItem('revenso_user');
+        if (!userData) {
+          router.push('/login');
+          return;
+        }
+        
+        const parsedUser = JSON.parse(userData);
+        setUser(parsedUser);
+        setIsAuthenticated(true);
+      } catch (error) {
+        console.error('Authentication error:', error);
+        router.push('/login');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    checkAuth();
+  }, [router]);
 
   // Listen for custom events from the sidebar to switch tabs
   useEffect(() => {
@@ -55,7 +78,10 @@ export default function Home() {
   };
   
   const handleLogout = () => {
-    logout();
+    // Clear user data from localStorage
+    localStorage.removeItem('revenso_user');
+    
+    // Redirect to login page
     router.push('/login');
   };
 
@@ -84,82 +110,82 @@ export default function Home() {
     }
   };
 
-  // Create a user profile from auth data
+  // Create a user profile from user data
   const userProfile = user ? {
-    name: user.name || `${user.firstName} ${user.lastName}`,
-    username: `@${user.firstName?.toLowerCase() || ''}${user.lastName?.charAt(0)?.toLowerCase() || ''}`,
+    name: user.full_name || 'User',
+    username: `@${user.twitter?.replace('@', '') || 'user'}`,
     email: user.email,
+    avatar: user.avatar || 'https://via.placeholder.com/150',
+    role: user.profile?.role || 'Member',
+    project: user.profile?.project || '',
+    bio: user.profile?.description || 'No bio available',
+    event: user.profile?.event_attending || 'No events',
+    // Default values for remaining fields
     phone: '+1 (555) 123-4567',
     address: 'San Francisco, CA',
-    dateOfBirth: 'June 15, 1992',
-    occupation: 'Senior Product Designer',
-    bio: 'Creative designer with a passion for user experience and innovative solutions.',
     following: 196,
     followers: 1176,
     isPremium: true,
-    role: 'Gold Member',
-    profileImgUrl: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=256&q=80',
     socialLinks: [
-      { platform: 'Twitter', handle: '@alexjohnson' },
-      { platform: 'LinkedIn', handle: 'alex-johnson' },
-      { platform: 'Instagram', handle: '@alex.creates' }
+      { platform: 'Twitter', handle: user.twitter || '@user' }
     ]
   } : null;
 
-  // Main app content
-  const AppContent = () => {
-    if (!mounted) {
-      return <div className="loading-screen">Loading...</div>;
-    }
-    
-    return (
-      <>
-        <div className="relative flex flex-col h-screen max-w-md mx-auto bg-white overflow-hidden">
-          {/* Side Drawer */}
-          <SideDrawer isOpen={drawerOpen} onClose={closeDrawer} userProfile={userProfile} />
+  // Show loading state or login redirect
+  if (isLoading || !mounted) {
+    return <div className="loading-screen">Loading...</div>;
+  }
+  
+  // If not authenticated, don't render anything (redirect will handle navigation)
+  if (!isAuthenticated) {
+    return <div className="loading-screen">Redirecting to login...</div>;
+  }
 
-          {/* Header - always showing the app name REVENSO */}
-          <header className="flex justify-between items-center p-3 bg-white shadow-sm z-10 sticky top-0">
-            <button className="p-2 touch-manipulation" onClick={toggleDrawer}>
-              <FontAwesomeIcon icon={faBars} className="h-5 w-5 text-gray-600" />
-            </button>
-            <div>
-              <h1 className="text-2xl font-bold text-black-500">REVENSO</h1>
-            </div>
-            <button 
-              className="p-2 touch-manipulation"
-              onClick={handleLogout}
-              title="Logout"
-            >
-              <FontAwesomeIcon icon={faSignOutAlt} className="h-5 w-5 text-gray-600" />
-            </button>
-          </header>
-          
-          {/* Main content area */}
-          <main className="flex-1 overflow-hidden pb-32">
-            {renderContent()}
-          </main>
-        </div>
-        
-        {/* Bottom navigation - rendered outside the main container to ensure it's always on top */}
-        <BottomNavigation activeTab={activeTab} setActiveTab={setActiveTab} />
-        
-        <style jsx>{`
-          .loading-screen {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-          }
-        `}</style>
-      </>
-    );
-  };
-
-  // Wrap the app content with the protected route
+  // Main app content when authenticated
   return (
-    <ProtectedRoute>
-      <AppContent />
-    </ProtectedRoute>
+    <>
+      <Head>
+        <title>REVENSO | Connect with Professionals</title>
+      </Head>
+      
+      <div className="relative flex flex-col h-screen max-w-md mx-auto bg-white overflow-hidden">
+        {/* Side Drawer */}
+        <SideDrawer isOpen={drawerOpen} onClose={closeDrawer} userProfile={userProfile} />
+
+        {/* Header - always showing the app name REVENSO */}
+        <header className="flex justify-between items-center p-3 bg-white shadow-sm z-10 sticky top-0">
+          <button className="p-2 touch-manipulation" onClick={toggleDrawer}>
+            <FontAwesomeIcon icon={faBars} className="h-5 w-5 text-gray-600" />
+          </button>
+          <div>
+            <h1 className="text-2xl font-bold text-black-500">REVENSO</h1>
+          </div>
+          <button 
+            className="p-2 touch-manipulation"
+            onClick={handleLogout}
+            title="Logout"
+          >
+            <FontAwesomeIcon icon={faSignOutAlt} className="h-5 w-5 text-gray-600" />
+          </button>
+        </header>
+        
+        {/* Main content area */}
+        <main className="flex-1 overflow-hidden pb-32">
+          {renderContent()}
+        </main>
+      </div>
+      
+      {/* Bottom navigation - rendered outside the main container to ensure it's always on top */}
+      <BottomNavigation activeTab={activeTab} setActiveTab={setActiveTab} />
+      
+      <style jsx>{`
+        .loading-screen {
+          min-height: 100vh;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+      `}</style>
+    </>
   );
 }

@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMoon, faSun, faEnvelope, faLock, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { createClient } from '@supabase/supabase-js';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -14,32 +14,64 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
   
   const router = useRouter();
-  const { user, login, signInWithGoogle, error, success } = useAuth();
   const { darkMode, toggleDarkMode } = useTheme ? useTheme() : { darkMode: false, toggleDarkMode: () => {} };
   
   // Handle client-side only features
   useEffect(() => {
     setMounted(true);
     
-    // If user is already logged in, redirect to home
-    if (user) {
-      router.push('/');
-    }
-  }, [user, router]);
+    // Check if user is already logged in
+    const checkUserSession = () => {
+      const userData = localStorage.getItem('revenso_user');
+      if (userData) {
+        router.push('/');
+      }
+    };
+    
+    checkUserSession();
+  }, [router]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    setError(null);
+    setSuccess(null);
     
     try {
-      const success = await login(email, password);
-      if (success) {
-        router.push('/');
+      console.log(email, password);
+      
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+      
+      const data = await response.json();
+      console.log(data);
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Login failed');
       }
+      
+      // Store user data in localStorage for session management
+      localStorage.setItem('revenso_user', JSON.stringify(data.user));
+      
+      // Set success message
+      setSuccess('Login successful! Redirecting...');
+      
+      // Redirect to main page after small delay
+      setTimeout(() => {
+        router.push('/');
+      }, 1000);
     } catch (error) {
       console.error("Login error:", error);
+      setError(error.message);
     } finally {
       setIsLoading(false);
     }
@@ -47,14 +79,25 @@ export default function Login() {
   
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
+    setError(null);
     
     try {
-      // This is to ensure we have a smooth transition when we migrate to the Server Actions
-      if (typeof window !== 'undefined') {
-        window.location.href = '/api/auth/google';
-      }
+      // Initialize Supabase client
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+      const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+      const supabase = createClient(supabaseUrl, supabaseAnonKey);
+      
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+      
+      if (error) throw error;
     } catch (error) {
       console.error("Google sign-in error:", error);
+      setError(error.message);
       setIsLoading(false);
     }
   };
