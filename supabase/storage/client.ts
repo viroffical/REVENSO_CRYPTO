@@ -3,8 +3,8 @@ import { v4 as uuidv4 } from "uuid";
 
 // Create a Supabase client
 function createSupabaseClient() {
-  const supabaseUrl = "https://rjucgbzerztofpuotjgr.supabase.co";
-  const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJqdWNnYnplcnp0b2ZwdW90amdyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzI2MTAsImV4cCI6MjA2MDIwODYxMH0.jf08hvHlAP5RAXqziUa8rytGR60xqRWnUAuhqfo-pek";
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL as string;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string;
   
   return createClient(supabaseUrl, supabaseAnonKey);
 }
@@ -51,8 +51,7 @@ export const uploadImage = async ({ file, bucket, folder }: UploadProps) => {
     return { imageUrl: "", error: "Image upload failed: " + error.message };
   }
 
-  const supabaseUrl = "https://rjucgbzerztofpuotjgr.supabase.co";
-  const imageUrl = `${supabaseUrl}/storage/v1/object/public/${bucket}/${data?.path}`;
+  const imageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL!}/storage/v1/object/public/${bucket}/${data?.path}`;
 
   return { imageUrl, error: "" };
 };
