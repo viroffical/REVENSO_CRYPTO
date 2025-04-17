@@ -1,57 +1,59 @@
-import React from 'react';
-import { useRouter } from 'next/router';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-  faUser, 
+import React from "react";
+import { useRouter } from "next/router";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faUser,
   faTimes,
   faGaugeHigh,
-  faArrowRightFromBracket
-} from '@fortawesome/free-solid-svg-icons';
-import { motion } from 'framer-motion';
-import { useAuth } from '../context/AuthContext';
+  faArrowRightFromBracket,
+} from "@fortawesome/free-solid-svg-icons";
+import { motion } from "framer-motion";
+import { useAuth } from "../context/AuthContext";
 
 const SideDrawer = ({ isOpen, onClose, userProfile }) => {
+  console.log(userProfile, "userProfile", JSON.parse(localStorage.getItem("revenso_user")));
   const router = useRouter();
   const { logout } = useAuth();
   const drawerVariants = {
     open: {
       x: 0,
       transition: {
-        type: 'spring',
+        type: "spring",
         stiffness: 300,
-        damping: 30
-      }
+        damping: 30,
+      },
     },
     closed: {
-      x: '-100%',
+      x: "-100%",
       transition: {
-        type: 'spring',
+        type: "spring",
         stiffness: 300,
-        damping: 30
-      }
-    }
+        damping: 30,
+      },
+    },
   };
 
   const overlayVariants = {
     open: {
       opacity: 0.5,
-      display: 'block'
+      display: "block",
     },
     closed: {
       opacity: 0,
       transitionEnd: {
-        display: 'none'
-      }
-    }
+        display: "none",
+      },
+    },
   };
 
   // Default profile if none provided
   const profile = userProfile || {
-    name: 'Your Name',
-    username: '@username',
+    name: "Your Name",
+    username: "@username",
     following: 196,
     followers: 1176,
-    profileImgUrl: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=256&q=80'
+    profileImgUrl:
+      "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=256&q=80",
   };
 
   return (
@@ -66,16 +68,18 @@ const SideDrawer = ({ isOpen, onClose, userProfile }) => {
       />
 
       {/* Drawer sidebar */}
-      <motion.div 
+      <motion.div
         className="fixed top-0 left-0 h-full w-4/5 max-w-xs bg-white z-40 flex flex-col shadow-xl overflow-y-auto pb-24"
-        style={{ paddingBottom: 'calc(72px + env(safe-area-inset-bottom, 8px))' }}
+        style={{
+          paddingBottom: "calc(72px + env(safe-area-inset-bottom, 8px))",
+        }}
         initial="closed"
         animate={isOpen ? "open" : "closed"}
         variants={drawerVariants}
       >
         {/* Close button for mobile */}
-        <button 
-          className="absolute top-2 right-2 p-2 block md:hidden" 
+        <button
+          className="absolute top-2 right-2 p-2 block md:hidden"
           onClick={onClose}
         >
           <FontAwesomeIcon icon={faTimes} className="text-gray-600" />
@@ -84,10 +88,10 @@ const SideDrawer = ({ isOpen, onClose, userProfile }) => {
         {/* Profile section */}
         <div className="p-4 border-b border-gray-200">
           <div className="flex items-center mb-2">
-            <img 
-              src={profile.profileImgUrl || profile.avatarUrl} 
-              alt={profile.name} 
-              className="w-12 h-12 rounded-full mr-3 object-cover border border-gray-200" 
+            <img
+              src={profile.profileImgUrl || profile.image_url}
+              alt={profile.name}
+              className="w-12 h-12 rounded-full mr-3 object-cover border border-gray-200"
             />
             <div className="flex-1">
               <h3 className="font-bold text-lg">{profile.name}</h3>
@@ -108,26 +112,36 @@ const SideDrawer = ({ isOpen, onClose, userProfile }) => {
         <nav className="flex-1">
           <ul className="py-2">
             <li>
-              <button 
+              <button
                 onClick={() => {
-                  window.dispatchEvent(new CustomEvent('setActiveTab', { detail: 'profile' }));
+                  window.dispatchEvent(
+                    new CustomEvent("setActiveTab", { detail: "profile" }),
+                  );
                   onClose();
-                }} 
+                }}
                 className="flex items-center w-full text-left px-4 py-3 hover:bg-gray-100 transition-colors"
               >
-                <FontAwesomeIcon icon={faUser} className="text-gray-700 w-5 h-5 mr-3" />
+                <FontAwesomeIcon
+                  icon={faUser}
+                  className="text-gray-700 w-5 h-5 mr-3"
+                />
                 <span className="font-medium">Profile</span>
               </button>
             </li>
             <li>
-              <button 
+              <button
                 onClick={() => {
-                  window.dispatchEvent(new CustomEvent('setActiveTab', { detail: 'dashboard' }));
+                  window.dispatchEvent(
+                    new CustomEvent("setActiveTab", { detail: "dashboard" }),
+                  );
                   onClose();
-                }} 
+                }}
                 className="flex items-center w-full text-left px-4 py-3 hover:bg-gray-100 transition-colors"
               >
-                <FontAwesomeIcon icon={faGaugeHigh} className="text-gray-700 w-5 h-5 mr-3" />
+                <FontAwesomeIcon
+                  icon={faGaugeHigh}
+                  className="text-gray-700 w-5 h-5 mr-3"
+                />
                 <span className="font-medium">Dashboard</span>
               </button>
             </li>
@@ -137,20 +151,23 @@ const SideDrawer = ({ isOpen, onClose, userProfile }) => {
         {/* Footer - with extra space to ensure visibility above bottom navigation */}
         <div className="p-4 pt-2 flex flex-col mt-auto">
           {/* Logout Button */}
-          <button 
+          <button
             className="logout-button w-full mb-4"
             onClick={() => {
               logout();
               onClose();
-              router.push('/login');
+              router.push("/login");
             }}
           >
             <span className="flex items-center justify-center">
-              <FontAwesomeIcon icon={faArrowRightFromBracket} className="mr-2" />
+              <FontAwesomeIcon
+                icon={faArrowRightFromBracket}
+                className="mr-2"
+              />
               Logout
             </span>
           </button>
-          
+
           {/* Extra space to ensure visibility above bottom nav */}
           <div className="h-16"></div>
         </div>

@@ -2,8 +2,33 @@ import { motion } from 'framer-motion';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendar, faXmark, faHeart, faCheckCircle, faBriefcase, faCircle, faCommentDots } from '@fortawesome/free-solid-svg-icons';
 import { faXTwitter } from '@fortawesome/free-brands-svg-icons';
+import { useEffect, useState } from 'react';
 
 const Card = ({ profile, dragProgress }) => {
+  const [userProfile, setUserProfile] = useState(null);
+  
+  useEffect(() => {
+    try {
+      const storedProfile = localStorage.getItem('revenso_user');
+      if (storedProfile) {
+        setUserProfile(JSON.parse(storedProfile));
+      }
+    } catch (error) {
+      console.error('Error parsing user profile:', error);
+    }
+  }, []);
+  
+  // If user profile hasn't loaded yet, show a loading state
+  if (!userProfile) {
+    return (
+      <div className="relative w-full h-full bg-white rounded-3xl flex items-center justify-center">
+        <p className="text-gray-600">Loading profile...</p>
+      </div>
+    );
+  }
+  
+  console.log(userProfile, 'userProfile');
+  
   return (
     <div 
       className="relative w-full h-full bg-white rounded-3xl overflow-y-auto scrollbar-hide overscroll-y-contain will-change-scroll"
@@ -23,11 +48,11 @@ const Card = ({ profile, dragProgress }) => {
         {/* Profile Image */}
         <div className="w-full h-full bg-white flex-grow will-change-transform">
           <img
-            src={profile.imageUrl || profile.image}
-            alt={profile.name}
+            src={userProfile.image_url}
+            alt={userProfile.full_name}
             className="w-full h-full object-cover object-center will-change-transform"
             style={{ 
-              minHeight: "calc(100vh - 220px)",
+              minHeight: "calc(100vh - 120px)",
               WebkitBackfaceVisibility: 'hidden',
               backfaceVisibility: 'hidden',
               transform: 'translateZ(0)',
@@ -57,35 +82,57 @@ const Card = ({ profile, dragProgress }) => {
         )}
         
         {/* Profile Info Overlay */}
-        <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/90 via-black/60 to-transparent text-white">
-          <div className="flex items-center mb-0.5">
-            <h2 className="text-lg font-bold mr-2">{profile.name}</h2>
-            {profile.verified && (
-              <FontAwesomeIcon icon={faXTwitter} style={{height:'1rem', color: 'white', fontWeight: 'bolder'}} />
-            )}
+        <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/90 via-black/75 to-transparent text-white">
+          <div className="flex items-center mb-1">
+            <h2 className="text-xl font-bold mr-2 drop-shadow-md">{userProfile.full_name}</h2>
+            <FontAwesomeIcon 
+              icon={faXTwitter} 
+              style={{
+                height:'1.2rem', 
+                color: 'white', 
+                fontWeight: 'bolder', 
+                cursor: "pointer",
+                filter: 'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5))'
+              }} 
+            />
           </div>
           
           {/* Job & Company */}
-          <div className="flex items-center mb-0.2">
-            <FontAwesomeIcon icon={faBriefcase} className="h-4 w-4 mr-2" />
-            <p className="text-[0.7rem] font-medium">
-              {profile.occupation || profile.jobTitle} {profile.company && `at ${profile.company}`}
+          <div className="flex items-center mb-1">
+            <FontAwesomeIcon 
+              icon={faBriefcase} 
+              className="h-4 w-4 mr-2" 
+              style={{filter: 'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5))'}}
+            />
+            <p className="text-sm font-medium drop-shadow-md">
+              {userProfile.profile?.role || 'Developer'} {userProfile.profile?.project ? `at ${userProfile.profile.project}` : ''}
             </p>
           </div>
           
           {/* Bio */}
-          <p className="text-base text-gray-100 mb-0.5 text-[0.7rem]">{profile.bio}</p>
+          <p className="text-sm text-white mb-2 drop-shadow-md">
+            {userProfile.profile?.description ? `Looking to meet ${userProfile.profile.description}` : 'Looking to meet developers and designers'}
+          </p>
           
           {/* Attending Section */}
           <div>
-            <h3 className="text-sm font-bold">Attending</h3>
+            <h3 className="text-sm font-bold drop-shadow-md">Attending</h3>
             <div className="flex justify-between items-center">
               <div className="flex items-center">
-                <div className="bg-teal-500 text-white rounded-full w-3 h-3 mr-2"></div>
-                <span className="font-medium">Token2049 week</span>
+                <div className="bg-teal-500 text-white rounded-full w-3 h-3 mr-2 shadow-sm"></div>
+                <span className="font-medium drop-shadow-md">
+                  {userProfile.profile?.event_attending || 'TOKEN 2049'}
+                </span>
               </div>
-              <button className="p-2 ">
-                <FontAwesomeIcon icon={faCommentDots} style={{height:'1.3rem', color: 'white'}} />
+              <button className="p-2">
+                <FontAwesomeIcon 
+                  icon={faCommentDots} 
+                  style={{
+                    height:'1.3rem', 
+                    color: 'white',
+                    filter: 'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5))'
+                  }} 
+                />
               </button>
             </div>
           </div>
