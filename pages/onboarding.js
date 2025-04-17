@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useTransition } from 'react';
 import Head from 'next/head';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useForm } from 'react-hook-form';
@@ -10,6 +10,8 @@ import {
 import { FaCamera } from 'react-icons/fa';
 import { IoInformationCircleOutline } from 'react-icons/io5';
 import useRegister from '../lib/useRegister';
+import { convertBlobUrlToFile } from '../lib/utils';
+import { uploadImage } from '../supabase/storage/client';
 
 const OnboardingPage = () => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -108,10 +110,21 @@ const OnboardingPage = () => {
     }, 50);
   };
   
-  // Handle image uploads
-  const handleImageChange = (e, type) => {
+  // Add isPending state for tracking upload status
+  const [isPending, startTransition] = useTransition();
+  const [uploadStatus, setUploadStatus] = useState({
+    loading: false,
+    error: null,
+    success: false
+  });
+
+  // Handle image uploads with direct upload to Supabase
+  const handleImageChange = async (e, type) => {
     const file = e.target.files[0];
-    if (file) {
+    if (!file) return;
+    
+    try {
+      // First, show the preview immediately for better UX
       const reader = new FileReader();
       reader.onloadend = () => {
         setFormData(prev => ({
@@ -121,6 +134,62 @@ const OnboardingPage = () => {
         }));
       };
       reader.readAsDataURL(file);
+      
+      // Then upload to Supabase in the background
+      setUploadStatus({ loading: true, error: null, success: false });
+      
+      startTransition(async () => {
+        try {
+          console.log('Uploading image to Supabase...');
+          
+          // Upload the image to Supabase
+          const { imageUrl, error } = await uploadImage({
+            file: file,
+            bucket: 'avatar',
+            folder: 'profiles'
+          });
+          
+          if (error) {
+            console.error('Error uploading image:', error);
+            setUploadStatus({ 
+              loading: false, 
+              error: `Failed to upload image: ${error}`, 
+              success: false 
+            });
+            return;
+          }
+          
+          console.log('Image uploaded successfully:', imageUrl);
+          
+          // Update form data with the Supabase URL
+          setFormData(prev => ({
+            ...prev,
+            [type]: file,
+            [`${type}Preview`]: reader.result,
+            [`${type}Url`]: imageUrl
+          }));
+          
+          setUploadStatus({ 
+            loading: false, 
+            error: null, 
+            success: true 
+          });
+        } catch (error) {
+          console.error('Image upload error:', error);
+          setUploadStatus({ 
+            loading: false, 
+            error: `Upload failed: ${error.message}`, 
+            success: false 
+          });
+        }
+      });
+    } catch (error) {
+      console.error('Error processing image:', error);
+      setUploadStatus({ 
+        loading: false, 
+        error: `Failed to process image: ${error.message}`, 
+        success: false 
+      });
     }
   };
   
@@ -159,10 +228,24 @@ const OnboardingPage = () => {
   const handleFinalSubmit = async () => {
     console.log('Form submitted:', formData);
     try {
+      // Check if we have an upload in progress
+      if (uploadStatus.loading) {
+        alert("Please wait for image upload to complete before submitting");
+        return;
+      }
+      
+      // Check if there was an upload error
+      if (uploadStatus.error) {
+        const proceed = confirm(
+          `There was an error with your profile image: ${uploadStatus.error}. Do you want to continue anyway?`
+        );
+        if (!proceed) return;
+      }
+      
       // Clear any previous errors when starting a new submission
       clearError();
       
-      // Prepare user data including the profile image preview (base64 data)
+      // Prepare user data including the profile image
       const userData = {
         email: formData.email,
         password: formData.password,
@@ -172,11 +255,15 @@ const OnboardingPage = () => {
         project: formData.project,
         bio: formData.bio,
         event: formData.event,
+        // Use the uploaded URL if available, otherwise use the base64 preview as fallback
+        profileImageUrl: formData.profileImageUrl || null,
         profileImagePreview: formData.profileImagePreview,
       };
-      console.log('User data:', userData);
+      
+      console.log('User data ready for registration:', userData);
+      
       // Call the register API through our custom hook
-      // await registerUser(userData);
+      await registerUser(userData);
     } catch (error) {
       console.error('Registration error:', error);
       alert(`Registration failed: ${error.message}`);

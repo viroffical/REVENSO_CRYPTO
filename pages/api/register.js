@@ -37,6 +37,7 @@ export default async function handler(req, res) {
       twitter, 
       profileImage, 
       profileImagePreview,
+      profileImageUrl, // New field for direct Supabase URL
       role,
       project,
       bio,
@@ -44,10 +45,10 @@ export default async function handler(req, res) {
     } = req.body;
 
     // Handle image upload to Supabase Storage
-    let avatarUrl = null;
+    let avatarUrl = profileImageUrl || null; // Use the direct URL if available
     
-    // Process image - handle base64 string from the client
-    if (profileImagePreview) {
+    // Process image only if we don't already have a URL and have base64 data
+    if (!avatarUrl && profileImagePreview) {
       try {
         // If we have a base64 string
         if (profileImagePreview.includes('base64')) {
