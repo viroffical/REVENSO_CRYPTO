@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCalendarDay, faClock, faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { faCalendarDay, faClock, faSpinner, faFilter } from '@fortawesome/free-solid-svg-icons';
 import { supabase } from '../lib/supabaseClient';
+import { formatDate } from '../lib/utils';
 
 const EventsComponent = () => {
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [selectedDate, setSelectedDate] = useState('All');
   const [events, setEvents] = useState([]);
   const [categories, setCategories] = useState(['All']);
+  const [dates, setDates] = useState(['All']);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
@@ -40,6 +43,10 @@ const EventsComponent = () => {
           // Extract unique categories
           const uniqueCategories = [...new Set(data.map(event => event.type))];
           setCategories(['All', ...uniqueCategories]);
+          
+          // Extract unique dates
+          const uniqueDates = [...new Set(data.map(event => event.date))];
+          setDates(['All', ...uniqueDates]);
         }
         
       } catch (error) {
@@ -57,10 +64,17 @@ const EventsComponent = () => {
     fetchEvents();
   }, []);
   
-  // Filter events by selected category
-  const filteredEvents = selectedCategory === 'All'
-    ? events
-    : events.filter(event => event.type === selectedCategory);
+  // Filter events by selected category and date
+  const filteredEvents = events.filter(event => {
+    // Filter by category first
+    const categoryMatch = selectedCategory === 'All' || event.type === selectedCategory;
+    
+    // Then filter by date
+    const dateMatch = selectedDate === 'All' || event.date === selectedDate;
+    
+    // Return true only if both filters match
+    return categoryMatch && dateMatch;
+  });
 
   // Render attendees with count
   const renderAttendees = (attendees) => {
@@ -106,20 +120,49 @@ const EventsComponent = () => {
           </div>
 
           {/* Category Filters */}
-          <div className="mb-2 flex overflow-x-auto -mx-4 px-4 pb-2 scrollbar-hide">
-            {categories.map(category => (
-              <button 
-                key={category}
-                className={`flex-shrink-0 px-4 py-2 rounded-full mr-2 text-sm ${
-                  selectedCategory === category 
-                    ? 'bg-yellow-500 text-white' 
-                    : 'bg-gray-100 text-gray-700'
-                }`}
-                onClick={() => setSelectedCategory(category)}
-              >
-                {category}
-              </button>
-            ))}
+          <div className="mb-3">
+            <div className="flex items-center mb-2 px-1">
+              <FontAwesomeIcon icon={faFilter} className="text-yellow-500 mr-2 w-3.5" />
+              <span className="text-sm font-medium text-gray-700">Filter by Category</span>
+            </div>
+            <div className="flex overflow-x-auto -mx-4 px-4 pb-2 scrollbar-hide">
+              {categories.map(category => (
+                <button 
+                  key={category}
+                  className={`flex-shrink-0 px-4 py-2 rounded-full mr-2 text-sm ${
+                    selectedCategory === category 
+                      ? 'bg-yellow-500 text-white' 
+                      : 'bg-gray-100 text-gray-700'
+                  }`}
+                  onClick={() => setSelectedCategory(category)}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
+          </div>
+          
+          {/* Date Filters */}
+          <div className="mb-2">
+            <div className="flex items-center mb-2 px-1">
+              <FontAwesomeIcon icon={faCalendarDay} className="text-yellow-500 mr-2 w-3.5" />
+              <span className="text-sm font-medium text-gray-700">Filter by Date</span>
+            </div>
+            <div className="flex overflow-x-auto -mx-4 px-4 pb-2 scrollbar-hide">
+              {dates.map(date => (
+                <button 
+                  key={date}
+                  className={`flex-shrink-0 px-4 py-2 rounded-full mr-2 text-sm ${
+                    selectedDate === date 
+                      ? 'bg-yellow-500 text-white' 
+                      : 'bg-gray-100 text-gray-700'
+                  }`}
+                  onClick={() => setSelectedDate(date)}
+                >
+                  {date === 'All' ? 'All Dates' : formatDate(date)}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -143,15 +186,36 @@ const EventsComponent = () => {
           </div>
         ) : filteredEvents.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-64">
-            <p className="text-gray-500 mb-2">No events found</p>
-            {selectedCategory !== 'All' && (
-              <button 
-                onClick={() => setSelectedCategory('All')} 
-                className="px-4 py-2 bg-yellow-500 text-white rounded-full text-sm"
-              >
-                Show All Events
-              </button>
-            )}
+            <p className="text-gray-500 mb-2">No events found with the selected filters</p>
+            <div className="flex space-x-2">
+              {(selectedCategory !== 'All' || selectedDate !== 'All') && (
+                <button 
+                  onClick={() => {
+                    setSelectedCategory('All');
+                    setSelectedDate('All');
+                  }} 
+                  className="px-4 py-2 bg-yellow-500 text-white rounded-full text-sm"
+                >
+                  Show All Events
+                </button>
+              )}
+              {selectedCategory !== 'All' && (
+                <button 
+                  onClick={() => setSelectedCategory('All')}
+                  className="px-4 py-2 bg-gray-200 text-gray-700 rounded-full text-sm"
+                >
+                  Clear Category Filter
+                </button>
+              )}
+              {selectedDate !== 'All' && (
+                <button 
+                  onClick={() => setSelectedDate('All')}
+                  className="px-4 py-2 bg-gray-200 text-gray-700 rounded-full text-sm"
+                >
+                  Clear Date Filter
+                </button>
+              )}
+            </div>
           </div>
         ) : (
           <>
@@ -172,7 +236,7 @@ const EventsComponent = () => {
                       <div className="flex flex-col mt-1.5 space-y-0.5">
                         <div className="flex items-center text-xs text-gray-500">
                           <FontAwesomeIcon icon={faCalendarDay} className="mr-1 text-yellow-500 w-3.5" />
-                          <span>{event.date}</span>
+                          <span>{formatDate(event.date)}</span>
                         </div>
                         <div className="flex items-center text-xs text-gray-500">
                           <FontAwesomeIcon icon={faClock} className="mr-1 text-yellow-500 w-3.5" />
