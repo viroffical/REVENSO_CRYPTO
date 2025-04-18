@@ -90,7 +90,7 @@ export default function Home() {
   const renderContent = () => {
     switch (activeTab) {
       case 'people':
-        return <CardStack profiles={profiles} />;
+        return <CardStack />
       case 'maps':
         return <MapDetailComponent />;
       case 'meetings':
@@ -102,7 +102,7 @@ export default function Home() {
       case 'dashboard':
         return <DashboardComponent />;
       case 'profile':
-        return <ProfileComponent userProfile={userProfile} />;
+        return <ProfileComponent userProfile={user} />;
       default:
         return (
           <div className="flex items-center justify-center h-full">
@@ -152,7 +152,7 @@ export default function Home() {
       
       <div className="relative flex flex-col h-screen max-w-md mx-auto bg-white overflow-hidden">
         {/* Side Drawer */}
-        <SideDrawer isOpen={drawerOpen} onClose={closeDrawer} userProfile={userProfile} />
+        <SideDrawer isOpen={drawerOpen} onClose={closeDrawer} userProfile={user} />
 
         {/* Header - always showing the app name REVENSO */}
         <header className="flex justify-between items-center p-3 bg-white shadow-sm z-10 sticky top-0">

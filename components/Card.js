@@ -5,21 +5,21 @@ import { faXTwitter } from '@fortawesome/free-brands-svg-icons';
 import { useEffect, useState } from 'react';
 
 const Card = ({ profile, dragProgress }) => {
-  const [userProfile, setUserProfile] = useState(null);
+  // const [profile, setUserProfile] = useState(null);
   
-  useEffect(() => {
-    try {
-      const storedProfile = localStorage.getItem('revenso_user');
-      if (storedProfile) {
-        setUserProfile(JSON.parse(storedProfile));
-      }
-    } catch (error) {
-      console.error('Error parsing user profile:', error);
-    }
-  }, []);
+  // useEffect(() => {
+  //   try {
+  //     const storedProfile = localStorage.getItem('revenso_user');
+  //     if (storedProfile) {
+  //       setUserProfile(JSON.parse(storedProfile));
+  //     }
+  //   } catch (error) {
+  //     console.error('Error parsing user profile:', error);
+  //   }
+  // }, []);
   
   // If user profile hasn't loaded yet, show a loading state
-  if (!userProfile) {
+  if (!profile) {
     return (
       <div className="relative w-full h-full bg-white rounded-3xl flex items-center justify-center">
         <p className="text-gray-600">Loading profile...</p>
@@ -27,7 +27,7 @@ const Card = ({ profile, dragProgress }) => {
     );
   }
   
-  console.log(userProfile, 'userProfile');
+  console.log(profile, 'profile');
   
   return (
     <div 
@@ -48,8 +48,8 @@ const Card = ({ profile, dragProgress }) => {
         {/* Profile Image */}
         <div className="w-full h-full bg-white flex-grow will-change-transform">
           <img
-            src={userProfile.image_url}
-            alt={userProfile.full_name}
+            src={profile.image_url}
+            alt={profile.full_name}
             className="w-full h-full object-cover object-center will-change-transform"
             style={{ 
               minHeight: "calc(100vh - 120px)",
@@ -84,9 +84,9 @@ const Card = ({ profile, dragProgress }) => {
         {/* Profile Info Overlay */}
         <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/90 via-black/75 to-transparent text-white">
           <div className="flex items-center mb-1">
-            <h2 className="text-xl font-bold mr-2 drop-shadow-md">{userProfile.full_name}</h2>
+            <h2 className="text-xl font-bold mr-2 drop-shadow-md">{profile.full_name}</h2>
             <a 
-              href={userProfile.twitter ? `https://twitter.com/${userProfile.twitter.replace('@', '')}` : '#'} 
+              href={profile.twitter ? `https://twitter.com/${profile.twitter.replace('@', '')}` : '#'} 
               target="_blank" 
               rel="noopener noreferrer"
             >
@@ -111,13 +111,13 @@ const Card = ({ profile, dragProgress }) => {
               style={{filter: 'drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5))'}}
             />
             <p className="text-sm font-medium drop-shadow-md">
-              {userProfile.profile?.role || 'Developer'} {userProfile.profile?.project ? `at ${userProfile.profile.project}` : ''}
+              {profile.profile?.role || 'Developer'} {profile.profile?.project ? `at ${profile.profile.project}` : ''}
             </p>
           </div>
           
           {/* Bio */}
           <p className="text-sm text-white mb-2 drop-shadow-md">
-            {userProfile.profile?.description ? `Looking to meet ${userProfile.profile.description}` : 'Looking to meet developers and designers'}
+            {profile.profile?.description ? `Looking to meet ${profile.profile.description}` : 'Looking to meet developers and designers'}
           </p>
           
           {/* Attending Section */}
@@ -127,7 +127,7 @@ const Card = ({ profile, dragProgress }) => {
               <div className="flex items-center">
                 <div className="bg-teal-500 text-white rounded-full w-3 h-3 mr-2 shadow-sm"></div>
                 <span className="font-medium drop-shadow-md">
-                  {userProfile.profile?.event_attending || 'TOKEN 2049'}
+                  {profile.profile?.event_attending || 'TOKEN 2049'}
                 </span>
               </div>
               <button className="p-2">

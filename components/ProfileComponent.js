@@ -119,7 +119,7 @@ const ProfileComponent = ({ userProfile }) => {
           <div className="relative">
             <div className="h-28 w-28 rounded-full overflow-hidden border-4 border-white shadow-lg">
               <img 
-                src={profile.profileImgUrl} 
+                src={profile.image_url} 
                 alt={profile.name} 
                 className="h-full w-full object-cover"
               />
@@ -174,7 +174,7 @@ const ProfileComponent = ({ userProfile }) => {
       </div>
       
       {/* Stats Section */}
-      <div className="px-4 py-5">
+      {/* <div className="px-4 py-5">
         <h2 className="text-lg font-semibold mb-3 px-2 text-gray-800">Stats</h2>
         <div className="flex gap-3 overflow-x-auto pb-2 px-2 hide-scrollbar">
           {stats.map((stat, index) => (
@@ -188,7 +188,7 @@ const ProfileComponent = ({ userProfile }) => {
             </div>
           ))}
         </div>
-      </div>
+      </div> */}
       
       {/* Profile Details */}
       <div className="px-6 py-5 border-t border-gray-100">
@@ -205,7 +205,7 @@ const ProfileComponent = ({ userProfile }) => {
             </div>
           </div>
           
-          <div className="flex items-center">
+          {/* <div className="flex items-center">
             <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center mr-3 flex-shrink-0">
               <FontAwesomeIcon icon={faPhone} className="text-blue-500" />
             </div>
@@ -213,9 +213,9 @@ const ProfileComponent = ({ userProfile }) => {
               <p className="text-xs text-gray-500">Phone</p>
               <p className="font-medium">{profile.phone}</p>
             </div>
-          </div>
+          </div> */}
           
-          <div className="flex items-center">
+          {/* <div className="flex items-center">
             <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center mr-3 flex-shrink-0">
               <FontAwesomeIcon icon={faCalendarAlt} className="text-blue-500" />
             </div>
@@ -223,9 +223,9 @@ const ProfileComponent = ({ userProfile }) => {
               <p className="text-xs text-gray-500">Date of Birth</p>
               <p className="font-medium">{profile.dateOfBirth}</p>
             </div>
-          </div>
+          </div> */}
           
-          <div className="flex items-center">
+          {/* <div className="flex items-center">
             <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center mr-3 flex-shrink-0">
               <FontAwesomeIcon icon={faMapMarkerAlt} className="text-blue-500" />
             </div>
@@ -233,7 +233,7 @@ const ProfileComponent = ({ userProfile }) => {
               <p className="text-xs text-gray-500">Location</p>
               <p className="font-medium">{profile.address}</p>
             </div>
-          </div>
+          </div> */}
           
           <div className="flex items-center">
             <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center mr-3 flex-shrink-0">
@@ -247,7 +247,7 @@ const ProfileComponent = ({ userProfile }) => {
         </div>
         
         {/* Social Links */}
-        <div className="mb-4">
+        {/* <div className="mb-4">
           <h3 className="text-sm font-semibold mb-2 text-gray-700">Social Profiles</h3>
           <div className="space-y-2">
             {profile.socialLinks.map((link, index) => (
@@ -262,7 +262,7 @@ const ProfileComponent = ({ userProfile }) => {
               </div>
             ))}
           </div>
-        </div>
+        </div> */}
       </div>
       
       {/* Membership Section */}
@@ -309,7 +309,7 @@ const ProfileComponent = ({ userProfile }) => {
       </div>
       
       {/* Achievements Section */}
-      <div className="px-6 py-5 border-t border-gray-100">
+      {/* <div className="px-6 py-5 border-t border-gray-100">
         <h2 className="text-lg font-semibold mb-4 text-gray-800">Achievements</h2>
         
         <div className="grid grid-cols-3 gap-3">
@@ -325,7 +325,7 @@ const ProfileComponent = ({ userProfile }) => {
             </div>
           ))}
         </div>
-      </div>
+      </div> */}
       
       {/* Settings Section */}
       <div className="px-6 py-5 border-t border-gray-100 mb-6">

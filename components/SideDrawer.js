@@ -8,60 +8,60 @@ import {
   faArrowRightFromBracket,
 } from "@fortawesome/free-solid-svg-icons";
 import { motion } from "framer-motion";
-import { createClient } from '@supabase/supabase-js';
-import { createClient as createSupabaseClient } from '../utils/supabase/client';
+import { createClient } from "@supabase/supabase-js";
+import { createClient as createSupabaseClient } from "../utils/supabase/client";
 
 const SideDrawer = ({ isOpen, onClose, userProfile: propUserProfile }) => {
   const [localUserProfile, setLocalUserProfile] = useState(null);
   const router = useRouter();
-  
+
   // Use the provided userProfile prop if available, otherwise get from localStorage
   useEffect(() => {
     if (propUserProfile) {
       setLocalUserProfile(propUserProfile);
-    } else if (typeof window !== 'undefined') {
+    } else if (typeof window !== "undefined") {
       try {
-        const storedProfile = localStorage.getItem('revenso_user');
+        const storedProfile = localStorage.getItem("revenso_user");
         if (storedProfile) {
           setLocalUserProfile(JSON.parse(storedProfile));
         }
       } catch (error) {
-        console.error('Error parsing user profile:', error);
+        console.error("Error parsing user profile:", error);
       }
     }
   }, [propUserProfile]);
-  
+
   const handleLogout = async () => {
     try {
       // This will only run in the browser
-      if (typeof window !== 'undefined') {
+      if (typeof window !== "undefined") {
         // Clear local storage
-        localStorage.removeItem('revenso_user');
-        
+        localStorage.removeItem("revenso_user");
+
         // Attempt to sign out from Supabase
         try {
           const supabase = createSupabaseClient();
           await supabase.auth.signOut();
         } catch (supabaseError) {
-          console.error('Supabase signout error:', supabaseError);
+          console.error("Supabase signout error:", supabaseError);
           // Continue with logout flow even if Supabase signout fails
         }
-        
+
         // Close drawer and redirect to login
         onClose();
-        router.push('/login');
+        router.push("/login");
       }
     } catch (error) {
-      console.error('Logout error:', error);
+      console.error("Logout error:", error);
       // Even if there's an error, we should still clear localStorage and redirect
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('revenso_user');
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("revenso_user");
         onClose();
-        router.push('/login');
+        router.push("/login");
       }
     }
   };
-  
+
   const drawerVariants = {
     open: {
       x: 0,
@@ -138,13 +138,17 @@ const SideDrawer = ({ isOpen, onClose, userProfile: propUserProfile }) => {
           {localUserProfile ? (
             <div className="flex items-center mb-2">
               <img
-                src={localUserProfile.image_url || localUserProfile.avatar}
-                alt={localUserProfile.full_name || localUserProfile.name}
+                src={localUserProfile.image_url}
+                alt={localUserProfile.full_name}
                 className="w-12 h-12 rounded-full mr-3 object-cover border border-gray-200"
               />
               <div className="flex-1">
-                <h3 className="font-bold text-lg">{localUserProfile.full_name || localUserProfile.name}</h3>
-                <p className="text-sm text-gray-500">{localUserProfile.twitter || localUserProfile.username}</p>
+                <h3 className="font-bold text-lg">
+                  {localUserProfile.full_name || localUserProfile.name}
+                </h3>
+                <p className="text-sm text-gray-500">
+                  {localUserProfile.twitter || localUserProfile.username}
+                </p>
               </div>
             </div>
           ) : (
@@ -205,10 +209,7 @@ const SideDrawer = ({ isOpen, onClose, userProfile: propUserProfile }) => {
         {/* Footer - with extra space to ensure visibility above bottom navigation */}
         <div className="p-4 pt-2 flex flex-col mt-auto">
           {/* Logout Button */}
-          <button
-            className="logout-button w-full mb-4"
-            onClick={handleLogout}
-          >
+          <button className="logout-button w-full mb-4" onClick={handleLogout}>
             <span className="flex items-center justify-center">
               <FontAwesomeIcon
                 icon={faArrowRightFromBracket}

@@ -2,11 +2,15 @@ import { useState, useRef, useEffect } from 'react';
 import { motion, useMotionValue, useTransform, AnimatePresence, animate } from 'framer-motion';
 import Card from './Card';
 import SwipeIndicator from './SwipeIndicator';
-import supabase from '../lib/supabaseClient';
+// import supabase from '../lib/supabaseClient';
 import { profiles as dummyProfiles } from '../data/profiles';
-
+import { createClient } from "@supabase/supabase-js";
+const supabaseUrl = "https://rjucgbzerztofpuotjgr.supabase.co";
+const supabaseAnonKey =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJqdWNnYnplcnp0b2ZwdW90amdyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzI2MTAsImV4cCI6MjA2MDIwODYxMH0.jf08hvHlAP5RAXqziUa8rytGR60xqRWnUAuhqfo-pek";
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 const CardStack = () => {
-  const [profiles, setProfiles] = useState(dummyProfiles || []);
+  const [profiles, setProfiles] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [exitDirection, setExitDirection] = useState(null);
   const [swipedProfiles, setSwipedProfiles] = useState([]);
@@ -127,8 +131,9 @@ const CardStack = () => {
 const SwipeableCard = ({ profile, onSwipe, isTop, zIndex }) => {
   const cardRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [touchStartX, setTouchStartX] = useState(0);
   
-  // High performance motion values for smooth tracking
+  // High performance motion values for smoother tracking
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-300, 0, 300], [-20, 0, 20]);
   
@@ -136,17 +141,71 @@ const SwipeableCard = ({ profile, onSwipe, isTop, zIndex }) => {
   const leftIndicatorOpacity = useTransform(x, [-150, -20], [1, 0]);
   const rightIndicatorOpacity = useTransform(x, [20, 150], [0, 1]);
   
-  // Reset card position with simple spring animation
+  // Enhanced spring animation for more natural card movement
   const resetCardPosition = () => {
     animate(x, 0, {
       type: "spring",
-      stiffness: 500,
-      damping: 50,
-      duration: 0.2
+      stiffness: 400,  // Lower stiffness for smoother finish
+      damping: 40,     // Lower damping for more natural bounce
+      velocity: 0,     // Reset any existing velocity
+      restDelta: 0.5,  // Smaller rest delta for more precision
+      restSpeed: 0.5,  // Smaller rest speed for smoother finish
     });
   };
   
-  // Simple drag handlers that work well on both mobile and desktop
+  // Direct touch event handlers for better control on mobile
+  useEffect(() => {
+    if (!isTop || !cardRef.current) return;
+    
+    const card = cardRef.current;
+    
+    const handleTouchStart = (e) => {
+      setIsDragging(true);
+      setTouchStartX(e.touches[0].clientX);
+    };
+    
+    const handleTouchMove = (e) => {
+      if (!isDragging) return;
+      
+      const currentX = e.touches[0].clientX;
+      const deltaX = currentX - touchStartX;
+      
+      // Update the motion value directly for smoother movement
+      x.set(deltaX);
+    };
+    
+    const handleTouchEnd = (e) => {
+      if (!isDragging) return;
+      
+      setIsDragging(false);
+      
+      // Get the final position and calculate swipe direction
+      const currentX = x.get();
+      const swipeThreshold = 80;
+      
+      if (currentX > swipeThreshold) {
+        onSwipe('right');
+      } else if (currentX < -swipeThreshold) {
+        onSwipe('left');
+      } else {
+        resetCardPosition();
+      }
+    };
+    
+    // Add touch event listeners for mobile devices
+    card.addEventListener('touchstart', handleTouchStart, { passive: true });
+    card.addEventListener('touchmove', handleTouchMove, { passive: true });
+    card.addEventListener('touchend', handleTouchEnd);
+    
+    return () => {
+      // Clean up event listeners
+      card.removeEventListener('touchstart', handleTouchStart);
+      card.removeEventListener('touchmove', handleTouchMove);
+      card.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [isTop, isDragging, touchStartX, x, onSwipe]);
+  
+  // Mouse drag handlers (for desktop)
   const handleDragStart = () => {
     if (!isTop) return;
     setIsDragging(true);
@@ -157,9 +216,9 @@ const SwipeableCard = ({ profile, onSwipe, isTop, zIndex }) => {
     
     setIsDragging(false);
     
-    // More responsive thresholds specifically for touch devices
+    // More responsive thresholds
     const swipeThreshold = 80;
-    const velocityThreshold = 300;
+    const velocityThreshold = 200; // Lower threshold for easier swiping
     
     // Detect swipes based on velocity first (fastest response)
     if (info.velocity.x > velocityThreshold) {
@@ -198,12 +257,15 @@ const SwipeableCard = ({ profile, onSwipe, isTop, zIndex }) => {
       }
     },
     exit: (direction) => ({
-      x: direction === 'left' ? -1000 : direction === 'right' ? 1000 : 0,
-      opacity: 1,
-      rotate: direction === 'left' ? -30 : direction === 'right' ? 30 : 0,
+      x: direction === 'left' ? -2000 : direction === 'right' ? 2000 : 0,
+      y: direction === 'left' ? 100 : direction === 'right' ? 50 : 0,
+      opacity: 0,
+      rotate: direction === 'left' ? -45 : direction === 'right' ? 45 : 0,
+      scale: 0.8,
       transition: { 
-        duration: 0.2,
-        ease: "easeOut"
+        duration: 0.5,
+        ease: [0.32, 0.72, 0, 1], // Custom easing for smoother exit
+        opacity: { duration: 0.3 }
       }
     }),
   };
@@ -216,23 +278,28 @@ const SwipeableCard = ({ profile, onSwipe, isTop, zIndex }) => {
         x, 
         rotate, 
         zIndex: isDragging ? 999 : (zIndex + 10),
-        touchAction: 'none',
+        touchAction: 'none', // Disable browser touch actions for better swipe control
         WebkitTapHighlightColor: 'transparent',
         WebkitUserSelect: 'none',
         userSelect: 'none',
         WebkitBackfaceVisibility: 'hidden',
         backfaceVisibility: 'hidden',
+        willChange: 'transform', // Hint to browser for optimization
         transform: 'translate3d(0,0,0)',
-        WebkitTransform: 'translate3d(0,0,0)'
+        WebkitTransform: 'translate3d(0,0,0)',
+        perspective: 1000, // Improve performance for 3D transforms
       }}
       drag={isTop ? "x" : false}
-      dragConstraints={{ left: 0, right: 0 }}
-      dragElastic={0.7}
+      dragConstraints={{ left: -1000, right: 1000 }} // Wider constraints for smoother drag
+      dragElastic={0.9} // More elasticity for natural feeling
       dragMomentum={true}
       dragTransition={{ 
-        power: 0.2,
-        timeConstant: 100,
-        modifyTarget: target => Math.abs(target) < 5 ? 0 : target
+        power: 0.15, // Lower power for smoother deceleration
+        timeConstant: 200, // Higher time constant for smoother movement
+        restDelta: 1, // Smaller delta for more precise rest point
+        modifyTarget: target => Math.abs(target) < 10 ? 0 : target, // More forgiving snap back
+        bounceStiffness: 300, // Softer bounce for more natural feel
+        bounceDamping: 40  // Lower damping for smoother bounce
       }}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
@@ -241,13 +308,14 @@ const SwipeableCard = ({ profile, onSwipe, isTop, zIndex }) => {
       exit="exit"
       variants={variants}
       custom={onSwipe}
-      whileTap={{ scale: 1.02 }}
+      whileTap={{ scale: 1.01 }} // Smaller scale change for smoother feel
       layoutId={`card-${profile.id}`}
       transition={{
         type: "spring",
-        stiffness: 500,
-        damping: 30,
-        mass: 0.8
+        stiffness: 400, // Lower stiffness for smoother animation
+        damping: 35,   // Adjusted damping for natural movement
+        mass: 0.9,     // Slightly higher mass feels more substantial
+        restDelta: 0.5 // Smaller rest delta for smoother finish
       }}
     >
       <div className="h-[calc(100vh-180px)] shadow-xl rounded-xl overflow-hidden bg-white">
