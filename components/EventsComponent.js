@@ -249,11 +249,11 @@ const EventsComponent = () => {
                   onClick={hasExternalLink ? handleCardClick : undefined}
                 >
                   {/* Tag for clickable events */}
-                  {hasExternalLink && (
+                  {/* {hasExternalLink && (
                     <div className="absolute top-2 right-2 z-10 bg-yellow-500 text-white text-[10px] px-2 py-0.5 rounded-full">
                       External Link
                     </div>
-                  )}
+                  )} */}
                   <div className="flex min-h-[140px]">
                     <div className="w-36 bg-gray-200 flex-shrink-0">
                       <img 
@@ -301,14 +301,14 @@ const EventsComponent = () => {
                           )}
                           
                           {/* Show click indicator if link is external */}
-                          {hasExternalLink && (
+                          {/* {hasExternalLink && (
                             <span className="text-xs text-blue-500 font-medium flex items-center bg-blue-50 px-2 py-1 rounded-full">
                               <span>View Event</span>
                               <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                               </svg>
                             </span>
-                          )}
+                          )} */}
                         </div>
                       </div>
                     </div>
