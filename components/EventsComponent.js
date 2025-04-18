@@ -219,63 +219,103 @@ const EventsComponent = () => {
           </div>
         ) : (
           <>
-            {filteredEvents.map((event) => (
-              <div key={event.id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                <div className="flex min-h-[140px]">
-                  <div className="w-36 bg-gray-200 flex-shrink-0">
-                    <img 
-                      src={event.cover_url} 
-                      alt={event.name} 
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="p-3 flex-1 flex flex-col justify-between">
-                    <div>
-                      <h3 className="font-semibold text-base line-clamp-1">{event.name}</h3>
-                      
-                      <div className="flex flex-col mt-1.5 space-y-0.5">
-                        <div className="flex items-center text-xs text-gray-500">
-                          <FontAwesomeIcon icon={faCalendarDay} className="mr-1 text-yellow-500 w-3.5" />
-                          <span>{formatDate(event.date)}</span>
-                        </div>
-                        <div className="flex items-center text-xs text-gray-500">
-                          <FontAwesomeIcon icon={faClock} className="mr-1 text-yellow-500 w-3.5" />
-                          <span>{event.start_time} - {event.end_time}</span>
-                        </div>
-                      </div>
+            {filteredEvents.map((event) => {
+              const hasExternalLink = event.link && event.link.startsWith('https');
+              
+              // Function to handle card click
+              const handleCardClick = () => {
+                if (hasExternalLink) {
+                  window.open(event.link, '_blank', 'noopener,noreferrer');
+                }
+              };
+              
+              // Function to handle non-external link display
+              const handleLinkClick = (e) => {
+                e.stopPropagation(); // Prevent the card click event
+                if (event.link) {
+                  navigator.clipboard.writeText(event.link);
+                  alert(`Link copied to clipboard: ${event.link}`);
+                }
+              };
+              
+              return (
+                <div 
+                  key={event.id} 
+                  className={`bg-white rounded-xl shadow-sm border overflow-hidden relative ${
+                    hasExternalLink 
+                      ? 'cursor-pointer hover:shadow-md hover:border-yellow-400 transition-all duration-200 border-gray-200' 
+                      : 'border-gray-100'
+                  }`}
+                  onClick={hasExternalLink ? handleCardClick : undefined}
+                >
+                  {/* Tag for clickable events */}
+                  {hasExternalLink && (
+                    <div className="absolute top-2 right-2 z-10 bg-yellow-500 text-white text-[10px] px-2 py-0.5 rounded-full">
+                      External Link
                     </div>
-                    
-                    <div className="mt-auto">
-                      <div className="mt-1.5">
-                        <span className="text-xs px-2 py-0.5 bg-yellow-100 text-yellow-800 rounded-md inline-block mr-2">
-                          {event.type}
-                        </span>
-                        <span className="text-xs text-green-500 font-medium inline-block">
-                          {event.price === "Free" ? "Free" : `$${event.price}`}
-                        </span>
+                  )}
+                  <div className="flex min-h-[140px]">
+                    <div className="w-36 bg-gray-200 flex-shrink-0">
+                      <img 
+                        src={event.cover_url} 
+                        alt={event.name} 
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="p-3 flex-1 flex flex-col justify-between">
+                      <div>
+                        <h3 className="font-semibold text-base line-clamp-1">{event.name}</h3>
+                        
+                        <div className="flex flex-col mt-1.5 space-y-0.5">
+                          <div className="flex items-center text-xs text-gray-500">
+                            <FontAwesomeIcon icon={faCalendarDay} className="mr-1 text-yellow-500 w-3.5" />
+                            <span>{formatDate(event.date)}</span>
+                          </div>
+                          <div className="flex items-center text-xs text-gray-500">
+                            <FontAwesomeIcon icon={faClock} className="mr-1 text-yellow-500 w-3.5" />
+                            <span>{event.start_time} - {event.end_time}</span>
+                          </div>
+                        </div>
                       </div>
-
-                      {/* <div className="flex justify-between items-center mt-2">
-                        {event.invited_users && (() => {
-                          try {
-                            const attendees = typeof event.invited_users === 'string' 
-                              ? JSON.parse(event.invited_users) 
-                              : event.invited_users;
-                            return renderAttendees(attendees);
-                          } catch (error) {
-                            console.error('Error parsing invited_users:', error);
-                            return null;
-                          }
-                        })()}
-                        <span className={`text-xs font-medium px-2.5 py-0.5 rounded-full ${statusColors[event.status] || 'bg-gray-500 text-white'}`}>
-                          {event.status}
-                        </span>
-                      </div> */}
+                      
+                      <div className="mt-auto">
+                        <div className="mt-1.5 flex items-center justify-between">
+                          <div>
+                            <span className="text-xs px-2 py-0.5 bg-yellow-100 text-yellow-800 rounded-md inline-block mr-2">
+                              {event.type}
+                            </span>
+                            <span className="text-xs text-green-500 font-medium inline-block">
+                              {event.price === "Free" ? "Free" : `$${event.price}`}
+                            </span>
+                          </div>
+                          
+                          {/* Show link text if it exists but doesn't start with https */}
+                          {event.link && !hasExternalLink && (
+                            <button 
+                              onClick={handleLinkClick}
+                              className="text-xs text-gray-500 truncate max-w-[120px] px-2 py-1 rounded hover:bg-gray-100 transition-colors duration-200 flex items-center"
+                            >
+                              <span className="truncate">{event.link}</span>
+                              <span className="ml-1 text-[10px] text-gray-400">(Copy)</span>
+                            </button>
+                          )}
+                          
+                          {/* Show click indicator if link is external */}
+                          {hasExternalLink && (
+                            <span className="text-xs text-blue-500 font-medium flex items-center bg-blue-50 px-2 py-1 rounded-full">
+                              <span>View Event</span>
+                              <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                              </svg>
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
             
             {/* Bottom spacer to ensure last element is fully visible above the navigation bar */}
             <div className="h-28 w-full"></div>
