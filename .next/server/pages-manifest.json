@@ -3,6 +3,5 @@
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
   "/": "pages/index.js",
-  "/login": "pages/login.js",
-  "/api/calendly/status": "pages/api/calendly/status.js"
+  "/login": "pages/login.js"
 }
