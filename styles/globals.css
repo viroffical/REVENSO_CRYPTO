@@ -2,39 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-html,
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 250, 250, 250;
+  --background-end-rgb: 255, 255, 255;
+}
+
 body {
-  padding: 0;
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-  height: 100%;
-  overflow: auto; /* Changed from hidden to auto to allow scrolling */
-}
-
-#__next {
-  height: 100%;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-/* Custom utility for hiding scrollbars while maintaining scroll functionality */
-@layer utilities {
-  /* Chrome, Safari and Opera */
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none;
-  }
-
-  /* IE, Edge and Firefox */
-  .scrollbar-hide {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
-  }
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-start-rgb));
 }
