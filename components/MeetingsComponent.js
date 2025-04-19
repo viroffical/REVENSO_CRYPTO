@@ -99,14 +99,18 @@ const MeetingsComponent = () => {
   const CALENDLY_AUTH_URL = "https://auth.calendly.com/oauth/authorize";
   // Handle connection status changes
   const handleConnect = () => {
-    connect();
-    // const params = new URLSearchParams({
-    //   client_id:"whbJPFMaNVvKb91QxB5NGPeJtRFCqxQYnhTEnhCThMI",
-    //   response_type: 'code',
-    //   redirect_uri: "https://workspace.krishnavirnlu.repl.co/oauth/callback",
-    // });
-
-    // window.location.href = `${CALENDLY_AUTH_URL}?${params.toString()}`;
+    try {
+      // Show loading state during connection
+      setLoadingEvents(true);
+      
+      // Use the connect function from useCalendly hook
+      connect();
+      
+      console.log("Initiating Calendly connection...");
+    } catch (error) {
+      console.error("Error connecting to Calendly:", error);
+      setLoadingEvents(false);
+    }
   };
 
   const handleDisconnect = async () => {
