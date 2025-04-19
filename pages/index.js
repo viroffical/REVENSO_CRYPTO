@@ -18,15 +18,14 @@ const SideDrawer = dynamic(() => import('../components/SideDrawer'), { ssr: fals
 import { profiles } from '../data/profiles'
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState('people');
+  const router = useRouter();
+  const { tab } = router.query;
+  const [activeTab, setActiveTab] = useState(tab || 'people');
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
- 
-  
-  const router = useRouter();
 
   // Check client-side mounting and authentication
   useEffect(() => {
@@ -69,6 +68,13 @@ export default function Home() {
       window.removeEventListener('setActiveTab', handleSetActiveTab);
     };
   }, [mounted]);
+  
+  // Update activeTab when query parameter changes
+  useEffect(() => {
+    if (tab) {
+      setActiveTab(tab);
+    }
+  }, [tab]);
 
 
   const toggleDrawer = () => {
