@@ -13,7 +13,7 @@ export default function handler(req, res) {
   }
 
   const clientId = process.env.CALENDLY_CLIENT_ID;
-  const redirectUri = process.env.CALENDLY_REDIRECT_URI || "http://localhost:3000/oauth/callback";
+  const redirectUri = process.env.CALENDLY_REDIRECT_URI;
   
   // Build the authorization URL
   const authUrl = 'https://auth.calendly.com/oauth/authorize';
