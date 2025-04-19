@@ -1,10 +1,12 @@
 import axios from 'axios';
 import { createClient } from '@supabase/supabase-js';
 
+// Hardcoded values for Replit environment
+const SUPABASE_URL = 'https://rjucgbzerztofpuotjgr.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJqdWNnYnplcnp0b2ZwdW90amdyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MzI2MTAsImV4cCI6MjA2MDIwODYxMH0.jf08hvHlAP5RAXqziUa8rytGR60xqRWnUAuhqfo-pek';
+
 // Initialize Supabase client
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 export default async function handler(req, res) {
   // Handle OAuth callback when code is present in query params
@@ -23,12 +25,12 @@ export default async function handler(req, res) {
       
       console.log('User authenticated:', user.id);
       
-      // Exchange code for tokens
+      // Exchange code for tokens with hardcoded values
       const tokenResponse = await axios.post('https://auth.calendly.com/oauth/token', {
-        client_id: process.env.CLIENT_ID,
-        client_secret: process.env.CLIENT_SECRET,
+        client_id: 'whbJPFMaNVvKb91QxB5NGPeJtRFCqxQYnhTEnhCThMI',
+        client_secret: 'YD5I229i7LCfakbIhVY9-0iIlijh3f9iwS7cP3gGSGM',
         code,
-        redirect_uri: process.env.REDIRECT_URI,
+        redirect_uri: 'http://localhost:5000/api/auth/calendly',
         grant_type: 'authorization_code'
       });
       
@@ -98,10 +100,10 @@ export default async function handler(req, res) {
   // Handle initial OAuth redirect when no code is present
   else {
     try {
-      // Get auth URL parameters
-      const clientId = process.env.CLIENT_ID;
-      const redirectUri = process.env.REDIRECT_URI;
-      const authBaseUrl = process.env.CALENDLY_AUTH_BASE_URL;
+      // Hardcoded Calendly values for Replit environment
+      const clientId = 'whbJPFMaNVvKb91QxB5NGPeJtRFCqxQYnhTEnhCThMI';
+      const redirectUri = 'http://localhost:5000/api/auth/calendly';
+      const authBaseUrl = 'https://auth.calendly.com';
       
       if (!clientId || !redirectUri || !authBaseUrl) {
         return res.status(500).json({ error: 'Missing Calendly configuration' });
