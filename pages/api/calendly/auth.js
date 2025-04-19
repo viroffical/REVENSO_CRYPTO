@@ -5,6 +5,13 @@ export default function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  // Get user_id from query parameters
+  const { user_id } = req.query;
+  
+  if (!user_id) {
+    return res.status(400).json({ error: 'Missing user_id parameter' });
+  }
+
   const clientId = process.env.CALENDLY_CLIENT_ID;
   const redirectUri = process.env.CALENDLY_REDIRECT_URI || `${process.env.NEXT_PUBLIC_BASE_URL}/api/calendly/callback`;
   
@@ -13,7 +20,10 @@ export default function handler(req, res) {
   const scopes = 'default';
   const responseType = 'code';
   
-  const authorizationUrl = `${authUrl}?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=${responseType}&scope=${scopes}`;
+  // Include user_id in the state parameter for the callback to retrieve
+  const state = JSON.stringify({ user_id });
+  
+  const authorizationUrl = `${authUrl}?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=${responseType}&scope=${scopes}&state=${encodeURIComponent(state)}`;
 
   // Redirect the user to Calendly's authorization page
   res.redirect(authorizationUrl);

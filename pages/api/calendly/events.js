@@ -1,9 +1,10 @@
-import { createClient } from '@supabase/supabase-js';
 import axios from 'axios';
+import { Pool } from 'pg';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
+// Initialize PostgreSQL client
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+});
 
 // Helper function to refresh an access token
 async function refreshAccessToken(refreshToken) {
@@ -81,25 +82,31 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  // Extract query parameters
+  const { 
+    min_start_time, 
+    max_start_time, 
+    count, 
+    status, 
+    sort, 
+    page_token, 
+    user_id 
+  } = req.query;
+  
+  if (!user_id) {
+    return res.status(400).json({ error: 'Missing user_id parameter' });
+  }
+
   try {
-    // Extract query parameters
-    const { min_start_time, max_start_time, count, status, sort, page_token } = req.query;
-    
-    // Get the current user from the session
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-
-    if (sessionError || !session) {
-      return res.status(401).json({ error: 'Authentication required' });
-    }
-
     // Get the Calendly connection for this user
-    const { data: calendlyUser, error: calendlyError } = await supabase
-      .from('calendly_users')
-      .select('*')
-      .eq('user_id', session.user.id)
-      .single();
+    const result = await pool.query(
+      'SELECT * FROM calendly_users WHERE user_id = $1',
+      [user_id]
+    );
+    
+    const calendlyUser = result.rows[0];
 
-    if (calendlyError || !calendlyUser) {
+    if (!calendlyUser) {
       return res.status(400).json({ error: 'Calendly account not connected' });
     }
 
@@ -131,14 +138,10 @@ export default async function handler(req, res) {
           const { access_token, refresh_token } = await refreshAccessToken(refreshToken);
           
           // Update the tokens in the database
-          await supabase
-            .from('calendly_users')
-            .update({
-              access_token,
-              refresh_token,
-              updated_at: new Date().toISOString()
-            })
-            .eq('id', calendlyUser.id);
+          await pool.query(
+            'UPDATE calendly_users SET access_token = $1, refresh_token = $2, updated_at = NOW() WHERE id = $3',
+            [access_token, refresh_token, calendlyUser.id]
+          );
           
           // Get the user info with the new access token
           const userInfo = await getCalendlyUserInfo(access_token);

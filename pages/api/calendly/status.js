@@ -1,39 +1,34 @@
 import { createClient } from '@supabase/supabase-js';
+import { Pool } from 'pg';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
+// Initialize PostgreSQL client
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+});
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  // Get user_id from query or cookies
+  const { user_id } = req.query;
+  
+  if (!user_id) {
+    return res.status(400).json({ 
+      connected: false, 
+      error: 'Missing user_id parameter' 
+    });
+  }
+
   try {
-    // Get the current user from the session
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-
-    if (sessionError || !session) {
-      return res.status(401).json({ 
-        connected: false, 
-        error: 'Authentication required' 
-      });
-    }
-
     // Check if the user has a Calendly connection
-    const { data: calendlyUser, error: calendlyError } = await supabase
-      .from('calendly_users')
-      .select('*')
-      .eq('user_id', session.user.id)
-      .single();
-
-    if (calendlyError && calendlyError.code !== 'PGRST116') {
-      console.error('Error fetching Calendly connection:', calendlyError);
-      return res.status(500).json({ 
-        connected: false,
-        error: 'Failed to check Calendly connection' 
-      });
-    }
+    const result = await pool.query(
+      'SELECT * FROM calendly_users WHERE user_id = $1',
+      [user_id]
+    );
+    
+    const calendlyUser = result.rows[0];
 
     // Return the connection status
     if (!calendlyUser) {

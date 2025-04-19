@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from 'react';
-import { createClient } from '@supabase/supabase-js';
 
 export function useCalendly() {
   const [isConnected, setIsConnected] = useState(false);
@@ -8,14 +7,30 @@ export function useCalendly() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [userId, setUserId] = useState(null);
+  
+  // Get the current user ID from localStorage
+  useEffect(() => {
+    const storedUser = localStorage.getItem('revenso_user');
+    if (storedUser) {
+      try {
+        const userObj = JSON.parse(storedUser);
+        setUserId(userObj.id);
+      } catch (err) {
+        console.error('Error parsing user from localStorage:', err);
+      }
+    }
+  }, []);
   
   // Check if the user is connected to Calendly
   const checkConnection = useCallback(async () => {
+    if (!userId) return false;
+    
     try {
       setLoading(true);
       setError(null);
       
-      const response = await fetch('/api/calendly/status');
+      const response = await fetch(`/api/calendly/status?user_id=${userId}`);
       
       if (!response.ok) {
         throw new Error('Failed to check Calendly connection status');
@@ -41,21 +56,31 @@ export function useCalendly() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [userId]);
 
   // Connect to Calendly
   const connect = useCallback(() => {
-    window.location.href = '/api/calendly/auth';
-  }, []);
+    if (!userId) {
+      setError('User is not logged in');
+      return;
+    }
+    window.location.href = `/api/calendly/auth?user_id=${userId}`;
+  }, [userId]);
 
   // Disconnect from Calendly
   const disconnect = useCallback(async () => {
+    if (!userId) return false;
+    
     try {
       setLoading(true);
       setError(null);
       
       const response = await fetch('/api/calendly/disconnect', {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ user_id: userId }),
       });
       
       if (!response.ok) {
@@ -75,17 +100,17 @@ export function useCalendly() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [userId]);
 
   // Get Calendly event types
   const getEventTypes = useCallback(async () => {
-    if (!isConnected) return [];
+    if (!isConnected || !userId) return [];
     
     try {
       setLoading(true);
       setError(null);
       
-      const response = await fetch('/api/calendly/event-types');
+      const response = await fetch(`/api/calendly/event-types?user_id=${userId}`);
       
       if (!response.ok) {
         throw new Error('Failed to fetch Calendly event types');
@@ -102,17 +127,17 @@ export function useCalendly() {
     } finally {
       setLoading(false);
     }
-  }, [isConnected]);
+  }, [isConnected, userId]);
 
   // Get Calendly events
   const getEvents = useCallback(async () => {
-    if (!isConnected) return [];
+    if (!isConnected || !userId) return [];
     
     try {
       setLoading(true);
       setError(null);
       
-      const response = await fetch('/api/calendly/events');
+      const response = await fetch(`/api/calendly/events?user_id=${userId}`);
       
       if (!response.ok) {
         throw new Error('Failed to fetch Calendly events');
@@ -129,12 +154,14 @@ export function useCalendly() {
     } finally {
       setLoading(false);
     }
-  }, [isConnected]);
+  }, [isConnected, userId]);
 
-  // Check connection status on component mount
+  // Check connection status when userId changes
   useEffect(() => {
-    checkConnection();
-  }, [checkConnection]);
+    if (userId) {
+      checkConnection();
+    }
+  }, [userId, checkConnection]);
 
   return {
     isConnected,
@@ -148,5 +175,6 @@ export function useCalendly() {
     checkConnection,
     getEventTypes,
     getEvents,
+    userId,
   };
 }
