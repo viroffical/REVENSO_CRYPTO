@@ -9,10 +9,13 @@ import {
   faSpinner,
   faExternalLinkAlt,
   faCheckCircle,
-  faTimesCircle
+  faTimesCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import { useCalendly } from "../hooks/useCalendly";
-import { formatCalendlyEvent, formatCalendlyEventType } from "../utils/calendlyService";
+import {
+  formatCalendlyEvent,
+  formatCalendlyEventType,
+} from "../utils/calendlyService";
 
 const MeetingsComponent = () => {
   const {
@@ -25,7 +28,7 @@ const MeetingsComponent = () => {
     connect,
     disconnect,
     getEvents,
-    getEventTypes
+    getEventTypes,
   } = useCalendly();
 
   const [activeTab, setActiveTab] = useState("upcoming");
@@ -44,26 +47,39 @@ const MeetingsComponent = () => {
             getEvents(),
             getEventTypes(),
           ]);
-          
+
           console.log("Fetched Calendly events:", eventsData);
           console.log("Fetched Calendly event types:", eventTypesData);
-          
+
           // Format the data for display
           if (eventsData && Array.isArray(eventsData)) {
             setFormattedEvents(eventsData.map(formatCalendlyEvent));
-          } else if (eventsData && eventsData.collection && Array.isArray(eventsData.collection)) {
+          } else if (
+            eventsData &&
+            eventsData.collection &&
+            Array.isArray(eventsData.collection)
+          ) {
             setFormattedEvents(eventsData.collection.map(formatCalendlyEvent));
           } else {
             console.error("Unexpected events data format:", eventsData);
             setFormattedEvents([]);
           }
-          
+
           if (eventTypesData && Array.isArray(eventTypesData)) {
             setFormattedEventTypes(eventTypesData.map(formatCalendlyEventType));
-          } else if (eventTypesData && eventTypesData.collection && Array.isArray(eventTypesData.collection)) {
-            setFormattedEventTypes(eventTypesData.collection.map(formatCalendlyEventType));
+          } else if (
+            eventTypesData &&
+            eventTypesData.collection &&
+            Array.isArray(eventTypesData.collection)
+          ) {
+            setFormattedEventTypes(
+              eventTypesData.collection.map(formatCalendlyEventType),
+            );
           } else {
-            console.error("Unexpected event types data format:", eventTypesData);
+            console.error(
+              "Unexpected event types data format:",
+              eventTypesData,
+            );
             setFormattedEventTypes([]);
           }
         } catch (err) {
@@ -72,7 +88,7 @@ const MeetingsComponent = () => {
           setLoadingEvents(false);
         }
       };
-      
+
       loadData();
     } else {
       // Reset data when disconnected
@@ -84,10 +100,21 @@ const MeetingsComponent = () => {
   // Handle connection status changes
   const handleConnect = () => {
     connect();
+    // const params = new URLSearchParams({
+    //   client_id:"whbJPFMaNVvKb91QxB5NGPeJtRFCqxQYnhTEnhCThMI",
+    //   response_type: 'code',
+    //   redirect_uri: "https://workspace.krishnavirnlu.repl.co/oauth/callback",
+    // });
+
+    // window.location.href = `${CALENDLY_AUTH_URL}?${params.toString()}`;
   };
 
   const handleDisconnect = async () => {
-    if (window.confirm("Are you sure you want to disconnect your Calendly account?")) {
+    if (
+      window.confirm(
+        "Are you sure you want to disconnect your Calendly account?",
+      )
+    ) {
       await disconnect();
     }
   };
@@ -96,7 +123,11 @@ const MeetingsComponent = () => {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center h-screen bg-white">
-        <FontAwesomeIcon icon={faSpinner} spin className="text-yellow-500 text-4xl mb-4" />
+        <FontAwesomeIcon
+          icon={faSpinner}
+          spin
+          className="text-yellow-500 text-4xl mb-4"
+        />
         <p className="text-gray-500">Loading Calendly integration...</p>
       </div>
     );
@@ -128,7 +159,8 @@ const MeetingsComponent = () => {
         <div className="max-w-md w-full bg-white rounded-xl shadow-lg p-6 text-center">
           <h2 className="text-2xl font-semibold mb-4">Connect Your Calendar</h2>
           <p className="text-gray-600 mb-6">
-            Connect your Calendly account to manage your meetings and schedule directly from this app.
+            Connect your Calendly account to manage your meetings and schedule
+            directly from this app.
           </p>
           <button
             onClick={handleConnect}
@@ -195,7 +227,11 @@ const MeetingsComponent = () => {
       <div className="flex-1 overflow-y-auto px-4 space-y-4 pb-40 scrollbar-hide">
         {loadingEvents ? (
           <div className="flex flex-col items-center justify-center h-64">
-            <FontAwesomeIcon icon={faSpinner} spin className="text-yellow-500 text-4xl mb-4" />
+            <FontAwesomeIcon
+              icon={faSpinner}
+              spin
+              className="text-yellow-500 text-4xl mb-4"
+            />
             <p className="text-gray-500">Loading events...</p>
           </div>
         ) : activeTab === "upcoming" ? (
@@ -211,7 +247,10 @@ const MeetingsComponent = () => {
                   className="text-yellow-500 hover:text-yellow-600 flex items-center"
                 >
                   <span>Go to Calendly Dashboard</span>
-                  <FontAwesomeIcon icon={faExternalLinkAlt} className="ml-1 text-xs" />
+                  <FontAwesomeIcon
+                    icon={faExternalLinkAlt}
+                    className="ml-1 text-xs"
+                  />
                 </a>
               </div>
             ) : (
@@ -235,7 +274,10 @@ const MeetingsComponent = () => {
                   className="text-yellow-500 hover:text-yellow-600 flex items-center"
                 >
                   <span>Create Event Types in Calendly</span>
-                  <FontAwesomeIcon icon={faExternalLinkAlt} className="ml-1 text-xs" />
+                  <FontAwesomeIcon
+                    icon={faExternalLinkAlt}
+                    className="ml-1 text-xs"
+                  />
                 </a>
               </div>
             ) : (
@@ -273,28 +315,40 @@ const MeetingCard = ({ meeting }) => {
       <div className="flex">
         {/* Left date column */}
         <div className="w-20 flex-shrink-0 flex flex-col items-center justify-center bg-gray-50 p-2">
-          <div className="text-xs text-gray-500">{eventDate.toLocaleString('default', { month: 'short' })}</div>
+          <div className="text-xs text-gray-500">
+            {eventDate.toLocaleString("default", { month: "short" })}
+          </div>
           <div className="text-xl font-bold">{eventDate.getDate()}</div>
-          <div className="text-xs">{eventDate.toLocaleString('default', { weekday: 'short' })}</div>
+          <div className="text-xs">
+            {eventDate.toLocaleString("default", { weekday: "short" })}
+          </div>
         </div>
 
         {/* Meeting details */}
         <div className="p-4 flex-1">
           <h3 className="font-semibold text-base mb-1">{meeting.title}</h3>
-          
+
           <div className="flex flex-col space-y-1">
             <div className="flex items-center text-xs text-gray-500">
-              <FontAwesomeIcon icon={faClock} className="mr-1 text-yellow-500 w-3.5" />
+              <FontAwesomeIcon
+                icon={faClock}
+                className="mr-1 text-yellow-500 w-3.5"
+              />
               <span>{formattedTime}</span>
             </div>
             <div className="flex items-center text-xs text-gray-500">
-              <FontAwesomeIcon icon={faVideo} className="mr-1 text-yellow-500 w-3.5" />
+              <FontAwesomeIcon
+                icon={faVideo}
+                className="mr-1 text-yellow-500 w-3.5"
+              />
               <span>{meeting.location}</span>
             </div>
           </div>
 
           <div className="mt-2 pt-2 border-t border-gray-100 flex justify-between items-center">
-            <span className={`text-xs px-2 py-0.5 ${getBgColor()} text-blue-800 rounded-md`}>
+            <span
+              className={`text-xs px-2 py-0.5 ${getBgColor()} text-blue-800 rounded-md`}
+            >
               {meeting.eventType.name}
             </span>
             <a
@@ -304,7 +358,10 @@ const MeetingCard = ({ meeting }) => {
               className="text-xs text-blue-500 hover:text-blue-700 flex items-center"
             >
               <span>View Details</span>
-              <FontAwesomeIcon icon={faExternalLinkAlt} className="ml-1 text-xs" />
+              <FontAwesomeIcon
+                icon={faExternalLinkAlt}
+                className="ml-1 text-xs"
+              />
             </a>
           </div>
         </div>
@@ -322,21 +379,25 @@ const EventTypeCard = ({ eventType }) => {
           <div>
             <h3 className="font-semibold text-base mb-1">{eventType.name}</h3>
             <div className="text-xs text-gray-500 mb-2">
-              {eventType.duration} minute{eventType.duration !== 1 ? 's' : ''}
+              {eventType.duration} minute{eventType.duration !== 1 ? "s" : ""}
             </div>
             {eventType.description && (
-              <p className="text-sm text-gray-600 mb-3 line-clamp-2">{eventType.description}</p>
+              <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                {eventType.description}
+              </p>
             )}
           </div>
           <div
             className="w-4 h-4 rounded-full"
-            style={{ backgroundColor: eventType.color || '#4945ef' }}
+            style={{ backgroundColor: eventType.color || "#4945ef" }}
           ></div>
         </div>
-        
+
         <div className="mt-2 pt-2 border-t border-gray-100 flex justify-between items-center">
-          <span className={`text-xs px-2 py-0.5 ${eventType.active ? 'bg-green-50 text-green-800' : 'bg-gray-50 text-gray-600'} rounded-md`}>
-            {eventType.active ? 'Active' : 'Inactive'}
+          <span
+            className={`text-xs px-2 py-0.5 ${eventType.active ? "bg-green-50 text-green-800" : "bg-gray-50 text-gray-600"} rounded-md`}
+          >
+            {eventType.active ? "Active" : "Inactive"}
           </span>
           <a
             href={eventType.schedulingUrl}
@@ -345,7 +406,10 @@ const EventTypeCard = ({ eventType }) => {
             className="text-xs text-blue-500 hover:text-blue-700 flex items-center"
           >
             <span>Share Link</span>
-            <FontAwesomeIcon icon={faExternalLinkAlt} className="ml-1 text-xs" />
+            <FontAwesomeIcon
+              icon={faExternalLinkAlt}
+              className="ml-1 text-xs"
+            />
           </a>
         </div>
       </div>

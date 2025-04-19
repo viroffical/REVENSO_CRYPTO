@@ -12,8 +12,8 @@ export default function handler(req, res) {
     return res.status(400).json({ error: 'Missing user_id parameter' });
   }
 
-  const clientId = process.env.CALENDLY_CLIENT_ID;
-  const redirectUri = process.env.CALENDLY_REDIRECT_URI;
+  const clientId = "whbJPFMaNVvKb91QxB5NGPeJtRFCqxQYnhTEnhCThMI";
+  const redirectUri = "https://workspace.krishnavirnlu.repl.co/oauth/callback";
   
   // Build the authorization URL
   const authUrl = 'https://auth.calendly.com/oauth/authorize';

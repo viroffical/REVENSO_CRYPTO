@@ -15,33 +15,33 @@ export default function OAuthCallback() {
 
       try {
         // Get user_id from state parameter
-        let userId;
-        try {
-          if (state) {
-            const stateObj = JSON.parse(decodeURIComponent(state));
-            userId = stateObj.user_id;
-          }
-        } catch (e) {
-          console.error('Error parsing state:', e);
-        }
+         let userId;
+        // try {
+        //   if (state) {
+        //     const stateObj = JSON.parse(decodeURIComponent(state));
+        //     userId = stateObj.user_id;
+        //   }
+        // } catch (e) {
+        //   console.error('Error parsing state:', e);
+        // }
 
-        if (!userId) {
-          // Try to get userId from localStorage as fallback
-          const storedUser = localStorage.getItem('revenso_user');
-          if (storedUser) {
-            try {
-              const userObj = JSON.parse(storedUser);
-              userId = userObj.id;
-            } catch (err) {
-              console.error('Error parsing user from localStorage:', err);
-            }
-          }
-        }
+        // if (!userId) {
+        //   // Try to get userId from localStorage as fallback
+        //   const storedUser = localStorage.getItem('revenso_user');
+        //   if (storedUser) {
+        //     try {
+        //       const userObj = JSON.parse(storedUser);
+        //       userId = userObj.id;
+        //     } catch (err) {
+        //       console.error('Error parsing user from localStorage:', err);
+        //     }
+        //   }
+        // }
 
-        if (!userId) {
-          router.push('/?tab=meetings&error=missing_user_id');
-          return;
-        }
+        // if (!userId) {
+        //   router.push('/?tab=meetings&error=missing_user_id');
+        //   return;
+        // }
 
         // Process the OAuth code on the server
         const response = await fetch('/api/calendly/process-callback', {
