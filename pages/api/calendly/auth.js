@@ -13,7 +13,7 @@ export default function handler(req, res) {
   }
 
   const clientId = process.env.CALENDLY_CLIENT_ID;
-  const redirectUri = process.env.CALENDLY_REDIRECT_URI || `${process.env.NEXT_PUBLIC_BASE_URL}/api/calendly/callback`;
+  const redirectUri = process.env.CALENDLY_REDIRECT_URI || "http://localhost:3000/oauth/callback";
   
   // Build the authorization URL
   const authUrl = 'https://auth.calendly.com/oauth/authorize';
@@ -25,6 +25,8 @@ export default function handler(req, res) {
   
   const authorizationUrl = `${authUrl}?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=${responseType}&scope=${scopes}&state=${encodeURIComponent(state)}`;
 
+  console.log('Redirecting to Calendly authorization URL:', authorizationUrl);
+  
   // Redirect the user to Calendly's authorization page
   res.redirect(authorizationUrl);
 }
