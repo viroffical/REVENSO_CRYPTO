@@ -13,7 +13,7 @@ async function exchangeCodeForTokens(code) {
       client_id: "whbJPFMaNVvKb91QxB5NGPeJtRFCqxQYnhTEnhCThMI",
       client_secret: "YD5I229i7LCfakbIhVY9-0iIlijh3f9iwS7cP3gGSGM",
       code,
-      redirect_uri: "http://localhost:5000/oauth/callback",
+      redirect_uri: process.env.CALENDLY_REDIRECT_URI,
       grant_type: "authorization_code",
     });
 
