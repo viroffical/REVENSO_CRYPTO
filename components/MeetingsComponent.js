@@ -45,9 +45,27 @@ const MeetingsComponent = () => {
             getEventTypes(),
           ]);
           
+          console.log("Fetched Calendly events:", eventsData);
+          console.log("Fetched Calendly event types:", eventTypesData);
+          
           // Format the data for display
-          setFormattedEvents(eventsData.map(formatCalendlyEvent));
-          setFormattedEventTypes(eventTypesData.map(formatCalendlyEventType));
+          if (eventsData && Array.isArray(eventsData)) {
+            setFormattedEvents(eventsData.map(formatCalendlyEvent));
+          } else if (eventsData && eventsData.collection && Array.isArray(eventsData.collection)) {
+            setFormattedEvents(eventsData.collection.map(formatCalendlyEvent));
+          } else {
+            console.error("Unexpected events data format:", eventsData);
+            setFormattedEvents([]);
+          }
+          
+          if (eventTypesData && Array.isArray(eventTypesData)) {
+            setFormattedEventTypes(eventTypesData.map(formatCalendlyEventType));
+          } else if (eventTypesData && eventTypesData.collection && Array.isArray(eventTypesData.collection)) {
+            setFormattedEventTypes(eventTypesData.collection.map(formatCalendlyEventType));
+          } else {
+            console.error("Unexpected event types data format:", eventTypesData);
+            setFormattedEventTypes([]);
+          }
         } catch (err) {
           console.error("Error loading Calendly data:", err);
         } finally {
@@ -62,7 +80,7 @@ const MeetingsComponent = () => {
       setFormattedEventTypes([]);
     }
   }, [isConnected, getEvents, getEventTypes]);
-
+  const CALENDLY_AUTH_URL = "https://auth.calendly.com/oauth/authorize";
   // Handle connection status changes
   const handleConnect = () => {
     connect();

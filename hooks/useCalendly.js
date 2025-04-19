@@ -117,9 +117,13 @@ export function useCalendly() {
       }
       
       const data = await response.json();
-      setEventTypes(data.collection);
+      console.log('Event types data from API:', data);
       
-      return data.collection;
+      // Handle the data structure correctly
+      const typesCollection = data.collection || [];
+      setEventTypes(typesCollection);
+      
+      return typesCollection;
     } catch (err) {
       console.error('Error fetching Calendly event types:', err);
       setError(err.message);
@@ -144,9 +148,13 @@ export function useCalendly() {
       }
       
       const data = await response.json();
-      setEvents(data.collection);
+      console.log('Events data from API:', data);
       
-      return data.collection;
+      // Handle the data structure correctly
+      const eventsCollection = data.collection || [];
+      setEvents(eventsCollection);
+      
+      return eventsCollection;
     } catch (err) {
       console.error('Error fetching Calendly events:', err);
       setError(err.message);
