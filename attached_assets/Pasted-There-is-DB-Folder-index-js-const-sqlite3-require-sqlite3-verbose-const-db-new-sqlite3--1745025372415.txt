@@ -1,0 +1,389 @@
+There is DB Folder 
+index.js
+
+const sqlite3 = require('sqlite3').verbose();
+const db = new sqlite3.Database(':memory:');
+
+module.exports = db;
+
+initializeDatabase.js
+const db = require('./index');
+
+CREATE_USERS_TABLE_SQL = 
+  CREATE TABLE users
+    (
+      id INTEGER PRIMARY KEY AUTOINCREMENT, 
+      calendly_uid TEXT UNIQUE NOT NULL,
+      access_token TEXT UNIQUE NOT NULL,
+      refresh_token TEXT UNIQUE NOT NULL
+    )
+;
+
+module.exports = () => {
+  return new Promise((resolve, reject) => {
+    db.serialize(function () {
+      db.run(CREATE_USERS_TABLE_SQL, (result, err) => {
+        if (err) return reject(err);
+        resolve(result);
+      });
+    });
+  });
+};
+under Model Folder 
+model.js
+const db = require('../db');
+
+const FIND_BY_CALENDLY_UID_SQL = SELECT * FROM users WHERE calendly_uid = ?;
+const FIND_BY_ID_SQL = SELECT * FROM users WHERE id = ?;
+const FIND_BY_ACCESS_TOKEN_SQL = SELECT * FROM users WHERE access_token = ?;
+const CREATE_SQL = INSERT INTO users (calendly_uid, access_token, refresh_token) VALUES (?, ?, ?);
+const UPDATE_SQL = UPDATE users SET access_token = ?, refresh_token = ? WHERE id = ?;
+
+class UserModel {
+  constructor(connection) {
+    this.connection = connection;
+  }
+
+  async findOrCreate({ calendlyUid, refreshToken, accessToken }) {
+    const user = await this.findByCalendlyUserId(calendlyUid);
+
+    if (user) return user;
+
+    await this.create({
+      calendlyUid,
+      refreshToken,
+      accessToken,
+    });
+
+    return this.findByCalendlyUserId(calendlyUid);
+  }
+
+  async findByCalendlyUserId(calendlyUid) {
+    return new Promise((resolve, reject) => {
+      db.get(FIND_BY_CALENDLY_UID_SQL, [calendlyUid], (err, row) => {
+        if (err) return reject(err);
+
+        resolve(row);
+      });
+    });
+  }
+
+
+
+  async findById(id) {
+    return new Promise((resolve, reject) => {
+      db.get(FIND_BY_ID_SQL, [id], (err, row) => {
+        if (err) return reject(err);
+
+        resolve(row);
+      });
+    });
+  }
+
+  async findByAccessToken(accessToken) {
+    return new Promise((resolve, reject) => {
+      db.get(FIND_BY_ACCESS_TOKEN_SQL, [accessToken], (err, row) => {
+        if (err) return reject(err);
+
+        resolve(row);
+      });
+    });
+  }
+
+  async update(id, { accessToken, refreshToken }) {
+    return new Promise((resolve, reject) => {
+      db.run(UPDATE_SQL, [accessToken, refreshToken, id], (err, row) => {
+        if (err) return reject(err);
+
+        resolve(row);
+      });
+    });
+  }
+
+  async create({ calendlyUid, accessToken, refreshToken }) {
+    return new Promise((resolve, reject) => {
+      db.run(CREATE_SQL, [calendlyUid, accessToken, refreshToken], (err) => {
+        if (err) return reject(err);
+        resolve();
+      });
+    });
+  }
+}
+
+module.exports = new UserModel(db);
+
+Service Folder 
+calendlyService.js
+
+const axios = require('axios').default;
+const User = require('../models/userModel');
+
+const {
+  CALENDLY_AUTH_BASE_URL,
+  CALENDLY_API_BASE_URL,
+  CLIENT_SECRET,
+  CLIENT_ID,
+} = process.env;
+
+class CalendlyService {
+  constructor(accessToken, refreshToken) {
+    this.accessToken = accessToken;
+    this.refreshToken = refreshToken;
+    this.request = axios.create({
+      baseURL: CALENDLY_API_BASE_URL,
+    });
+
+    this.requestInterceptor = this.request.interceptors.response.use(
+      (res) => res,
+      this._onCalendlyError
+    );
+  }
+
+  requestConfiguration() {
+    return {
+      headers: {
+        Authorization: Bearer ${this.accessToken},
+      },
+    };
+  }
+
+  getUserInfo = async () => {
+    const { data } = await this.request.get(
+      '/users/me',
+      this.requestConfiguration()
+    );
+
+    return data;
+  };
+
+  getUserEventTypes = async (userUri, count, pageToken) => {
+    let queryParams = [count=${count || 10}].join('&');
+
+    if (pageToken) queryParams += &page_token=${pageToken};
+
+    const url = /event_types?${queryParams}&user=${userUri};
+
+    const { data } =  await this.request.get(url, this.requestConfiguration());
+
+    return data;
+  };
+
+  getUserEventType = async (uuid) => {
+    const { data } = await this.request.get(
+      /event_types/${uuid},
+      this.requestConfiguration()
+    );
+
+    return data;
+  };
+
+  getUserScheduledEvents = async (
+    userUri,
+    count,
+    pageToken,
+    sort,
+    status,
+    maxStartTime,
+    minStartTime
+  ) => {
+    let queryParams = [
+      user=${userUri},
+      count=${count || 10},
+    ].join('&');
+
+    if (pageToken) queryParams += &page_token=${pageToken};
+    if (sort) queryParams += &sort=${sort};
+    if (status) queryParams += &status=${status};
+    if (maxStartTime) queryParams += &max_start_time=${maxStartTime};
+    if (minStartTime) queryParams += &min_start_time=${minStartTime};
+
+    const url = /scheduled_events?${queryParams};
+
+    const { data } = await this.request.get(url, this.requestConfiguration());
+
+    return data;
+  };
+
+  getUserScheduledEvent = async (uuid) => {
+    const { data } = await this.request.get(
+      /scheduled_events/${uuid},
+      this.requestConfiguration()
+    );
+
+    return data;
+  };
+
+  getUserScheduledEventInvitees = async (uuid, count, pageToken) => {
+    let queryParams = [count=${count || 10}].join('&');
+
+    if (pageToken) queryParams += &page_token=${pageToken};
+
+    const url = /scheduled_events/${uuid}/invitees?${queryParams};
+
+    const { data } = await this.request.get(url, this.requestConfiguration());
+
+    return data;
+  };
+
+  getUserEventTypeAvailTimes = async (eventUri, startTime, endTime) => {
+    let queryParams = [
+      start_time=${startTime},
+      end_time=${endTime},
+      event_type=${eventUri},
+    ].join('&');
+
+    const url = /event_type_available_times?${queryParams};
+
+    const { data } = await this.request.get(url, this.requestConfiguration());
+
+    return data;
+  };
+
+  getUserBusyTimes = async (userUri, startTime, endTime) => {
+    let queryParams = [
+      user=${userUri},
+      start_time=${startTime},
+      end_time=${endTime},
+    ].join('&');
+
+    const url = /user_busy_times?${queryParams};
+
+    const { data } = await this.request.get(url, this.requestConfiguration());
+
+    return data;
+  };
+
+  getUserAvailabilitySchedules = async (userUri) => {
+    const url = /user_availability_schedules?user=${userUri};
+
+    const { data } = await this.request.get(url, this.requestConfiguration());
+
+    return data;
+  };
+
+  getUser = async (userUri) => {
+    const url = /users/${userUri};
+
+    const { data } = await this.request.get(url, this.requestConfiguration());
+
+    return data;
+  };
+
+  markAsNoShow = async (uri) => {
+    const { data } = await this.request.post(
+      '/invitee_no_shows',
+      {
+        invitee: uri,
+      },
+      this.requestConfiguration()
+    );
+
+    return data;
+  };
+
+  undoNoShow = async (inviteeUuid) => {
+    await this.request.delete(
+      /invitee_no_shows/${inviteeUuid},
+      this.requestConfiguration()
+    );
+  };
+
+  cancelEvent = async (uuid, reason) => {
+    const { data } = await this.request.post(
+      /scheduled_events/${uuid}/cancellation,
+      {
+        reason: reason,
+      },
+      this.requestConfiguration()
+    );
+
+    return data;
+  };
+
+  requestNewAccessToken = () => {
+    return axios.post(${CALENDLY_AUTH_BASE_URL}/oauth/token, {
+      client_id: CLIENT_ID,
+      client_secret: CLIENT_SECRET,
+      grant_type: 'refresh_token',
+      refresh_token: this.refreshToken,
+    });
+  };
+
+  _onCalendlyError = async (error) => {
+    if (error.response.status !== 401) return Promise.reject(error);
+
+    this.request.interceptors.response.eject(this.requestInterceptor);
+
+    try {
+      const response = await this.requestNewAccessToken();
+      const { access_token, refresh_token } = response.data;
+
+      const user = await User.findByAccessToken(this.accessToken);
+
+      await User.update(user.id, {
+        accessToken: access_token,
+        refreshToken: refresh_token,
+      });
+
+      this.accessToken = access_token;
+      this.refreshToken = refresh_token;
+
+      error.response.config.headers.Authorization = Bearer ${access_token};
+
+      // retry original request with new access token
+      return this.request(error.response.config);
+    } catch (e) {
+      return Promise.reject(e);
+    }
+  };
+}
+
+module.exports = CalendlyService;
+ 
+calendlyOauth2Startegy
+index.js
+
+const OAuth2Strategy = require('passport-oauth2').Strategy;
+const User = require('../models/userModel');
+const CalendlyService = require('../services/calendlyService');
+const { CALENDLY_AUTH_BASE_URL, CLIENT_ID, CLIENT_SECRET, REDIRECT_URI } =
+  process.env;
+
+const strategy = new OAuth2Strategy(
+  {
+    authorizationURL: CALENDLY_AUTH_BASE_URL + '/oauth/authorize',
+    tokenURL: CALENDLY_AUTH_BASE_URL + '/oauth/token',
+    clientID: CLIENT_ID,
+    clientSecret: CLIENT_SECRET,
+    callbackURL: REDIRECT_URI,
+  },
+  async (accessToken, refreshToken, _profile, cb) => {
+    const calendlyService = new CalendlyService(accessToken, refreshToken);
+    const userInfo = await calendlyService.getUserInfo();
+
+    try {
+      const result = await User.findOrCreate({
+        accessToken,
+        refreshToken,
+        calendlyUid: userInfo.resource.uri,
+      });
+      cb(null, { id: result.id });
+    } catch (e) {
+      console.error(e);
+      cb();
+    }
+  }
+);
+
+module.exports = strategy;
+
+
+.env file
+
+CLIENT_ID="whbJPFMaNVvKb91QxB5NGPeJtRFCqxQYnhTEnhCThMI"
+CLIENT_SECRET="YD5I229i7LCfakbIhVY9-0iIlijh3f9iwS7cP3gGSGM"
+CALENDLY_AUTH_BASE_URL="https://auth.calendly.com"
+CALENDLY_API_BASE_URL="https://api.calendly.com"
+REDIRECT_URI="http://localhost:3000/oauth/callback"
+CALENDLY_BASE_URL="https://calendly.com"
+PORT="3000"

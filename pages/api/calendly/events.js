@@ -1,100 +1,164 @@
 import { createClient } from '@supabase/supabase-js';
+import axios from 'axios';
 
-// Initialize Supabase client with service role key for admin privileges
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+// Helper function to refresh an access token
+async function refreshAccessToken(refreshToken) {
+  try {
+    const response = await axios.post('https://auth.calendly.com/oauth/token', {
+      client_id: process.env.CALENDLY_CLIENT_ID,
+      client_secret: process.env.CALENDLY_CLIENT_SECRET,
+      grant_type: 'refresh_token',
+      refresh_token: refreshToken
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('Error refreshing access token:', error.response?.data || error.message);
+    throw error;
+  }
+}
+
+// Get Calendly user info
+async function getCalendlyUserInfo(accessToken) {
+  try {
+    const response = await axios.get('https://api.calendly.com/users/me', {
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    });
+    
+    return response.data.resource;
+  } catch (error) {
+    if (error.response?.status === 401) {
+      throw new Error('Unauthorized: Access token is invalid or expired');
+    }
+    console.error('Error fetching Calendly user info:', error.response?.data || error.message);
+    throw error;
+  }
+}
+
+// Get Calendly scheduled events for a user
+async function getCalendlyEvents(accessToken, userUri, params = {}) {
+  try {
+    // Current time in ISO format
+    const now = new Date().toISOString();
+    
+    // Default params
+    const defaultParams = {
+      user: userUri,
+      min_start_time: now,
+      count: 50,
+      status: 'active',
+      sort: 'start_time:asc'
+    };
+    
+    // Merge default params with any additional params
+    const queryParams = { ...defaultParams, ...params };
+    
+    const response = await axios.get('https://api.calendly.com/scheduled_events', {
+      params: queryParams,
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    });
+    
+    return response.data;
+  } catch (error) {
+    if (error.response?.status === 401) {
+      throw new Error('Unauthorized: Access token is invalid or expired');
+    }
+    console.error('Error fetching Calendly events:', error.response?.data || error.message);
+    throw error;
+  }
+}
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  // Get user from the request
-  const { user } = await supabase.auth.getUser(req.cookies['sb-access-token'] || req.cookies['sb:token']);
-  
-  if (!user) {
-    return res.status(401).json({ error: 'Not authenticated' });
-  }
-
   try {
-    // 1. Get the Calendly credentials from the database
-    const { data: userData, error: userError } = await supabase
+    // Extract query parameters
+    const { min_start_time, max_start_time, count, status, sort, page_token } = req.query;
+    
+    // Get the current user from the session
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+
+    if (sessionError || !session) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+
+    // Get the Calendly connection for this user
+    const { data: calendlyUser, error: calendlyError } = await supabase
       .from('calendly_users')
       .select('*')
-      .eq('user_id', user.id)
+      .eq('user_id', session.user.id)
       .single();
 
-    if (userError || !userData) {
-      return res.status(404).json({ error: 'Calendly connection not found' });
+    if (calendlyError || !calendlyUser) {
+      return res.status(400).json({ error: 'Calendly account not connected' });
     }
 
-    const { access_token, token_expires_at, calendly_uid } = userData;
+    let accessToken = calendlyUser.access_token;
+    let refreshToken = calendlyUser.refresh_token;
 
-    // 2. Check if the token is expired and refresh if needed
-    const now = new Date();
-    const expiresAt = new Date(token_expires_at);
-    
-    if (now >= expiresAt) {
-      // Token is expired, we need to refresh it
-      const refreshResponse = await fetch('/api/calendly/refresh-token', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-      });
+    // Build params for the Calendly API
+    const apiParams = {};
+    if (min_start_time) apiParams.min_start_time = min_start_time;
+    if (max_start_time) apiParams.max_start_time = max_start_time;
+    if (count) apiParams.count = count;
+    if (status) apiParams.status = status;
+    if (sort) apiParams.sort = sort;
+    if (page_token) apiParams.page_token = page_token;
+
+    try {
+      // Get the user info with the current access token
+      const userInfo = await getCalendlyUserInfo(accessToken);
       
-      if (!refreshResponse.ok) {
-        return res.status(401).json({ error: 'Failed to refresh token' });
+      // Get scheduled events
+      const events = await getCalendlyEvents(accessToken, userInfo.uri, apiParams);
+      
+      return res.status(200).json(events);
+    } catch (error) {
+      // If the token is expired, try to refresh it
+      if (error.message?.includes('Unauthorized') || error.response?.status === 401) {
+        try {
+          // Refresh the token
+          const { access_token, refresh_token } = await refreshAccessToken(refreshToken);
+          
+          // Update the tokens in the database
+          await supabase
+            .from('calendly_users')
+            .update({
+              access_token,
+              refresh_token,
+              updated_at: new Date().toISOString()
+            })
+            .eq('id', calendlyUser.id);
+          
+          // Get the user info with the new access token
+          const userInfo = await getCalendlyUserInfo(access_token);
+          
+          // Get events with the new token
+          const events = await getCalendlyEvents(access_token, userInfo.uri, apiParams);
+          
+          return res.status(200).json(events);
+        } catch (refreshError) {
+          console.error('Error refreshing token:', refreshError);
+          return res.status(401).json({ error: 'Failed to refresh authentication' });
+        }
       }
       
-      // Get the updated token
-      const { data: updatedUser, error: refreshError } = await supabase
-        .from('calendly_users')
-        .select('access_token')
-        .eq('user_id', user.id)
-        .single();
-        
-      if (refreshError || !updatedUser) {
-        return res.status(500).json({ error: 'Failed to get refreshed token' });
-      }
-      
-      // Use the new token
-      access_token = updatedUser.access_token;
+      // For other errors
+      console.error('Error fetching events:', error);
+      return res.status(500).json({ error: 'Failed to fetch Calendly events' });
     }
-
-    // 3. Define the date range (e.g., events in the next 30 days)
-    const startTime = new Date();
-    const endTime = new Date();
-    endTime.setDate(endTime.getDate() + 30); // Next 30 days
-
-    // 4. Fetch scheduled events from Calendly API
-    const eventsUrl = new URL('https://api.calendly.com/scheduled_events');
-    eventsUrl.searchParams.append('user', `https://api.calendly.com/users/${calendly_uid}`);
-    eventsUrl.searchParams.append('min_start_time', startTime.toISOString());
-    eventsUrl.searchParams.append('max_start_time', endTime.toISOString());
-    eventsUrl.searchParams.append('status', 'active');
-
-    const eventsResponse = await fetch(eventsUrl.toString(), {
-      headers: {
-        'Authorization': `Bearer ${access_token}`,
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!eventsResponse.ok) {
-      const error = await eventsResponse.text();
-      console.error('Failed to fetch Calendly events:', error);
-      return res.status(eventsResponse.status).json({ error: 'Failed to fetch Calendly events' });
-    }
-
-    const eventsData = await eventsResponse.json();
-
-    // 5. Return the events
-    res.status(200).json(eventsData);
   } catch (error) {
-    console.error('Error fetching Calendly events:', error);
-    res.status(500).json({ error: 'Server error' });
+    console.error('Error in events endpoint:', error);
+    return res.status(500).json({ error: 'Internal server error' });
   }
 }

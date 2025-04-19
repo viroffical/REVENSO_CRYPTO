@@ -1,91 +1,140 @@
 import { createClient } from '@supabase/supabase-js';
+import axios from 'axios';
 
-// Initialize Supabase client with service role key for admin privileges
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+// Helper function to refresh an access token
+async function refreshAccessToken(refreshToken) {
+  try {
+    const response = await axios.post('https://auth.calendly.com/oauth/token', {
+      client_id: process.env.CALENDLY_CLIENT_ID,
+      client_secret: process.env.CALENDLY_CLIENT_SECRET,
+      grant_type: 'refresh_token',
+      refresh_token: refreshToken
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('Error refreshing access token:', error.response?.data || error.message);
+    throw error;
+  }
+}
+
+// Get Calendly user info
+async function getCalendlyUserInfo(accessToken) {
+  try {
+    const response = await axios.get('https://api.calendly.com/users/me', {
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    });
+    
+    return response.data.resource;
+  } catch (error) {
+    if (error.response?.status === 401) {
+      throw new Error('Unauthorized: Access token is invalid or expired');
+    }
+    console.error('Error fetching Calendly user info:', error.response?.data || error.message);
+    throw error;
+  }
+}
+
+// Get Calendly event types for a user
+async function getCalendlyEventTypes(accessToken, userUri) {
+  try {
+    const response = await axios.get(`https://api.calendly.com/event_types`, {
+      params: {
+        user: userUri,
+        count: 100
+      },
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    });
+    
+    return response.data;
+  } catch (error) {
+    if (error.response?.status === 401) {
+      throw new Error('Unauthorized: Access token is invalid or expired');
+    }
+    console.error('Error fetching Calendly event types:', error.response?.data || error.message);
+    throw error;
+  }
+}
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  // Get user from the request
-  const { user } = await supabase.auth.getUser(req.cookies['sb-access-token'] || req.cookies['sb:token']);
-  
-  if (!user) {
-    return res.status(401).json({ error: 'Not authenticated' });
-  }
-
   try {
-    // 1. Get the Calendly credentials from the database
-    const { data: userData, error: userError } = await supabase
+    // Get the current user from the session
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+
+    if (sessionError || !session) {
+      return res.status(401).json({ error: 'Authentication required' });
+    }
+
+    // Get the Calendly connection for this user
+    const { data: calendlyUser, error: calendlyError } = await supabase
       .from('calendly_users')
       .select('*')
-      .eq('user_id', user.id)
+      .eq('user_id', session.user.id)
       .single();
 
-    if (userError || !userData) {
-      return res.status(404).json({ error: 'Calendly connection not found' });
+    if (calendlyError || !calendlyUser) {
+      return res.status(400).json({ error: 'Calendly account not connected' });
     }
 
-    let { access_token, token_expires_at, calendly_uid } = userData;
+    let accessToken = calendlyUser.access_token;
+    let refreshToken = calendlyUser.refresh_token;
 
-    // 2. Check if the token is expired and refresh if needed
-    const now = new Date();
-    const expiresAt = new Date(token_expires_at);
-    
-    if (now >= expiresAt) {
-      // Token is expired, we need to refresh it
-      const refreshResponse = await fetch('/api/calendly/refresh-token', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-      });
+    try {
+      // Get the user info with the current access token
+      const userInfo = await getCalendlyUserInfo(accessToken);
       
-      if (!refreshResponse.ok) {
-        return res.status(401).json({ error: 'Failed to refresh token' });
+      // Get event types
+      const eventTypes = await getCalendlyEventTypes(accessToken, userInfo.uri);
+      
+      return res.status(200).json(eventTypes);
+    } catch (error) {
+      // If the token is expired, try to refresh it
+      if (error.message?.includes('Unauthorized') || error.response?.status === 401) {
+        try {
+          // Refresh the token
+          const { access_token, refresh_token } = await refreshAccessToken(refreshToken);
+          
+          // Update the tokens in the database
+          await supabase
+            .from('calendly_users')
+            .update({
+              access_token,
+              refresh_token,
+              updated_at: new Date().toISOString()
+            })
+            .eq('id', calendlyUser.id);
+          
+          // Get the user info with the new access token
+          const userInfo = await getCalendlyUserInfo(access_token);
+          
+          // Get event types with the new token
+          const eventTypes = await getCalendlyEventTypes(access_token, userInfo.uri);
+          
+          return res.status(200).json(eventTypes);
+        } catch (refreshError) {
+          console.error('Error refreshing token:', refreshError);
+          return res.status(401).json({ error: 'Failed to refresh authentication' });
+        }
       }
       
-      // Get the updated token
-      const { data: updatedUser, error: refreshError } = await supabase
-        .from('calendly_users')
-        .select('access_token')
-        .eq('user_id', user.id)
-        .single();
-        
-      if (refreshError || !updatedUser) {
-        return res.status(500).json({ error: 'Failed to get refreshed token' });
-      }
-      
-      // Use the new token
-      access_token = updatedUser.access_token;
+      // For other errors
+      console.error('Error fetching event types:', error);
+      return res.status(500).json({ error: 'Failed to fetch Calendly event types' });
     }
-
-    // 3. Fetch user's event types from Calendly API
-    const eventTypesUrl = `https://api.calendly.com/event_types?user=${encodeURIComponent(`https://api.calendly.com/users/${calendly_uid}`)}&active=true`;
-
-    const eventTypesResponse = await fetch(eventTypesUrl, {
-      headers: {
-        'Authorization': `Bearer ${access_token}`,
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!eventTypesResponse.ok) {
-      const error = await eventTypesResponse.text();
-      console.error('Failed to fetch Calendly event types:', error);
-      return res.status(eventTypesResponse.status).json({ error: 'Failed to fetch Calendly event types' });
-    }
-
-    const eventTypesData = await eventTypesResponse.json();
-
-    // 4. Return the event types
-    res.status(200).json(eventTypesData);
   } catch (error) {
-    console.error('Error fetching Calendly event types:', error);
-    res.status(500).json({ error: 'Server error' });
+    console.error('Error in event-types endpoint:', error);
+    return res.status(500).json({ error: 'Internal server error' });
   }
 }

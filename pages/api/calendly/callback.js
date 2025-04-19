@@ -1,107 +1,148 @@
 import { createClient } from '@supabase/supabase-js';
+import axios from 'axios';
 
-// Initialize Supabase client with service role key for admin privileges
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-// Calendly OAuth settings
-const CALENDLY_CLIENT_ID = process.env.CALENDLY_CLIENT_ID;
-const CALENDLY_CLIENT_SECRET = process.env.CALENDLY_CLIENT_SECRET;
-const CALENDLY_REDIRECT_URI = process.env.CALENDLY_REDIRECT_URI || 
-  `${process.env.NEXT_PUBLIC_BASE_URL}/api/calendly/callback`;
+// Helper function to exchange auth code for tokens
+async function exchangeCodeForTokens(code) {
+  const clientId = process.env.CALENDLY_CLIENT_ID;
+  const clientSecret = process.env.CALENDLY_CLIENT_SECRET;
+  const redirectUri = process.env.CALENDLY_REDIRECT_URI || `${process.env.NEXT_PUBLIC_BASE_URL}/api/calendly/callback`;
+
+  try {
+    const response = await axios.post('https://auth.calendly.com/oauth/token', {
+      client_id: clientId,
+      client_secret: clientSecret,
+      code,
+      redirect_uri: redirectUri,
+      grant_type: 'authorization_code'
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('Error exchanging code for tokens:', error.response?.data || error.message);
+    throw error;
+  }
+}
+
+// Helper function to get Calendly user info
+async function getCalendlyUserInfo(accessToken) {
+  try {
+    const response = await axios.get('https://api.calendly.com/users/me', {
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    });
+    
+    return response.data.resource;
+  } catch (error) {
+    console.error('Error fetching Calendly user info:', error.response?.data || error.message);
+    throw error;
+  }
+}
+
+// Helper function to find or create a Calendly user record
+async function findOrCreateCalendlyUser({ userId, calendlyUid, accessToken, refreshToken }) {
+  // First, check if the user already exists
+  const { data: existingUser, error: fetchError } = await supabase
+    .from('calendly_users')
+    .select('*')
+    .eq('calendly_uid', calendlyUid)
+    .single();
+
+  if (fetchError && fetchError.code !== 'PGRST116') {
+    console.error('Error fetching Calendly user:', fetchError);
+    throw fetchError;
+  }
+
+  // If the user exists, update their tokens
+  if (existingUser) {
+    const { error: updateError } = await supabase
+      .from('calendly_users')
+      .update({
+        access_token: accessToken,
+        refresh_token: refreshToken,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', existingUser.id);
+
+    if (updateError) {
+      console.error('Error updating Calendly user:', updateError);
+      throw updateError;
+    }
+
+    return existingUser;
+  }
+
+  // Otherwise, create a new user record
+  const { data: newUser, error: insertError } = await supabase
+    .from('calendly_users')
+    .insert([{
+      user_id: userId,
+      calendly_uid: calendlyUid,
+      access_token: accessToken,
+      refresh_token: refreshToken
+    }])
+    .select()
+    .single();
+
+  if (insertError) {
+    console.error('Error creating Calendly user:', insertError);
+    throw insertError;
+  }
+
+  return newUser;
+}
 
 export default async function handler(req, res) {
+  // Only allow GET requests
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { code } = req.query;
-  const returnUrl = req.cookies.calendlyReturnUrl || '/';
+  const { code, error } = req.query;
 
+  // Handle authorization errors
+  if (error) {
+    console.error('Authorization error:', error);
+    return res.redirect('/?error=authorization_failed');
+  }
+
+  // Handle missing code
   if (!code) {
-    console.error('No authorization code received from Calendly');
-    return res.redirect(`${returnUrl}?error=auth_failed&reason=no_code`);
+    console.error('Missing authorization code');
+    return res.redirect('/?error=missing_code');
   }
 
   try {
-    // 1. Exchange authorization code for access token
-    const tokenResponse = await fetch('https://auth.calendly.com/oauth/token', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: new URLSearchParams({
-        client_id: CALENDLY_CLIENT_ID,
-        client_secret: CALENDLY_CLIENT_SECRET,
-        code,
-        redirect_uri: CALENDLY_REDIRECT_URI,
-        grant_type: 'authorization_code',
-      }),
+    // Exchange the authorization code for tokens
+    const { access_token, refresh_token } = await exchangeCodeForTokens(code);
+    
+    // Get the user's Calendly info
+    const calendlyUser = await getCalendlyUserInfo(access_token);
+    
+    // Get the current user from session
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    
+    if (sessionError || !session) {
+      console.error('Error getting session:', sessionError || 'No session found');
+      return res.redirect('/?error=auth_required');
+    }
+    
+    // Store the Calendly connection in our database
+    await findOrCreateCalendlyUser({
+      userId: session.user.id,
+      calendlyUid: calendlyUser.uri,
+      accessToken: access_token,
+      refreshToken: refresh_token
     });
-
-    if (!tokenResponse.ok) {
-      const error = await tokenResponse.text();
-      console.error('Failed to exchange code for token:', error);
-      return res.redirect(`${returnUrl}?error=auth_failed&reason=token_exchange`);
-    }
-
-    const tokenData = await tokenResponse.json();
-    const { access_token, refresh_token, expires_in } = tokenData;
-
-    // 2. Get the Calendly user info
-    const userResponse = await fetch('https://api.calendly.com/users/me', {
-      headers: {
-        'Authorization': `Bearer ${access_token}`,
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!userResponse.ok) {
-      const error = await userResponse.text();
-      console.error('Failed to get Calendly user info:', error);
-      return res.redirect(`${returnUrl}?error=auth_failed&reason=user_info`);
-    }
-
-    const userData = await userResponse.json();
-    const calendlyUid = userData.resource.uri.split('/').pop();
-
-    // 3. Get the user from the request context using auth cookie
-    const { user } = await supabase.auth.getUser(req.cookies['sb-access-token'] || req.cookies['sb:token']);
-
-    if (!user) {
-      console.error('No authenticated user found');
-      return res.redirect(`${returnUrl}?error=auth_failed&reason=no_user`);
-    }
-
-    // 4. Calculate token expiration
-    const expiresAt = new Date();
-    expiresAt.setSeconds(expiresAt.getSeconds() + expires_in);
-
-    // 5. Store the Calendly tokens in Supabase
-    const { data, error } = await supabase
-      .from('calendly_users')
-      .upsert({
-        user_id: user.id,
-        calendly_uid: calendlyUid,
-        access_token,
-        refresh_token,
-        token_expires_at: expiresAt.toISOString(),
-        updated_at: new Date().toISOString(),
-      }, {
-        onConflict: 'user_id',
-        returning: 'minimal'
-      });
-
-    if (error) {
-      console.error('Failed to store Calendly tokens:', error);
-      return res.redirect(`${returnUrl}?error=auth_failed&reason=db_error`);
-    }
-
-    // Success! Redirect back to the app
-    res.redirect(`${returnUrl}?calendlyConnected=true`);
+    
+    // Redirect back to the meetings page with success
+    return res.redirect('/?tab=meetings&calendly=connected');
   } catch (error) {
-    console.error('Error in Calendly OAuth callback:', error);
-    res.redirect(`${returnUrl}?error=auth_failed&reason=server_error`);
+    console.error('Error in OAuth callback:', error);
+    return res.redirect(`/?error=${encodeURIComponent(error.message || 'oauth_error')}`);
   }
 }
